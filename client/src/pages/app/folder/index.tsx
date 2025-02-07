@@ -7,11 +7,8 @@ import Info from "lucide-solid/icons/info";
 import { createMediaQuery } from "@solid-primitives/media";
 import Editor from "components/editor";
 import { Splitter } from '@ark-ui/solid/splitter';
-import { useAuth } from "context/auth";
 
 export default function Folder() {
-  const [requireAuth] = useAuth();
-  requireAuth();
   const [data] = useData();
   const params = useParams();
   const isMobile = createMediaQuery("(max-width: 767px)");

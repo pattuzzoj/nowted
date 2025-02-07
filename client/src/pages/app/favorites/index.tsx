@@ -6,11 +6,8 @@ import { Show } from "solid-js";
 import { createMediaQuery } from "@solid-primitives/media";
 import Editor from "components/editor";
 import { Splitter } from "@ark-ui/solid/splitter";
-import { useAuth } from "context/auth";
 
 export default function Favorites() {
-  const [requireAuth] = useAuth();
-  requireAuth();
   const [data] = useData();
   const params = useParams();
 

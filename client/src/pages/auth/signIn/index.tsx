@@ -15,7 +15,7 @@ export default function SignIn() {
     validateOn: "input",
     revalidateOn: "input"
   });
-  const [_, {handleSignIn}] = useAuth();
+  const {handleSignIn} = useAuth();
 
   return (
     <Form class="w-full max-w-96 flex flex-col justify-center gap-6" onSubmit={handleSignIn}>

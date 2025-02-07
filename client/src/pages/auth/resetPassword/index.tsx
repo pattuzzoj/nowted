@@ -11,7 +11,7 @@ type Password = {
 
 export default function resetPassword() {
   const [params, _setParams] = useSearchParams<{ token: string }>();
-  const [_, {handleResetPassword}] = useAuth();
+  const {handleResetPassword} = useAuth();
   const navigate = useNavigate();
   const token = params.token;
 

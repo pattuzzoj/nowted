@@ -12,7 +12,7 @@ type Recover = {
 export default function RecoverAccount() {
   const [form, { Form, Field }] = createForm<Recover>();
   const [isEmailSent, setIsEmailSent] = createSignal(false);
-  const [_, {handleRecoverAccount}] = useAuth();
+  const {handleRecoverAccount} = useAuth();
 
   async function handleSubmitRecoverAccount(values: Recover) {
     const recoverAccountSent = await handleRecoverAccount(values.account);

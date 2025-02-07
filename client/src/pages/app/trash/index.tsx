@@ -3,15 +3,11 @@ import { createMediaQuery } from "@solid-primitives/media";
 import { useParams } from "@solidjs/router";
 import Editor from "components/editor";
 import NoteList from "components/noteList";
-import { useAuth } from "context/auth";
 import { useData } from "context/data";
 import TrashIcon from "lucide-solid/icons/trash-2";
 import { Show } from "solid-js";
 
 export default function Trash() {
-  const [requireAuth] = useAuth();
-  requireAuth();
-  
   const [data] = useData();
   const params = useParams();
 

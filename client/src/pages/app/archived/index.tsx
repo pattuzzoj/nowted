@@ -3,14 +3,11 @@ import { createMediaQuery } from "@solid-primitives/media";
 import { useParams } from "@solidjs/router";
 import Editor from "components/editor";
 import NoteList from "components/noteList";
-import { useAuth } from "context/auth";
 import { useData } from "context/data";
 import Archive from "lucide-solid/icons/archive";
 import { Show } from "solid-js";
 
 export default function Archived() {
-  const [requireAuth] = useAuth();
-  requireAuth();
   const [data] = useData();
   const params = useParams();
   const isMobile = createMediaQuery("(max-width: 767px)");

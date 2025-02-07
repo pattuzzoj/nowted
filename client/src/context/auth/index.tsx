@@ -7,16 +7,13 @@ import { sleep } from "@utilify/core";
 
 const AuthContext = createContext();
 
-type Auth = [
-  requireAuth: () => void,
-  {
-    handleSignIn: (credentials: SignIn) => Promise<void>,
-    handleSignUp: (registration: SignUp) => Promise<void>,
-    handleLogOut: () => Promise<void>,
-    handleRecoverAccount: (account: string) => Promise<boolean>,
-    handleResetPassword: (token: string, password: string) => Promise<void>
-  }
-]
+interface Auth {
+  handleSignIn: (credentials: SignIn) => Promise<void>,
+  handleSignUp: (registration: SignUp) => Promise<void>,
+  handleLogOut: () => Promise<void>,
+  handleRecoverAccount: (account: string) => Promise<boolean>,
+  handleResetPassword: (token: string, password: string) => Promise<void>
+}
 
 export default function AuthProvider(props: ParentProps) {
   const [isAuthenticated, setIsAuthenticated] = createSignal(false);
@@ -27,9 +24,14 @@ export default function AuthProvider(props: ParentProps) {
     try {
       const isLogged = await AuthService.status();
 
-      setIsAuthenticated(Boolean(isLogged));
+      if (!isLogged) {
+        throw new Error("User isn't logged");
+      }
+
+      setIsAuthenticated(isLogged);
     } catch (error) {
       console.error(error);
+      navigate("/auth/sign-in");
     }
   });
 
@@ -127,14 +129,8 @@ export default function AuthProvider(props: ParentProps) {
     }
   }
 
-  function requireAuth() {
-    if (!isAuthenticated()) {
-      navigate("/auth/sign-in");
-    }
-  }
-
   return (
-    <AuthContext.Provider value={[requireAuth, { handleSignIn, handleSignUp, handleLogOut, handleRecoverAccount, handleResetPassword }]}>
+    <AuthContext.Provider value={{ handleSignIn, handleSignUp, handleLogOut, handleRecoverAccount, handleResetPassword }}>
       {props.children}
     </AuthContext.Provider>
   )
