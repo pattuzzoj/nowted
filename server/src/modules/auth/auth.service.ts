@@ -5,7 +5,7 @@ import { UserService } from "../users/user.service";
 import SignInDto from "../auth/dto/signIn.dto";
 import SignUpDto from "../auth/dto/signUp.dto";
 import { MailService } from "../mail/mail.service";
-
+ 
 @Injectable()
 export class AuthService {
   constructor(private jwtService: JwtService, private users: UserService, private mailService: MailService) {}
