@@ -9,8 +9,7 @@ export default class AuthService {
       const request = await fetch(AuthService.url.concat(endpoint), {
         method,
         headers: {
-          "Content-Type": "application/json",
-          'Access-Control-Allow-Origin': "https://nowted-server.vercel.app",
+          "Content-Type": "application/json"
         },
         mode: 'cors',
         body: body ? JSON.stringify(body) : undefined
