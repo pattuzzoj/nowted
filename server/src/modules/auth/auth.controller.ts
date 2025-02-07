@@ -29,9 +29,7 @@ export class AuthController {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "none",
       domain: ".nowted-showcase.vercel.app"
-    });
-
-    res.status(HttpStatus.OK).send();
+    }).status(HttpStatus.OK).send();
   }
 
   @Post("/sign-up")
@@ -49,9 +47,7 @@ export class AuthController {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "none",
       domain: ".nowted-showcase.vercel.app"
-    });
-
-    res.status(HttpStatus.CREATED).send();
+    }).status(HttpStatus.CREATED).send();
   }
 
   @Post("/recover-account")
