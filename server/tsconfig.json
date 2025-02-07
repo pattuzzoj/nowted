@@ -19,12 +19,6 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "allowJs": true,
-    "paths": {
-      "@database/*": ["src/database/*"],
-      "@modules/*": ["src/modules/*"],
-      "@shared/*": ["src/shared/*"],
-      "@utils/*": ["src/utils/*"],
-    }
+    "allowJs": true
   }
 }
