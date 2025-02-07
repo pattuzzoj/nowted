@@ -27,7 +27,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: "strict"
+      sameSite: "none"
     });
 
     res.status(HttpStatus.OK).send();
@@ -46,7 +46,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: "strict"
+      sameSite: "none"
     });
 
     res.status(HttpStatus.CREATED).send();
