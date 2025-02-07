@@ -3,9 +3,6 @@ import AuthProvider, { useAuth } from "context/auth";
 import { ParentProps } from "solid-js";
 
 export default function App(props: ParentProps) {
-  const [requireAuth] = useAuth();
-  requireAuth();
-  
   return (
     <AuthProvider>
       <div class="flex w-screen">
