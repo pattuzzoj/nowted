@@ -1,0 +1,34 @@
+import { sql } from "drizzle-orm";
+import { pgTable, text, varchar, uuid, index, boolean, integer } from "drizzle-orm/pg-core";
+import { timestamps } from "./columns.helpers";
+
+export const userSchema = pgTable("users", {
+  id: uuid().default(sql`gen_random_uuid()`).primaryKey(),
+  email: varchar({length: 100}).unique().notNull(),
+  username: varchar({length: 16}).unique().notNull(),
+  password: varchar({length: 100}).notNull(),
+  ...timestamps,
+}, (table) => [
+    index("emailIndex").on(table.email),
+    index("usernameIndex").on(table.username)
+]);
+
+export const folderSchema = pgTable("folders", {
+  id: uuid().default(sql`gen_random_uuid()`).primaryKey(),
+  name: varchar({length: 24}).notNull().default("new folder"),
+  order: integer().default(0).notNull(),
+  ...timestamps,
+  user_id: uuid().references(() => userSchema.id, { onDelete: "cascade" }),
+});
+
+export const noteSchema = pgTable("notes", {
+  id: uuid().default(sql`gen_random_uuid()`).primaryKey(),
+  name: varchar({length: 48}).notNull().default("new note"),
+  preview: text(),
+  content: text(),
+  favorite: boolean().notNull().default(false),
+  archived: boolean().notNull().default(false),
+  ...timestamps,
+  user_id: uuid().references(() => userSchema.id),
+  folder_id: uuid().references(() => folderSchema.id, { onDelete: "cascade" }),
+});

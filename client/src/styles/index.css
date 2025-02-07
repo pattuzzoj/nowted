@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@import "./base.css";
+@import "./colors.css";
+@import "./typography.css";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-tertiary: var(--tertiary);
+  --color-hover: var(--hover);
+  --color-accent: var(--accent);
+  --color-active: var(--active);
+  --color-link-hover: var(--link-hover);
+  --color-note-hover: var(--note-hover);
+}

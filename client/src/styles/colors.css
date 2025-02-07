@@ -1,0 +1,31 @@
+:root[data-theme="light"] {
+  --primary: rgb(234, 234, 234);
+  --secondary: rgb(221, 221, 221);
+  --tertiary: rgb(170, 170, 170);
+  --hover: ;
+  --accent: #312EB5;
+  --active: #312EB5;
+  --inactive: ;
+  --disabled: ;
+  --focus: ;
+  --shadow: ;
+
+  --link-hover: #ffffff08;
+  --note-hover: #333333;
+}
+
+:root[data-theme="dark"] {
+  --primary: #1A1A1A;
+  --secondary: #1C1C1C;
+  --tertiary: #232323;
+  --hover: #ffffff08;
+  --accent: #312EB5;
+  --active: #312EB5;
+  --inactive: ;
+  --disabled: ;
+  --focus: ;
+  --shadow: ;
+
+  --link-hover: #ffffff08;
+  --note-hover: #333333;
+}

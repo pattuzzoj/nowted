@@ -1,0 +1,100 @@
+@layer base {
+  html {
+    font-size: clamp(12px, 2vw, 18px);
+  }
+
+  html[data-theme="dark"] {
+    @apply
+    text-white
+  }
+
+  html[data-theme="light"] {
+    @apply
+    text-black
+  }
+
+  h1 {
+    @apply
+    text-4xl
+    font-semibold
+  }
+  
+  h2 {
+    @apply
+    text-3xl
+    font-semibold
+  }
+
+  h3 {
+    @apply
+    text-2xl
+    font-medium
+  }
+
+  h4 {
+    @apply
+    text-xl
+    font-medium
+  }
+
+  h5 {
+    @apply
+    text-lg
+    font-medium
+  }
+
+  h6 {
+    @apply
+    text-base
+    font-medium
+  }
+
+  a {
+    @apply
+    font-medium
+  }
+
+  input {
+    @apply
+    caret-blue-400
+
+  }
+  
+  span, p, pre, cite, dfn, abbr,
+  q, blockquote, li, dl, dt, dd,
+  th, td, legend, figcaption, label,
+  a, button, small, summary {
+    font-family: var(--font-text);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5rem;
+    word-spacing: 0.03rem;
+    letter-spacing: 0.02rem;
+    color: var(--color-text);
+  }
+  
+  a {
+    font-family: var(--font-link);
+    color: var(--color-link);
+  }
+  
+  a:link {}
+  
+  a:visited {}
+  
+  a:hover {}
+  
+  a:active {}
+  
+  button {
+    font-family: var(--font-button);
+    color: var(--color-button);
+  }
+  
+  small {
+    font-size: 0.7rem;
+    font-weight: 200;
+    line-height: 1rem;
+  }
+}
