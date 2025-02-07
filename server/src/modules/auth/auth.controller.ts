@@ -3,7 +3,6 @@ import { Response } from "express";
 import { AuthService } from "./auth.service";
 import { SignInDto } from "./dto/signin.dto";
 import { SignUpDto } from "./dto/signUp.dto";
-import { AuthGuard } from "src/shared/guards/auth.guard";
 
 @Controller("/auth")
 export class AuthController {
@@ -12,9 +11,9 @@ export class AuthController {
   @Get("/status")
   @HttpCode(HttpStatus.OK)
   async status(@Request() req, @Res() res: Response) {
-    // if (!req?.user) {
-    //   res.status(HttpStatus.UNAUTHORIZED).send();
-    // }
+    if (!req?.user) {
+      res.status(HttpStatus.UNAUTHORIZED).send();
+    }
   }
 
   @Post("/sign-in")
