@@ -7,7 +7,7 @@ export default class AuthService {
   private static async request(endpoint: string, method: "GET" | "POST" | "DELETE", body?: Record<string, any>) {
     try {
       const request = await fetch(AuthService.url.concat(endpoint), {
-        method,
+        method: method,
         headers: {
           "Content-Type": "application/json"
         },

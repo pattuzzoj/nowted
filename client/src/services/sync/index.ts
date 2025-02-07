@@ -30,7 +30,7 @@ export default class SyncService {
   private static async request(endpoint: string, method: "GET" | "POST" | "DELETE", body?: Record<string, any>) {
     try {
       const request = await fetch(SyncService.url.concat(endpoint), {
-        method,
+        method: method,
         headers: {
           "Content-Type": "application/json"
         },
