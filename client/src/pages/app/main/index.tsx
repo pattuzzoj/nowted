@@ -1,6 +1,10 @@
+import { useAuth } from "context/auth";
 import FolderOpen from "lucide-solid/icons/folder-open";
 
 export default function Main() {
+  const [requireAuth] = useAuth();
+  requireAuth();
+  
   return (
     <div class="h-screen w-full bg-secondary flex flex-col items-center justify-center text-center gap-4">
       <FolderOpen class="size-12" />

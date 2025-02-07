@@ -1,11 +1,13 @@
 import Sidebar from "components/sidebar";
-import AuthProvider from "context/auth";
+import AuthProvider, { useAuth } from "context/auth";
 import { ParentProps } from "solid-js";
 
 export default function App(props: ParentProps) {
+  const [requireAuth] = useAuth();
+  requireAuth();
+  
   return (
     <AuthProvider>
-      
       <div class="flex w-screen">
         <Sidebar />
         <div class="md:flex md:grow"></div>
