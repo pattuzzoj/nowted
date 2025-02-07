@@ -33,7 +33,7 @@ export default class SyncService {
         method,
         headers: {
           "Content-Type": "application/json",
-          'Access-Control-Allow-Origin': import.meta.env.VITE_SERVER_URL,
+          'Access-Control-Allow-Origin': "https://nowted-server.vercel.app",
         },
         mode: 'cors',
         body: body ? JSON.stringify(body) : undefined
