@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Param, UseGuards, Request, Body } from "@nestjs/common";
-import { AuthGuard } from "@shared/guards/auth.guard";
+import { AuthGuard } from "../../shared/guards/auth.guard";
 import { SyncService } from "./sync.service";
 import { SyncDto } from "./dto/sync.dto";
 
