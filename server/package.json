@@ -79,5 +79,11 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "_moduleAliases": {
+    "@database/*": "src/database/*",
+    "@modules/*": "src/modules/*",
+    "@shared/*": "src/shared/*",
+    "@utils/*": "src/utils/*"
   }
 }
