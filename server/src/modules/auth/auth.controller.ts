@@ -24,9 +24,11 @@ export class AuthController {
     const token = await this.authService.signIn(user);
 
     res.cookie("jwt", token, {
+      httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: "none"
+      sameSite: "none",
+      domain: ".nowted-showcase.vercel.app"
     });
 
     res.status(HttpStatus.OK).send();
@@ -42,9 +44,11 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async logout(@Res() res: Response) {
     res.clearCookie("jwt", {
+      httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: "none"
+      sameSite: "none",
+      domain: ".nowted-showcase.vercel.app"
     });
 
     res.status(HttpStatus.CREATED).send();

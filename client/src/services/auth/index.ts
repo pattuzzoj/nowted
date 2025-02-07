@@ -12,6 +12,7 @@ export default class AuthService {
           "Content-Type": "application/json"
         },
         mode: 'cors',
+        credentials: "include",
         body: body ? JSON.stringify(body) : undefined
       });
 
