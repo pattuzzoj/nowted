@@ -26,18 +26,12 @@ const stores: StoreSchema[] = [
     options: {
       keyPath: "id"
     },
-  },
-  {
-    name: "pending",
-    options: {
-      autoIncrement: true
-    },
   }
 ];
 
 const config = {
   name: "nowted",
-  version: 2,
+  version: 1,
   stores
 }
 
