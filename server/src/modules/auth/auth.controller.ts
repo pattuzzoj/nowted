@@ -3,12 +3,14 @@ import { Response } from "express";
 import { AuthService } from "./auth.service";
 import SignInDto from "../auth/dto/signIn.dto";
 import SignUpDto from "../auth/dto/signUp.dto";
+import { AuthGuard } from "../../shared/guards/auth.guard";
 
 @Controller("/auth")
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Get("/status")
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async status(@Request() req, @Res() res: Response) {
     if (!req?.user) {
