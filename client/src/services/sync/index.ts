@@ -71,7 +71,10 @@ export default class SyncService {
       new Date(note.updated_at) > lastSync
     ));
 
-    const data = await SyncService.request("", "POST", {folders, notes}) as {notes: Note[], folders: Folder[], lastSync: string};
-    localStorage.setItem("lastSync", data.lastSync);
+    if (notes.length || folders.length) {
+      const data = await SyncService.request("", "POST", {folders, notes}) as {notes: Note[], folders: Folder[], lastSync: string};
+      localStorage.setItem("lastSync", data.lastSync);
+    }
+
   }
 }
