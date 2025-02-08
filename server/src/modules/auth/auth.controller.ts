@@ -29,7 +29,11 @@ export class AuthController {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "none",
       domain: "https://nowted-showcase.vercel.app"
-    }).status(HttpStatus.OK).send();
+    });
+
+    return {
+      message: "success"
+    }
   }
 
   @Post("/sign-up")
@@ -39,7 +43,7 @@ export class AuthController {
   }
 
   @Delete("/log-out")
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async logout(@Res() res: Response) {
     res.clearCookie("jwt", {
       httpOnly: true,
@@ -47,7 +51,11 @@ export class AuthController {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "none",
       domain: "https://nowted-showcase.vercel.app"
-    }).status(HttpStatus.CREATED).send();
+    });
+
+    return {
+      message: "success"
+    }
   }
 
   @Post("/recover-account")
