@@ -19,6 +19,7 @@ export default class AuthService {
       return request.ok;
     } catch (error) {
       console.error(error);
+      return;
     }
   }
 

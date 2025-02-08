@@ -1,5 +1,5 @@
 import Sidebar from "components/sidebar";
-import AuthProvider, { useAuth } from "context/auth";
+import AuthProvider from "context/auth";
 import { ParentProps } from "solid-js";
 
 export default function App(props: ParentProps) {

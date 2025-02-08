@@ -105,7 +105,9 @@ export default function useToast() {
     if(status() === "loading") {
       return notifyId();
     }
-  })
+
+    return;
+  });
 
   return notify;
 }

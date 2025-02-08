@@ -1,5 +1,4 @@
-import { useNavigate } from "@solidjs/router";
-import { Accessor, createSignal, onCleanup, Setter } from "solid-js"
+import { Accessor, createSignal, Setter } from "solid-js"
 
 export type FetchReturn<T> = [
   Accessor<T | Response>,

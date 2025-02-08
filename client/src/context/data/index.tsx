@@ -352,12 +352,16 @@ export default function DataProvider(props: ParentProps) {
   }
 
   createEffect(async () => {
-    await getFolderById(params.folderId);
-    await getNotesByFolderId(params.folderId);
+    if (params.folderId) {
+      await getFolderById(params.folderId);
+      await getNotesByFolderId(params.folderId);
+    }
   });
 
   createEffect(async () => {
-    await getNoteById(params.noteId);
+    if (params.noteId) {
+      await getNoteById(params.noteId);
+    }
   });
 
   const syncId = setInterval(() => {

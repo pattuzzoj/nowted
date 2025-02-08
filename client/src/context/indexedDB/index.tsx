@@ -113,6 +113,8 @@ export default function IndexedDBProvider(props: IndexedDBProps) {
 
       return transaction;
     }
+
+    return;
   }
 
   function useStore<T>(name: string): StoreOperations<T> {

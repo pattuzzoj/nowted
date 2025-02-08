@@ -16,7 +16,7 @@ interface Auth {
 }
 
 export default function AuthProvider(props: ParentProps) {
-  const [isAuthenticated, setIsAuthenticated] = createSignal(false);
+  const [_isAuthenticated, setIsAuthenticated] = createSignal(false);
   const navigate = useNavigate();
   const notify = useToast();
 
