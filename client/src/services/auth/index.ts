@@ -39,7 +39,7 @@ export default class AuthService {
   }
 
   static async recoverAccount(account: string) {
-    return await AuthService.request("/recover-account", "POST", {account});
+    return await AuthService.request("/forgot-password", "POST", {account});
   }
 
   static async resetPassword(token: string, password: string) {

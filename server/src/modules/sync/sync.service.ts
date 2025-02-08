@@ -1,7 +1,8 @@
-import { Injectable, NotImplementedException } from "@nestjs/common";
-import { FolderService } from "../folder/folder.service";
-import { NoteService } from "../note/note.service";
-import { SyncDto } from "./dto/sync.dto";
+import { Injectable } from "@nestjs/common";
+import { FolderService } from "@modules/folder/folder.service";
+import { NoteService } from "@modules/note/note.service";
+import { Folder } from "@modules/folder/interface/folder.interface";
+import { Note } from "@modules/note/interface/note.interface";
 
 @Injectable()
 export class SyncService {
@@ -18,11 +19,11 @@ export class SyncService {
     }
   }
 
-  async syncData(userId, syncData) {
+  async syncData(userId: string, syncData: any) {
     const {folders, notes} = syncData;
 
-    folders.forEach((folder) => {
-      const existFolder = this.folderService.checkIfFolderExist(userId, folder.id);
+    folders.forEach(async (folder: Folder) => {
+      const existFolder = await this.folderService.checkIfFolderExist(userId, folder.id);
 
       if (existFolder) {
         this.folderService.create(userId, folder);
@@ -31,8 +32,8 @@ export class SyncService {
       }
     });
 
-    notes.forEach((note) => {
-      const existFolder = this.noteService.checkIfNoteExist(userId, note.id);
+    notes.forEach(async (note: Note) => {
+      const existFolder = await this.noteService.checkIfNoteExist(userId, note.id);
 
       if (existFolder) {
         this.noteService.create(userId, note);

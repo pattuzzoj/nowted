@@ -1,9 +1,10 @@
-import { Controller, Post, Body, HttpStatus, HttpCode, Res, Get, Delete, UseGuards, Request } from "@nestjs/common";
-import { Response } from "express";
+import { Controller, Post, Body, HttpStatus, HttpCode, Res, Get, Delete, UseGuards, Req } from "@nestjs/common";
+import type { Response } from "express";
+import { AuthGuard } from "@shared/guards/auth.guard";
 import { AuthService } from "./auth.service";
 import SignInDto from "../auth/dto/signIn.dto";
 import SignUpDto from "../auth/dto/signUp.dto";
-import { AuthGuard } from "../../shared/guards/auth.guard";
+import type { AuthRequest } from "./interface/authRequest.interface";
 
 @Controller("/auth")
 export class AuthController {
@@ -12,10 +13,8 @@ export class AuthController {
   @Get("/status")
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
-  async status(@Request() req, @Res() res: Response) {
-    if (!req?.user) {
-      res.status(HttpStatus.UNAUTHORIZED).send();
-    }
+  async status() {
+    return;
   }
 
   @Post("/sign-in")
@@ -43,6 +42,7 @@ export class AuthController {
   }
 
   @Delete("/log-out")
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async logout(@Res() res: Response) {
     res.clearCookie("jwt", {
@@ -58,7 +58,7 @@ export class AuthController {
     }
   }
 
-  @Post("/recover-account")
+  @Post("/forgot-password")
   @HttpCode(HttpStatus.OK)
   async recoverAccount(@Body("account") account: string) {
     await this.authService.recoverAccount(account);
@@ -71,8 +71,9 @@ export class AuthController {
   }
 
   @Post("/change-password")
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
-  async changePassword(@Request() req, @Body("password") password: string) {
+  async changePassword(@Req() req: AuthRequest, @Body("password") password: string) {
    await this.authService.changePassword(req.user.sub, password);
   }
 }

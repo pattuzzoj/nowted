@@ -1,28 +1,82 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "lib": ["ES2021", "DOM", "DOM.Iterable"],
-    "skipLibCheck": true,
-    "removeComments": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "preserve",
-    "jsxImportSource": "solid-js",
-
-    /* Linting */
-    "strict": true,
+    // Type Checking
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": false,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "allowUnusedLabels": true,
+    "strict": true,
+    
+    // Modules
+    "module": "NodeNext",
+    "moduleResolution": "bundler",
+    "baseUrl": "./src",
+    "allowArbitraryExtensions": true,
+    "allowImportingTsExtensions": true,
+    "noUncheckedSideEffectImports": false,
+    "paths": {
+      "@root/*": ["../*"],
+      "@database/*": ["./database/*"],
+      "@modules/*": ["./modules/*"],
+      "@shared/*": ["./shared/*"],
+      "@utils/*": ["./utils/*"],
+    },
+    "resolveJsonModule": true,
+    "rootDir": ".",
 
-    "baseUrl" : "./src",
-  }
+    // Emit
+    "declaration": true,
+    "declarationDir": "./types",
+    "declarationMap": true,
+    "downlevelIteration": false,
+    "emitBOM": false,
+    "emitDeclarationOnly": false,
+    "noEmit": true,
+    "noEmitOnError": false,
+    "outDir": "./dist",
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "sourceMap": true,
+    
+    // Language and Environment
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "lib": ["ESNext"],
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    
+    // JavaScript Support
+    "allowJs": true,
+    "checkJs": true,
+
+    // Interop Constraints
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+
+    // Diagnostics
+    "explainFiles": true,
+    "traceResolution": false,
+    
+    // Projects
+    "incremental": true,
+    
+    // Completeness
+    "skipLibCheck": true,
+  },
+
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "src/**/dto/*.dto.ts"
+  ]
 }

@@ -1,10 +1,10 @@
 import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
-import { UserService } from "../users/user.service";
+import { UserService } from "@modules/users/user.service";
+import { MailService } from "@modules/mail/mail.service";
 import SignInDto from "../auth/dto/signIn.dto";
 import SignUpDto from "../auth/dto/signUp.dto";
-import { MailService } from "../mail/mail.service";
 
 @Injectable()
 export class AuthService {
@@ -60,11 +60,11 @@ export class AuthService {
     }
 
     const token = await this.jwtService.signAsync({sub: user.id});
-    await this.mailService.sendRecoverMail(user.email, `<a href="${process.env.SITE_URL}/auth/reset-password?token=${token}">Recover Account</a>`);
+    await this.mailService.sendRecoverMail(user.email, `<a href="${process.env["SITE_URL"]!}/auth/reset-password?token=${token}">Recover Account</a>`);
   }
 
   async resetPassword(token: string, password: string) {
-    const payload = await this.jwtService.verifyAsync(token, { secret: process.env.JWT_SECRET });
+    const payload = await this.jwtService.verifyAsync(token, { secret: process.env["JWT_SECRET"]! });
 
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(password, salt);

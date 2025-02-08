@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { db } from "../../drizzle.config";
+import { db } from "@root/drizzle.config";
 
 @Module({
   providers: [

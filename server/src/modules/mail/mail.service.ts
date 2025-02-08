@@ -1,13 +1,13 @@
 import { Injectable } from "@nestjs/common";
-import * as nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer';
 
 @Injectable()
 export class MailService {
   private transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.MAILER_EMAIL,
-      pass: process.env.MAILER_PASSWORD
+      user: process.env["MAILER_EMAIL"]!,
+      pass: process.env["MAILER_PASSWORD"]!
     }
   });
 
@@ -25,7 +25,7 @@ export class MailService {
       `
     };
     
-    await this.transporter.sendMail(mailOptions, function(error, info){
+    this.transporter.sendMail(mailOptions, function(error, info){
       if (error) {
         console.log(error);
         throw new Error('Error sending email');

@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsNumber, IsString, IsUUID, MaxLength } from "class-validator"
-import { Folder } from "../folder.interface"
+import { IsNotEmpty, IsNumber, IsString, IsUUID, MaxLength } from "class-validator";
+import type { Folder } from "../interface/folder.interface";
 
 export class FolderDto implements Folder {
   @IsNotEmpty()

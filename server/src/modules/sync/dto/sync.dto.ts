@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsObject, IsString } from "class-validator";
-import { Task } from "../sync.interface";
+import { Task } from "../interface/sync.interface";
 
 export class SyncDto implements Task {
   @IsNotEmpty()

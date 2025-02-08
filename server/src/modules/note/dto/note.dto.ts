@@ -1,5 +1,5 @@
-import { IsBoolean, IsNotEmpty, IsString, IsUUID, MaxLength } from "class-validator"
-import { Note } from "../note.interface"
+import { IsBoolean, IsNotEmpty, IsString, IsUUID, MaxLength } from "class-validator";
+import { Note } from "../interface/note.interface";
 
 export class NoteDto implements Note {
   @IsNotEmpty()

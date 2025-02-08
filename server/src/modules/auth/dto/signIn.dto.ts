@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { IsNotEmpty, IsString, Length } from "class-validator";
 
 export default class SignInDto {

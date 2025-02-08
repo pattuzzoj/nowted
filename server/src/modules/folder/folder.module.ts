@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule } from "../../database/database.module";
+import { DatabaseModule } from "@database/database.module";
+import { NoteModule } from "@modules/note/note.module";
 import { FolderService } from "./folder.service";
-import { NoteModule } from "../note/note.module";
 
 @Module({
   providers: [FolderService],

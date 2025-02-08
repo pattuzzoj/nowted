@@ -1,8 +1,8 @@
 {
   "name": "server",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "version": "1.0.0",
+  "description": "Nowted Server",
+  "author": "Júlio Pattuzzo",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -11,7 +11,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -79,5 +79,12 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "_moduleAliases": {
+    "@root": "./",
+    "@database/*": "./src/database/*",
+    "@modules/*": "./src/modules/*",
+    "@shared/*": "./src/shared/*",
+    "@utils/*": "./src/utils/*"
   }
 }

@@ -1,8 +1,8 @@
 import { Injectable, Inject } from "@nestjs/common";
-import { DatabaseType } from "drizzle.config";
-import { folderSchema, noteSchema } from "../../database/schema";
-import { Note } from "./note.interface";
 import { and, eq, gt, isNotNull, sql } from "drizzle-orm";
+import type { DatabaseType } from "@root/drizzle.config";
+import { folderSchema, noteSchema } from "@database/schema";
+import { Note } from "./interface/note.interface";
 
 @Injectable()
 export class NoteService {
