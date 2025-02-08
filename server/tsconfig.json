@@ -16,16 +16,16 @@
     // Modules
     "module": "NodeNext",
     "moduleResolution": "nodenext",
-    "baseUrl": "./",
+    // "baseUrl": "./src",
     "allowArbitraryExtensions": true,
     "allowImportingTsExtensions": false,
     "noUncheckedSideEffectImports": false,
     "paths": {
-      "@root/*": ["*"],
-      "@database/*": ["src/database/*"],
-      "@modules/*": ["src/modules/*"],
-      "@shared/*": ["src/shared/*"],
-      "@utils/*": ["src/utils/*"],
+      "@root/*": ["./*"],
+      "@database/*": ["./src/database/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@utils/*": ["./src/utils/*"],
     },
     "resolveJsonModule": true,
     "rootDir": ".",
@@ -73,9 +73,9 @@
     "skipLibCheck": true,
   },
   "include": [
-    "src/**/*"
+    "./src/**/*"
   ],
   "exclude": [
-    "src/**/*.dto.ts"
+    "./src/**/*.dto.ts"
   ]
 }
