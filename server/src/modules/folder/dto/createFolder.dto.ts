@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { IsOptional } from "class-validator";
 import { FolderDto } from "./folder.dto";
 

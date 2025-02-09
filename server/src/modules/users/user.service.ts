@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { eq, or } from "drizzle-orm";
-import type { DatabaseType } from "@root/drizzle.config";
+import type { DatabaseType } from "../../../drizzle.config";
 import { userSchema } from "@database/schema";
 import { User } from "./interface/user.interface";
 

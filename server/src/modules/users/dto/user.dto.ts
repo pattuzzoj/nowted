@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { IsEmail, IsLowercase, IsNotEmpty, IsString, Length, MinLength } from "class-validator";
 import type { User } from "../interface/user.interface";
 

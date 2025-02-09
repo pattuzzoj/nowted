@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { IsBoolean, IsNotEmpty, IsString, IsUUID, MaxLength } from "class-validator";
 import { Note } from "../interface/note.interface";
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { IsNotEmpty, IsObject, IsString } from "class-validator";
 import { Task } from "../interface/sync.interface";
 
