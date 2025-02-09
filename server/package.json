@@ -81,10 +81,10 @@
     "testEnvironment": "node"
   },
   "_moduleAliases": {
-    "@root/*": "./dist/*",
-    "@database/*": "./dist/src/database/*",
-    "@modules/*": "./dist/src/modules/*",
-    "@shared/*": "./dist/src/shared/*",
-    "@utils/*": "./dist/src/utils/*"
+    "@root": "./dist",
+    "@database": "./dist/src/database",
+    "@modules": "./dist/src/modules",
+    "@shared": "./dist/src/shared",
+    "@utils": "./dist/src/utils"
   }
 }
