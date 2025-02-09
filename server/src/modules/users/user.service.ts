@@ -1,6 +1,7 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { eq, or } from "drizzle-orm";
-import type { DatabaseType } from "../../../drizzle.config";
+import * as bcrypt from "bcrypt";
+import type { DatabaseType } from "@/drizzle.config";
 import { userSchema } from "@database/schema";
 import { User } from "./interface/user.interface";
 
@@ -8,7 +9,7 @@ import { User } from "./interface/user.interface";
 export class UserService {
   constructor(@Inject("DATABASE") private db: DatabaseType) {}
 
-  async create(user: User) {
+  async createUser(user: User) {
     return await this.db
     .insert(userSchema)
     .values(user);
@@ -31,10 +32,27 @@ export class UserService {
     return user;
   }
 
-  async changePassword(id: string, password: string) {
+  async changeUsername(userId: string, username: string) {
     await this.db
     .update(userSchema)
-    .set({password})
-    .where(eq(userSchema.id, id));
+    .set({username})
+    .where(eq(userSchema.id, userId));
+  }
+
+  async changeEmail(userId: string, email: string) {
+    await this.db
+    .update(userSchema)
+    .set({email})
+    .where(eq(userSchema.id, userId));
+  }
+
+  async changePassword(userId: string, password: string) {
+    const salt = await bcrypt.genSalt();
+    const hashPassword = await bcrypt.hash(password, salt);
+
+    await this.db
+    .update(userSchema)
+    .set({password: hashPassword})
+    .where(eq(userSchema.id, userId));
   }
 }

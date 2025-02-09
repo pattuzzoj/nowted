@@ -1,5 +1,5 @@
 import { lazy } from "solid-js";
-import { Navigate, RouteDefinition } from "@solidjs/router";
+import { RouteDefinition } from "@solidjs/router";
 import { isUUID } from '@utilify/core';
 
 export const routes: RouteDefinition[] = [
@@ -9,7 +9,7 @@ export const routes: RouteDefinition[] = [
       { path: "" },
       { path: "/sign-in", component: lazy(() => import("pages/auth/signIn"))},
       { path: "/sign-up", component: lazy(() => import("pages/auth/signUp"))},
-      { path: "/recover-account", component: lazy(() => import("pages/auth/recoverAccount"))},
+      { path: "/forgot-password", component: lazy(() => import("pages/auth/forgotPassword"))},
       { path: "/reset-password", component: lazy(() => import("pages/auth/resetPassword"))}
     ]
   },

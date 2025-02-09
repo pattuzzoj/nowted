@@ -1,10 +1,9 @@
-import { Controller, Post, Body, HttpStatus, HttpCode, Res, Get, Delete, UseGuards, Req } from "@nestjs/common";
+import { Controller, Post, Body, HttpStatus, HttpCode, Res, Get, Delete, UseGuards } from "@nestjs/common";
 import type { Response } from "express";
 import { AuthGuard } from "@shared/guards/auth.guard";
 import { AuthService } from "./auth.service";
 import SignInDto from "../auth/dto/signIn.dto";
 import SignUpDto from "../auth/dto/signUp.dto";
-import type { AuthRequest } from "./interface/authRequest.interface";
 
 @Controller("/auth")
 export class AuthController {
@@ -26,7 +25,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: "none",
+      sameSite: "strict",
       domain: "nowted-server.vercel.app"
     }).status(HttpStatus.OK).send();
   }
@@ -45,7 +44,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: "none",
+      sameSite: "strict",
       domain: "nowted-server.vercel.app"
     }).status(HttpStatus.OK).send();
   }
@@ -60,12 +59,5 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async resetPassword(@Body("token") token: string, @Body("password") password: string) {
    await this.authService.resetPassword(token, password);
-  }
-
-  @Post("/change-password")
-  @UseGuards(AuthGuard)
-  @HttpCode(HttpStatus.OK)
-  async changePassword(@Req() req: AuthRequest, @Body("password") password: string) {
-   await this.authService.changePassword(req.user.sub, password);
   }
 }

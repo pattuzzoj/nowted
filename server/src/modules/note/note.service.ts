@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { and, eq, gt, isNotNull, sql } from "drizzle-orm";
-import type { DatabaseType } from "../../../drizzle.config";
+import type { DatabaseType } from "@/drizzle.config";
 import { folderSchema, noteSchema } from "@database/schema";
 import { Note } from "./interface/note.interface";
 

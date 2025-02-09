@@ -21,6 +21,7 @@
     "allowImportingTsExtensions": false,
     "noUncheckedSideEffectImports": false,
     "paths": {
+      "@/*": ["*"],
       "@database/*": ["src/database/*"],
       "@modules/*": ["src/modules/*"],
       "@shared/*": ["src/shared/*"],

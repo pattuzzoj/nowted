@@ -41,15 +41,8 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     user.password = await bcrypt.hash(user.password, salt);
 
-    await this.users.create(user);
+    await this.users.createUser(user);
     await this.mailService.sendWelcomeMail(user.email);
-  }
-
-  async changePassword(userId: string, password: string) {
-    const salt = await bcrypt.genSalt();
-    const hashPassword = await bcrypt.hash(password, salt);
-
-    await this.users.changePassword(userId, hashPassword);
   }
 
   async recoverAccount(account: string) {
