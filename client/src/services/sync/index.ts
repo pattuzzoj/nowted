@@ -2,6 +2,7 @@ import { FolderService } from "services/folder";
 import { NoteService } from "services/note";
 import { Folder, Note } from "types/interfaces";
 import { baseURL } from "utils/constants";
+import { SyncData } from "./interfaces";
 
 export default class SyncService {
   private static instance: SyncService;
@@ -47,7 +48,7 @@ export default class SyncService {
   }
 
   async syncFetch() {
-    const lastSync = localStorage.getItem("lastSync") || (new Date()).toISOString();
+    const lastSync = localStorage.getItem("lastSync");
 
     const data = await SyncService.request(`/${lastSync}`, "GET") as {notes: Note[], folders: Folder[], lastSync: string};
     localStorage.setItem("lastSync", data.lastSync);
@@ -62,7 +63,7 @@ export default class SyncService {
   }
 
   async syncPush() {
-    const lastSync = new Date(localStorage.getItem("lastSync") || "");
+    const lastSync = new Date(localStorage.getItem("lastSync")!);
 
     const folders = (await this.folderService?.getAllFolders())!.filter((folder) => (
       new Date(folder.updated_at) > lastSync
@@ -71,10 +72,15 @@ export default class SyncService {
       new Date(note.updated_at) > lastSync
     ));
 
-    if (notes.length || folders.length) {
-      const data = await SyncService.request("", "POST", {folders, notes}) as {notes: Note[], folders: Folder[], lastSync: string};
-      localStorage.setItem("lastSync", data.lastSync);
-    }
+    const data: SyncData = {
+      folders,
+      notes,
+      lastSync: lastSync.toISOString()
+    };
 
+    if (notes.length > 0 || folders.length > 0) {
+      const result = await SyncService.request("", "POST", data);
+      localStorage.setItem("lastSync", result.lastSync);
+    }
   }
 }

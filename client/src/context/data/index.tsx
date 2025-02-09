@@ -76,6 +76,10 @@ export default function DataProvider(props: ParentProps) {
 
   onMount(async () => {
     try {
+      if (!localStorage.getItem("lastSync")) {
+        localStorage.setItem("lastSync", (new Date()).toISOString());
+      }
+
       syncService.syncFetch();
       const folders = await folderService.getFolders();
       const favorites = await noteService.getFavoriteNotes();

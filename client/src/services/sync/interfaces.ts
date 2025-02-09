@@ -1,10 +1,8 @@
-export interface SignIn {
-  login: string;
-  password: string;
-}
+import { Folder } from "entities/folder";
+import { Note } from "entities/note";
 
-export interface SignUp {
-  email: string;
-  username: string;
-  password: string;
+export interface SyncData {
+  notes: Note[],
+  folders: Folder[],
+  lastSync: string;
 }

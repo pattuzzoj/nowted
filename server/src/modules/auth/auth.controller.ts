@@ -26,7 +26,8 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: "none"
+      sameSite: "none",
+      domain: "nowted-server.vercel.app"
     }).status(HttpStatus.OK).send();
   }
 
@@ -44,7 +45,8 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: "none"
+      sameSite: "none",
+      domain: "nowted-server.vercel.app"
     }).status(HttpStatus.OK).send();
   }
 
