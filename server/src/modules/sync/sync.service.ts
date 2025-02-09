@@ -9,8 +9,12 @@ export class SyncService {
   constructor(private folderService: FolderService, private noteService: NoteService) {}
 
   async getData(userId: string, lastSync: Date) {
+    console.log("1", userId, lastSync);
+
     const folders = await this.folderService.getFolders(userId, lastSync);
     const notes = await this.noteService.getNotes(userId, lastSync);
+
+    console.log("2", userId, lastSync);
 
     return {
       notes,

@@ -16,9 +16,11 @@ import UpdateFolderForm from "components/form/editNameFolder";
 import X from "lucide-solid/icons/x";
 import FileText from "lucide-solid/icons/file-text";
 import LogOut from "lucide-solid/icons/log-out";
+import { useAuth } from "context/auth";
 
 export default function Sidebar() {
   const [isActive, setIsActive] = createSignal(false);
+  const {handleLogOut} = useAuth();
   const [data, { noteService }] = useData();
   const params = useParams();
 
@@ -111,7 +113,7 @@ export default function Sidebar() {
         </nav>
       </div>
       <button class="flex items-center gap-3 -ml-4 p-4 py-1 rounded-r-lg hover:bg-link-hover">
-        <LogOut class="size-5"/>
+        <LogOut class="size-5" onClick={handleLogOut}/>
         Log out
       </button>
     </div>

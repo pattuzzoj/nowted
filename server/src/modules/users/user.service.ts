@@ -1,7 +1,7 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { eq, or } from "drizzle-orm";
 import * as bcrypt from "bcrypt";
-import type { DatabaseType } from "@/../drizzle.config";
+import type { DatabaseType } from "../../../drizzle.config";
 import { userSchema } from "@database/schema";
 import { User } from "./interface/user.interface";
 

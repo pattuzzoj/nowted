@@ -1,4 +1,4 @@
-import { createContext, createSignal, onMount, ParentProps, useContext } from "solid-js";
+import { createContext, createSignal, onMount, ParentProps, Show, useContext } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import AuthService from "services/auth";
 import { SignIn, SignUp } from "services/auth/interfaces";
@@ -16,7 +16,7 @@ interface Auth {
 }
 
 export default function AuthProvider(props: ParentProps) {
-  const [_isAuthenticated, setIsAuthenticated] = createSignal(false);
+  const [isAuthenticated, setIsAuthenticated] = createSignal(false);
   const navigate = useNavigate();
   const notify = useToast();
 
@@ -131,7 +131,9 @@ export default function AuthProvider(props: ParentProps) {
 
   return (
     <AuthContext.Provider value={{ handleSignIn, handleSignUp, handleLogOut, handleRecoverAccount, handleResetPassword }}>
-      {props.children}
+      <Show when={isAuthenticated()}>
+        {props.children}
+      </Show>
     </AuthContext.Provider>
   )
 }

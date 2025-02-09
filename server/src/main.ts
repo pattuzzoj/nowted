@@ -1,7 +1,6 @@
 import moduleAlias from 'module-alias';
 
 moduleAlias.addAliases({
-  "@": __dirname,
   "@database": __dirname.concat("/database"),
   "@modules": __dirname.concat("/modules"),
   "@shared": __dirname.concat("/shared"),
