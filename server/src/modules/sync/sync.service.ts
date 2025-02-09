@@ -26,6 +26,8 @@ export class SyncService {
   async syncData(userId: string, syncData: any) {
     const {folders, notes} = syncData;
 
+    console.log("1", userId, syncData);
+
     folders.forEach(async (folder: Folder) => {
       const existFolder = await this.folderService.checkIfFolderExist(userId, folder.id);
 
