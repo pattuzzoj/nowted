@@ -27,7 +27,7 @@ export class AuthController {
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "none",
-      domain: "https://nowted-showcase.vercel.app"
+      domain: "nowted-showcase.vercel.app"
     }).status(HttpStatus.OK).send();
   }
 
@@ -46,7 +46,7 @@ export class AuthController {
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "none",
-      domain: "https://nowted-showcase.vercel.app"
+      domain: "nowted-showcase.vercel.app"
     }).status(HttpStatus.OK).send();
   }
 
