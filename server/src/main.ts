@@ -1,13 +1,11 @@
 import moduleAlias from 'module-alias';
 
-console.log(__dirname);
-
 moduleAlias.addAliases({
   "@root": __dirname,
-  "@database": __dirname.concat("src/database"),
-  "@modules": __dirname.concat("src/modules"),
-  "@shared": __dirname.concat("src/shared"),
-  "@utils": __dirname.concat("src/utils"),
+  "@database": __dirname.concat("/database"),
+  "@modules": __dirname.concat("/modules"),
+  "@shared": __dirname.concat("/shared"),
+  "@utils": __dirname.concat("/utils"),
 });
 
 import { NestFactory } from '@nestjs/core';
