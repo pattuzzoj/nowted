@@ -1,12 +1,12 @@
-import NoteList from "components/noteList";
-import { useData } from "context/data";
 import { Show } from "solid-js";
-import FolderOpen from "lucide-solid/icons/folder-open";
 import { useParams } from "@solidjs/router";
-import Info from "lucide-solid/icons/info";
 import { createMediaQuery } from "@solid-primitives/media";
-import Editor from "components/editor";
 import { Splitter } from '@ark-ui/solid/splitter';
+import FolderOpen from "lucide-solid/icons/folder-open";
+import Info from "lucide-solid/icons/info";
+import NoteList from "@components/noteList";
+import { useData } from "@context/data";
+import Editor from "@components/editor";
 
 export default function Folder() {
   const [data] = useData();

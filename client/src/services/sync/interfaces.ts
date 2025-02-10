@@ -1,5 +1,5 @@
-import { Folder } from "entities/folder";
-import { Note } from "entities/note";
+import { Folder } from "@entities/folder";
+import { Note } from "@entities/note";
 
 export interface SyncData {
   notes: Note[],

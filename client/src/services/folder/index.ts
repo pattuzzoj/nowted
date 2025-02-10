@@ -1,7 +1,7 @@
 import { adjustDate } from "@utilify/core";
-import { StoreOperations } from "context/indexedDB";
-import { Folder } from "entities/folder";
-import { NoteService } from "services/note";
+import { StoreOperations } from "@context/indexedDB";
+import { Folder } from "@entities/folder";
+import { NoteService } from "@services/note";
 
 export class FolderService {
   private static instance: FolderService;

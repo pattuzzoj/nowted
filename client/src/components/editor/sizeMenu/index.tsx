@@ -1,8 +1,8 @@
-import { Select, createListCollection } from '@ark-ui/solid/select'
+import { createEffect, createSignal, Show } from 'solid-js';
 import { Index, Portal } from 'solid-js/web'
 import { Editor } from "@tiptap/core";
-import { createEffect, createSignal, onMount, Show } from 'solid-js';
 import { createEditorTransaction } from 'solid-tiptap';
+import { Select, createListCollection } from '@ark-ui/solid/select'
 import ALargeSmall from 'lucide-solid/icons/a-large-small';
 import ChevronsUpDown from 'lucide-solid/icons/chevrons-up-down';
 

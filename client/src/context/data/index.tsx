@@ -1,13 +1,13 @@
-import { useParams } from "@solidjs/router";
-import { sleep } from "@utilify/core";
-import { useIndexedDB } from "context/indexedDB";
-import useToast from "hooks/useToast";
-import { FolderService } from "services/folder";
-import { NoteService } from "services/note";
-import SyncService from "services/sync";
 import { createContext, createEffect, onCleanup, onMount, ParentProps, useContext } from "solid-js";
 import { createStore } from "solid-js/store";
-import { Folder, Note } from "types/interfaces";
+import { useParams } from "@solidjs/router";
+import { sleep } from "@utilify/core";
+import { useIndexedDB } from "@context/indexedDB";
+import useToast from "@hooks/useToast";
+import { FolderService } from "@services/folder";
+import { NoteService } from "@services/note";
+import SyncService from "@services/sync";
+import { Folder, Note } from "@types/interfaces";
 
 type DataContextType = [
   data: {
@@ -75,12 +75,25 @@ export default function DataProvider(props: ParentProps) {
   const notify = useToast();
 
   onMount(async () => {
-    try {
-      if (!localStorage.getItem("lastSync")) {
-        localStorage.setItem("lastSync", (new Date()).toISOString());
-      }
+    if (!localStorage.getItem("lastSync")) {
+      localStorage.setItem("lastSync", (new Date()).toISOString());
+    }
 
-      await syncService.syncFetch();
+    notify.loading("Synchronizing...");
+    await sleep(1000);
+    const response = await syncService.syncFetch();
+
+    if (response.status === "error") {
+      notify.error(response.message);
+    } else {
+      notify.success(response.message);
+    }
+    
+    await sleep(1000);
+    notify.loading("Loading local data...");
+    await sleep(1000);
+
+    try {
       const folders = await folderService.getFolders();
       const favorites = await noteService.getFavoriteNotes();
       const archived = await noteService.getArchivedNotes();
@@ -90,8 +103,11 @@ export default function DataProvider(props: ParentProps) {
       setData("favorites", favorites);
       setData("archived", archived);
       setData("trash", trash);
+
+      notify.success("Data loaded successfully");
     } catch (error) {
       console.error(error);
+      notify.error("Internal Error");
     }
   });
 
@@ -369,7 +385,9 @@ export default function DataProvider(props: ParentProps) {
   });
 
   const syncId = setInterval(() => {
-    syncService.syncPush();
+    if (navigator.onLine) {
+      syncService.syncPush();
+    }
   }, 5000);
 
   onCleanup(() => clearInterval(syncId));

@@ -1,11 +1,11 @@
-import { Splitter } from "@ark-ui/solid/splitter";
-import { createMediaQuery } from "@solid-primitives/media";
-import { useParams } from "@solidjs/router";
-import Editor from "components/editor";
-import NoteList from "components/noteList";
-import { useData } from "context/data";
-import TrashIcon from "lucide-solid/icons/trash-2";
 import { Show } from "solid-js";
+import { useParams } from "@solidjs/router";
+import { createMediaQuery } from "@solid-primitives/media";
+import { Splitter } from "@ark-ui/solid/splitter";
+import TrashIcon from "lucide-solid/icons/trash-2";
+import Editor from "@components/editor";
+import NoteList from "@components/noteList";
+import { useData } from "@context/data";
 
 export default function Trash() {
   const [data] = useData();

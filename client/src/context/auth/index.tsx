@@ -1,13 +1,14 @@
-import { createContext, createSignal, onMount, ParentProps, Show, useContext } from "solid-js";
+import { Accessor, createContext, createSignal, onMount, ParentProps, useContext } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import AuthService from "services/auth";
-import { SignIn, SignUp } from "services/auth/interfaces";
-import useToast from "hooks/useToast";
 import { sleep } from "@utilify/core";
+import AuthService from "@services/auth";
+import type { SignIn, SignUp } from "@services/auth/interfaces";
+import useToast from "@hooks/useToast";
 
-const AuthContext = createContext();
+const AuthContext = createContext<Auth>();
 
 interface Auth {
+  isAuthenticated: Accessor<boolean>,
   handleSignIn: (credentials: SignIn) => Promise<void>,
   handleSignUp: (registration: SignUp) => Promise<void>,
   handleLogOut: () => Promise<void>,
@@ -21,121 +22,110 @@ export default function AuthProvider(props: ParentProps) {
   const notify = useToast();
 
   onMount(async () => {
-    try {
-      const isLogged = await AuthService.status();
+    notify.loading("Logging...");
+    await sleep(1000);
+    const {status, message} = await AuthService.status();
 
-      if (!isLogged) {
-        throw new Error("User isn't logged");
-      }
-
-      setIsAuthenticated(isLogged);
-    } catch (error) {
-      console.error(error);
+    if (status === "error") {
+      notify.error(message);
       navigate("/auth/sign-in");
+      return;
     }
+
+    notify.success(message);
+    setIsAuthenticated(true);
   });
 
   async function handleSignIn(credentials: SignIn) {
     notify.loading("Logging...");
     await sleep(1000);
+    const {status, message} = await AuthService.signIn(credentials);
 
-    try {
-      const isLogged = await AuthService.signIn(credentials);
-
-      if (isLogged) {
-        setIsAuthenticated(true);
-        navigate("/");
-        notify.success("User logged in successfully");
-      } else {
-        throw new Error();
-      }
-    } catch {
-      notify.error("Invalid email or password");
+    if (status === "error") {
+      notify.error(message);
+      return;
     }
+
+    notify.success(message);
+    setIsAuthenticated(true);
+    navigate("/");
   }
 
   async function handleSignUp(registration: SignUp) {
     notify.loading("Registering...");
     await sleep(1000);
+    const {status, message} = await AuthService.signUp(registration);
 
-    try {
-      const isRegistered = await AuthService.signUp(registration);
-
-      if (isRegistered) {
-        navigate("/auth/sign-in");
-        notify.success("Successfully registered user");
-      } else {
-        throw new Error();
-      }
-    } catch {
-      notify.error("Error registering");
+    if (status === "error") {
+      notify.error(message);
+      return;
     }
+
+    notify.success(message);
+    navigate("/auth/sign-in");
   }
 
   async function handleLogOut() {
     notify.loading("Logging out...");
     await sleep(1000);
+    const {status, message} = await AuthService.logOut();
 
-    try {
-      const isLoggedOut = await AuthService.logOut();
-
-      if (isLoggedOut) {
-        setIsAuthenticated(false);
-        navigate("/auth/sign-in");
-        notify.success("Logged out successfully");
-      } else {
-        throw new Error();
-      }
-    } catch {
-      notify.error("Error logging out");
+    if (status === "error") {
+      notify.error(message);
+      return;
     }
+
+    notify.success(message);
+    setIsAuthenticated(false);
+    navigate("/auth/sign-in");
   }
 
   async function handleRecoverAccount(account: string) {
     notify.loading("Sending email...");
     await sleep(1000);
+    const {status, message} = await AuthService.recoverAccount(account);
 
-    try {
-      const recoverAccountSent = await AuthService.recoverAccount(account);
-
-      if (recoverAccountSent) {
-        notify.success(`Email sent to ${account}`);
-        return true;
-      } else {
-        throw new Error();
-      }
-    } catch {
-      notify.error("Error");
+    if (status === "error") {
+      notify.error(message);
       return false;
     }
+
+    notify.success(message);
+    return true;
   }
 
   async function handleResetPassword(token: string, password: string) {
-    notify.loading("Resetting...");
+    notify.loading("Resetting Password...");
     await sleep(1000);
+    const {status, message} = await AuthService.resetPassword(token, password);
 
-    try {
-      const passwordReseted = await AuthService.resetPassword(token, password);
-
-      if (passwordReseted) {
-        navigate("/auth/sign-in");
-        notify.success("Password successfully changed");
-      } else {
-        throw new Error();
-      }
-    } catch {
-      notify.error("Internal error");
+    if (status === "error") {
+      notify.error(message);
       navigate("/auth/recover-account");
+      return;
     }
+
+    notify.success(message);
+    navigate("/auth/sign-in");
   }
 
   return (
-    <AuthContext.Provider value={{ handleSignIn, handleSignUp, handleLogOut, handleRecoverAccount, handleResetPassword }}>
-      <Show when={isAuthenticated()}>
-        {props.children}
-      </Show>
+    <AuthContext.Provider value={{ isAuthenticated, handleSignIn, handleSignUp, handleLogOut, handleRecoverAccount, handleResetPassword }}>
+      {props.children}
     </AuthContext.Provider>
   )
 }
 
 export const useAuth = (): Auth => useContext(AuthContext) as unknown as Auth;
+
+export function AuthRoute(props: ParentProps) {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  if (!isAuthenticated()) {
+    navigate("/auth/sign-in");
+    return;
+  }
+
+  return props.children;
+}

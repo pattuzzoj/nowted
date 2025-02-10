@@ -1,14 +1,15 @@
-import { FolderService } from "services/folder";
-import { NoteService } from "services/note";
-import { Folder, Note } from "types/interfaces";
-import { baseURL } from "utils/constants";
+import { FolderService } from "@services/folder";
+import { NoteService } from "@services/note";
+import FetchService from "@services/fetch";
+import type { Folder, Note } from "@types/interfaces";
+import { baseURL } from "@utils/constants";
 import { SyncData } from "./interfaces";
 
 export default class SyncService {
   private static instance: SyncService;
-  private static url: string = baseURL.concat("/sync");
-  private folderService: FolderService | null = null;
   private noteService: NoteService | null = null;
+  private folderService: FolderService | null = null;
+  private fetchService: FetchService = new FetchService(baseURL.concat("/sync"));
 
   private constructor() {}
 
@@ -28,38 +29,27 @@ export default class SyncService {
     this.noteService = noteService;
   }
 
-  private static async request(endpoint: string, method: "GET" | "POST" | "DELETE", body?: Record<string, any>) {
-    try {
-      const request = await fetch(SyncService.url.concat(endpoint), {
-        method: method,
-        headers: {
-          "Content-Type": "application/json"
-        },
-        mode: 'cors',
-        credentials: "include",
-        body: body ? JSON.stringify(body) : undefined
-      });
-
-      if (request.ok) {
-        return await request.json();
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   async syncFetch() {
     const lastSync = localStorage.getItem("lastSync");
+    const response = await this.fetchService.get<{folders: Folder[], notes: Note[], lastSync: string}>(`/${lastSync}`);
 
-    const data = await SyncService.request(`/${lastSync}`, "GET") as {notes: Note[], folders: Folder[], lastSync: string};
-    localStorage.setItem("lastSync", data.lastSync);
-    
-    if (data.folders.length) {
-      data.folders.forEach(async (folder) => await this.folderService?.updateFolder(folder));
+    if (response.status === "error" || response.data === null) {
+      return response;
     }
 
-    if (data.notes.length) {
-      data.notes.forEach(async (note) => await this.noteService?.updateNote(note));
+    localStorage.setItem("lastSync", response.data.lastSync);
+
+    try {
+      response.data.folders.forEach(async (folder) => await this.folderService?.updateFolder(folder));
+      response.data.notes.forEach(async (note) => await this.noteService?.updateNote(note));
+      return response;
+    } catch (error) {
+      console.error(error);
+      return {
+        status: "error",
+        message: "Internal Error",
+        data: null
+      }
     }
   }
 
@@ -80,8 +70,18 @@ export default class SyncService {
     };
 
     if (notes.length > 0 || folders.length > 0) {
-      const result = await SyncService.request("", "POST", data);
-      localStorage.setItem("lastSync", result.lastSync);
+      return {
+        status: "success",
+        message: ""
+      };
     }
+
+    const response = await this.fetchService.post("", data);
+
+    if (response.status === "error" || response.data === null) {
+      return response;
+    }
+
+    localStorage.setItem("lastSync", response.data.lastSync);
   }
 }

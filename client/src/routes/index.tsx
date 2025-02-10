@@ -1,10 +1,10 @@
 import { Router } from '@solidjs/router';
+import AuthProvider from '@context/auth';
 import { routes } from './config';
-import DataProvider from 'context/data';
 
 export default function Routing() {
   return (
-    <Router root={DataProvider}>
+    <Router root={AuthProvider}>
       {routes}
     </Router>
   );

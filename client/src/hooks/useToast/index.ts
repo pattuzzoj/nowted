@@ -17,7 +17,7 @@ notifyActions.loading = (message: string = "Loading") => toast.loading(message, 
 });
 
 notifyActions.success = (message: string = "Successfully") => toast.success(message, {
-  duration: 3000,
+  duration: 1000,
   position: "bottom-right",
   className: "text-black! dark:text-white! bg-zinc-800! dark:bg-zinc-100 rounded-lg!",
   iconTheme: {
@@ -26,7 +26,7 @@ notifyActions.success = (message: string = "Successfully") => toast.success(mess
 });
 
 notifyActions.error = (message: string = "Something went wrong") => toast.error(message, {
-  duration: 3000,
+  duration: 1000,
   position: "bottom-right",
   className: "text-black! dark:text-white! bg-zinc-800! dark:bg-zinc-100 rounded-lg!",
   iconTheme: {

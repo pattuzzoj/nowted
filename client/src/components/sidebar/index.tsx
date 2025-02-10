@@ -1,22 +1,22 @@
+import { createSignal, For, Show } from "solid-js";
+import { Portal } from "solid-js/web";
 import { A, useParams } from "@solidjs/router";
 import Archive from "lucide-solid/icons/archive";
 import Star from "lucide-solid/icons/star";
 import Trash from "lucide-solid/icons/trash-2";
 import FilePlus from "lucide-solid/icons/file-plus";
 import Search from "lucide-solid/icons/search";
-import logo from "assets/logo.svg";
-import { createSignal, For, Show } from "solid-js";
-import { useData } from "context/data";
-import FolderItem from "components/folderItem";
-import Dialog from "components/dialog";
 import FolderPlus from "lucide-solid/icons/folder-plus";
-import { Portal } from "solid-js/web";
-import Backdrop from "components/backdrop";
-import UpdateFolderForm from "components/form/editNameFolder";
 import X from "lucide-solid/icons/x";
 import FileText from "lucide-solid/icons/file-text";
 import LogOut from "lucide-solid/icons/log-out";
-import { useAuth } from "context/auth";
+import FolderItem from "@components/folderItem";
+import Logo from "@components/logo";
+import Dialog from "@components/dialog";
+import Backdrop from "@components/backdrop";
+import UpdateFolderForm from "@components/form/editNameFolder";
+import { useData } from "@context/data";
+import { useAuth } from "@context/auth";
 
 export default function Sidebar() {
   const [isActive, setIsActive] = createSignal(false);
@@ -27,8 +27,8 @@ export default function Sidebar() {
   return (
     <div class="flex flex-col justify-between gap-8 w-96 h-screen p-4 bg-primary text-white/80">
       <div class="flex justify-between items-center">
-        <A class="w-fit" href="/">
-          <img class="size-25 h-fit" src={logo} alt="" />
+        <A class="h-fit w-fit size-25" href="/">
+          <Logo />
         </A>
         <button title="Search Notes" class="p-2 rounded-lg hover:bg-tertiary" onClick={() => setIsActive(!isActive())}>
           <Search />

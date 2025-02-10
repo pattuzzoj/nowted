@@ -1,4 +1,4 @@
-import { Accessor, createContext, createEffect, createSignal, onCleanup, onMount, ParentProps, Setter, useContext } from "solid-js";
+import { Accessor, createContext, createSignal, ParentProps, Setter, useContext } from "solid-js";
 
 const RootContext = createContext();
 

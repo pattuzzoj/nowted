@@ -1,10 +1,9 @@
 import { debounce, formatDate } from "@utilify/core";
-import { useData } from "context/data";
+import { ParentProps } from "solid-js";
+import { createTiptapEditor } from 'solid-tiptap';
 import CalendarDays from "lucide-solid/icons/calendar-days";
 import Folder from "lucide-solid/icons/folder";
 import ImagePlus from "lucide-solid/icons/image-plus";
-import { ParentProps } from "solid-js";
-import { createTiptapEditor } from 'solid-tiptap';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import Link from "@tiptap/extension-link";
@@ -13,12 +12,13 @@ import Highlight from "@tiptap/extension-highlight";
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import TextAlign from "@tiptap/extension-text-align";
+import TextStyle from "@tiptap/extension-text-style";
+import FontSize from "tiptap-extension-font-size";
 import MarkingMenu from "./markingMenu";
 import TypographMenu from "./typographMenu";
 import AlignMenu from "./alignMenu";
 import SizeMenu from "./sizeMenu";
-import TextStyle from "@tiptap/extension-text-style";
-import FontSize from "tiptap-extension-font-size";
+import { useData } from "@context/data";
 
 
 interface EditorProps extends ParentProps { }

@@ -1,10 +1,10 @@
+import { createEffect, createSignal } from "solid-js";
+import { createEditorTransaction } from "solid-tiptap";
 import { Editor } from "@tiptap/core";
 import AlignCenter from "lucide-solid/icons/align-center";
 import AlignJustify from "lucide-solid/icons/align-justify";
 import AlignLeft from "lucide-solid/icons/align-left";
 import AlignRight from "lucide-solid/icons/align-right";
-import { createEffect, createSignal } from "solid-js";
-import { createEditorTransaction } from "solid-tiptap";
 
 
 interface MarkProps {

@@ -1,10 +1,10 @@
 import { createForm, pattern, required } from "@modular-forms/solid";
-import Error from "components/form/error/error";
-import Submit from "components/form/submit";
 import Folder from "lucide-solid/icons/folder";
-import { useData } from "context/data";
+import Error from "@components/form/error/error";
+import Submit from "@components/form/submit";
+import { useData } from "@context/data";
+import { Folder as IFolder } from "@types/interfaces";
 import InputIcon from "../inputIcon";
-import { Folder as IFolder } from "types/interfaces";
 
 interface FolderProps extends Partial<IFolder> {}
 

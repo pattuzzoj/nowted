@@ -1,49 +1,31 @@
-import { baseURL } from "utils/constants";
+import FetchService from "@services/fetch";
+import { baseURL } from "@utils/constants";
 import { SignIn, SignUp } from "./interfaces";
 
 export default class AuthService {
-  private static url: string = baseURL.concat("/auth");
-
-  private static async request(endpoint: string, method: "GET" | "POST" | "DELETE", body?: Record<string, any>) {
-    try {
-      const request = await fetch(AuthService.url.concat(endpoint), {
-        method: method,
-        headers: {
-          "Content-Type": "application/json"
-        },
-        mode: 'cors',
-        credentials: "include",
-        body: body ? JSON.stringify(body) : undefined
-      });
-
-      return request.ok;
-    } catch (error) {
-      console.error(error);
-      return;
-    }
-  }
+  private static fetchService: FetchService = new FetchService(baseURL.concat("/auth"));
 
   static async status() {
-    return await AuthService.request("/status", "GET");
+    return await this.fetchService.get("/status");
   }
 
   static async signIn(credentials: SignIn) {
-    return await AuthService.request("/sign-in", "POST", credentials);
+    return await this.fetchService.post("/sign-in", credentials);
   }
 
   static async signUp(registration: SignUp) {
-    return await AuthService.request("/sign-up", "POST", registration);
+    return await this.fetchService.post("/sign-up", registration);
   }
 
   static async logOut() {
-    return await AuthService.request("/log-out", "DELETE");
+    return await this.fetchService.delete("/log-out");
   }
 
   static async recoverAccount(account: string) {
-    return await AuthService.request("/forgot-password", "POST", {account});
+    return await this.fetchService.post("/forgot-password", { account });
   }
 
   static async resetPassword(token: string, password: string) {
-    return await AuthService.request("/reset-password", "POST", {token, password});
+    return await this.fetchService.post("/reset-password", { token, password });
   }
 }

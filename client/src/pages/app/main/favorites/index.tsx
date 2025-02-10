@@ -1,11 +1,11 @@
-import { useParams } from "@solidjs/router";
-import NoteList from "components/noteList";
-import { useData } from "context/data";
-import Star from "lucide-solid/icons/star";
 import { Show } from "solid-js";
+import { useParams } from "@solidjs/router";
 import { createMediaQuery } from "@solid-primitives/media";
-import Editor from "components/editor";
 import { Splitter } from "@ark-ui/solid/splitter";
+import Star from "lucide-solid/icons/star";
+import NoteList from "@components/noteList";
+import { useData } from "@context/data";
+import Editor from "@components/editor";
 
 export default function Favorites() {
   const [data] = useData();

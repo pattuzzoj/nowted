@@ -1,10 +1,10 @@
-import { createForm, pattern, required } from "@modular-forms/solid";
-import Error from "components/form/error/error";
-import Folder from "lucide-solid/icons/folder";
-import { useData } from "context/data";
-import InputIcon from "../inputIcon";
-import LoaderCircle from "lucide-solid/icons/loader-circle";
 import { Show } from "solid-js";
+import { createForm, pattern, required } from "@modular-forms/solid";
+import Folder from "lucide-solid/icons/folder";
+import LoaderCircle from "lucide-solid/icons/loader-circle";
+import Error from "@components/form/error/error";
+import { useData } from "@context/data";
+import InputIcon from "../inputIcon";
 
 type Schema = {
   name: string

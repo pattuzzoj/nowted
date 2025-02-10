@@ -1,9 +1,4 @@
-class FetchError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "FetchError";
-  }
-}
+import FetchResponse from "./interface/fetchResponse.interface";
 
 export default class FetchService {
   private baseUrl: string;
@@ -12,27 +7,63 @@ export default class FetchService {
     this.baseUrl = baseUrl;
   }
 
-  async get<T>(url: string, options: RequestInit): Promise<T | undefined> {
+  private async request<T = null>(url: string, options: RequestInit): Promise<FetchResponse<T>> {
     try {
-      const request = await fetch(this.baseUrl.concat(url), {
-        method: "GET",
+      if ("body" in options) {
+        options.body = await this.serialize(options.body);
+      }
+
+      const response = await fetch(this.baseUrl.concat(url), {
         headers: {
           "Content-Type": "application/json"
         },
-        mode: "cors",
+        mode: 'cors',
+        credentials: "include",
         ...options
       });
 
-      const data = await request.json();
-
-      if (!request.ok) {
-        throw new FetchError(data.error);
-      }
-
-      return data.data;
-    } catch (e) {
-      console.error(e);
-      return undefined;
+      return await this.deserialize<FetchResponse<T>>(response);
+    } catch (error: any) {
+      console.error(error);
+      return {
+        status: "error",
+        message: "Internal Error",
+        data: null
+      };
     }
+  }
+
+  private async serialize(data: any): Promise<string> {
+    return JSON.stringify(data);
+  }
+
+  private async deserialize<T>(request: Response): Promise<T> {
+    return request.json();
+  }
+
+  public async get<T>(url: string) {
+    return await this.request<T>(url, {
+      method: "GET"
+    });
+  }
+
+  public async post(url: string, data: any) {
+    return await this.request(url, {
+      method: "POST",
+      body: data
+    });
+  }
+
+  public async put(url: string, data: any) {
+    return await this.request(url, {
+      method: "PUT",
+      body: data
+    });
+  }
+
+  public async delete(url: string) {
+    return await this.request(url, {
+      method: "DELETE"
+    });
   }
 }

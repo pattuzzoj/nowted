@@ -1,6 +1,6 @@
 import { JSX, JSXElement, splitProps, ValidComponent } from "solid-js";
-import { useRoot } from "../root";
 import { Dynamic } from "solid-js/web";
+import { useRoot } from "../root";
 
 interface TriggerProps extends JSX.HTMLAttributes<HTMLElement> {
   action: "open" | "close" | "toggle";

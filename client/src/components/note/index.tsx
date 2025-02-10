@@ -1,14 +1,14 @@
+import { Show } from "solid-js";
 import { A } from "@solidjs/router";
 import { formatDate } from "@utilify/core";
-import { useData } from "context/data";
-import { Note as INote } from "entities/note";
 import Archive from "lucide-solid/icons/archive";
 import ArchiveRestore from "lucide-solid/icons/archive-restore";
 import RefreshCcw from "lucide-solid/icons/refresh-ccw";
 import Star from "lucide-solid/icons/star";
 import StarOff from "lucide-solid/icons/star-off";
 import Trash from "lucide-solid/icons/trash-2";
-import { Show } from "solid-js";
+import { useData } from "@context/data";
+import { Note as INote } from "@entities/note";
 
 interface NoteProps extends INote {
   context: string;

@@ -1,9 +1,9 @@
-import { createForm, pattern, required } from "@modular-forms/solid";
-import Password from "components/form/password";
-import Error from "components/form/error/error";
 import { useNavigate, useSearchParams } from "@solidjs/router";
-import { useAuth } from "context/auth";
-import Submit from "components/form/submit";
+import { createForm, pattern, required } from "@modular-forms/solid";
+import Password from "@components/form/password";
+import Error from "@components/form/error/error";
+import Submit from "@components/form/submit";
+import { useAuth } from "@context/auth";
 
 type Password = {
   password: string;

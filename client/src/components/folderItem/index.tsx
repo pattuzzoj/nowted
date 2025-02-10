@@ -1,18 +1,18 @@
+import { Show } from "solid-js";
+import { Portal } from "solid-js/web";
 import { A, useParams } from "@solidjs/router";
 import Folder from "lucide-solid/icons/folder";
 import FolderOpen from "lucide-solid/icons/folder-open";
 import Settings2 from "lucide-solid/icons/settings-2";
 import Trash from "lucide-solid/icons/trash";
 import Pencil from "lucide-solid/icons/pencil";
-import { Show } from "solid-js";
-import Dropdown from "components/dropdown";
-import Dialog from "components/dialog";
-import { Portal } from "solid-js/web";
-import Backdrop from "components/backdrop";
 import X from "lucide-solid/icons/x";
-import { Folder as IFolder } from "types/interfaces";
-import UpdateFolderForm from "components/form/editNameFolder";
-import DeleteFolderForm from "components/form/deleteFolder";
+import Dropdown from "@components/dropdown";
+import Dialog from "@components/dialog";
+import Backdrop from "@components/backdrop";
+import { Folder as IFolder } from "@types/interfaces";
+import UpdateFolderForm from "@components/form/editNameFolder";
+import DeleteFolderForm from "@components/form/deleteFolder";
 
 interface FolderProps extends IFolder {}
 

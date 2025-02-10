@@ -1,9 +1,9 @@
-import { createForm, pattern, required } from "@modular-forms/solid";
-import Input from "components/form/input";
-import Error from "components/form/error/error";
-import { useAuth } from "context/auth";
 import { createSignal, Show } from "solid-js";
-import Submit from "components/form/submit";
+import { createForm, pattern, required } from "@modular-forms/solid";
+import Input from "@components/form/input";
+import Error from "@components/form/error/error";
+import Submit from "@components/form/submit";
+import { useAuth } from "@context/auth";
 
 type Recover = {
   account: string;

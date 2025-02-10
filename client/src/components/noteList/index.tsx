@@ -1,9 +1,9 @@
 import { For, JSXElement, ParentProps, Show } from "solid-js";
-import Note from "components/note";
-import { Note as INote } from "types/interfaces";
-import FilePlus from "lucide-solid/icons/file-plus";
 import { useParams } from "@solidjs/router";
-import { useData } from "context/data";
+import FilePlus from "lucide-solid/icons/file-plus";
+import type { Note as INote } from "@types/interfaces";
+import Note from "@components/note";
+import { useData } from "@context/data";
 
 interface NoteListProps extends ParentProps {
   title: string | JSXElement;

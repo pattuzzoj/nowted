@@ -1,8 +1,8 @@
-import { Select, createListCollection } from '@ark-ui/solid/select'
+import { createEffect, createSignal, Match, Switch } from 'solid-js';
 import { Index, Portal } from 'solid-js/web'
 import { Editor } from "@tiptap/core";
-import { createEffect, createSignal, Match, Switch } from 'solid-js';
 import { createEditorTransaction } from 'solid-tiptap';
+import { Select, createListCollection } from '@ark-ui/solid/select'
 import Type from 'lucide-solid/icons/type';
 import Heading1 from 'lucide-solid/icons/heading-1';
 import Heading2 from 'lucide-solid/icons/heading-2';

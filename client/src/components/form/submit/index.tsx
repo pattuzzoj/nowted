@@ -1,5 +1,5 @@
-import LoaderCircle from "lucide-solid/icons/loader-circle";
 import { JSX, Show, splitProps } from "solid-js";
+import LoaderCircle from "lucide-solid/icons/loader-circle";
 
 interface SubmitProps extends JSX.HTMLAttributes<HTMLButtonElement> {
   title: string;

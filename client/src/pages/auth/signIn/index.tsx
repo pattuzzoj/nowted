@@ -1,9 +1,9 @@
 import { createForm, pattern, required } from "@modular-forms/solid";
-import Input from "components/form/input";
-import Password from "components/form/password";
-import Error from "components/form/error/error";
-import { useAuth } from "context/auth";
-import Submit from "components/form/submit";
+import Input from "@components/form/input";
+import Password from "@components/form/password";
+import Error from "@components/form/error/error";
+import Submit from "@components/form/submit";
+import { useAuth } from "@context/auth";
 
 type Login = {
   login: string;

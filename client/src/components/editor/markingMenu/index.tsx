@@ -1,3 +1,5 @@
+import { createEffect, createSignal } from "solid-js";
+import { createEditorTransaction } from "solid-tiptap";
 import { Editor } from "@tiptap/core";
 import Bold from "lucide-solid/icons/bold";
 import Highlighter from "lucide-solid/icons/highlighter";
@@ -6,8 +8,6 @@ import Strikethrough from "lucide-solid/icons/strikethrough";
 import Subscript from "lucide-solid/icons/subscript";
 import Superscript from "lucide-solid/icons/superscript";
 import Underline from "lucide-solid/icons/underline";
-import { createEffect, createSignal } from "solid-js";
-import { createEditorTransaction } from "solid-tiptap";
 
 
 interface MarkProps {

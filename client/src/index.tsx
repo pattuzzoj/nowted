@@ -1,10 +1,10 @@
 /* @refresh reload */
 import { render } from 'solid-js/web';
 import { ErrorBoundary } from "solid-js";
-import './styles/index.css';
-import Routing from './routes';
-import IndexedDBProvider, { StoreSchema } from 'context/indexedDB';
 import { Toaster } from 'solid-toast';
+import IndexedDBProvider, { StoreSchema } from '@context/indexedDB';
+import Routing from '@routes/index';
+import '@styles/index.css';
 
 const root = document.getElementById('root');
 
