@@ -13,7 +13,11 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async status() {
-    return;
+    return {
+      status: "success",
+      message: "logged",
+      timestamp: new Date().toISOString()
+    }
   }
 
   @Post("/sign-in")
@@ -27,7 +31,11 @@ export class AuthController {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "strict",
       domain: "nowted-server.vercel.app"
-    }).status(HttpStatus.OK).send();
+    }).status(HttpStatus.OK).send({
+      status: "success",
+      message: "logged",
+      timestamp: new Date().toISOString()
+    });
   }
 
   @Post("/sign-up")
@@ -46,7 +54,11 @@ export class AuthController {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "strict",
       domain: "nowted-server.vercel.app"
-    }).status(HttpStatus.OK).send();
+    }).status(HttpStatus.OK).send({
+      status: "success",
+      message: "logged",
+      timestamp: new Date().toISOString()
+    });
   }
 
   @Post("/forgot-password")

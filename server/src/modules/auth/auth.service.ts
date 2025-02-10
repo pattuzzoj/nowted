@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { ConflictException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import { UserService } from "@modules/users/user.service";
@@ -14,13 +14,23 @@ export class AuthService {
     const user = await this.users.findOne(login);
 
     if (!user) {
-      throw new UnauthorizedException("Invalid credentials");
+      throw new UnauthorizedException({
+        status: "error",
+        statusCode: HttpStatus.UNAUTHORIZED,
+        message: "Invalid credentials",
+        timestamp: new Date().toISOString()
+      });
     }
 
     const isSamePassword = await bcrypt.compare(password, user.password);
 
     if (!isSamePassword) {
-      throw new UnauthorizedException("Invalid credentials");
+      throw new UnauthorizedException({
+        status: "error",
+        statusCode: HttpStatus.UNAUTHORIZED,
+        message: "Invalid credentials",
+        timestamp: new Date().toISOString()
+      });
     }
 
     return await this.jwtService.signAsync({sub: user.id, email: user.email});
@@ -31,11 +41,21 @@ export class AuthService {
     const alreadyHasUsername = await this.users.findOne(user.username);
 
     if (alreadyHasEmail) {
-      throw new ConflictException("Email already used");
+      throw new ConflictException({
+        status: "error",
+        statusCode: HttpStatus.CONFLICT,
+        message: "Email already used",
+        timestamp: new Date().toISOString()
+      });
     }
 
     if (alreadyHasUsername) {
-      throw new ConflictException("Username already used");
+      throw new ConflictException({
+        status: "error",
+        statusCode: HttpStatus.CONFLICT,
+        message: "Username already used",
+        timestamp: new Date().toISOString()
+      });
     }
 
     const salt = await bcrypt.genSalt();
@@ -49,7 +69,12 @@ export class AuthService {
     const user = await this.users.findOne(account);
 
     if (!user) {
-      throw new UnauthorizedException("User not exists");
+      throw new UnauthorizedException({
+        status: "error",
+        statusCode: HttpStatus.UNAUTHORIZED,
+        message: "Account not exists",
+        timestamp: new Date().toISOString()
+      });
     }
 
     const token = await this.jwtService.signAsync({sub: user.id});
