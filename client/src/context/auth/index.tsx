@@ -1,4 +1,4 @@
-import { Accessor, createContext, createSignal, onMount, ParentProps, useContext } from "solid-js";
+import { Accessor, Setter, createContext, createSignal, onMount, ParentProps, useContext, Show } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { sleep } from "@utilify/core";
 import AuthService from "@services/auth";
@@ -9,6 +9,7 @@ const AuthContext = createContext<Auth>();
 
 interface Auth {
   isAuthenticated: Accessor<boolean>,
+  setIsAuthenticated: Setter<boolean>,
   handleSignIn: (credentials: SignIn) => Promise<void>,
   handleSignUp: (registration: SignUp) => Promise<void>,
   handleLogOut: () => Promise<void>,
@@ -20,21 +21,6 @@ export default function AuthProvider(props: ParentProps) {
   const [isAuthenticated, setIsAuthenticated] = createSignal(false);
   const navigate = useNavigate();
   const notify = useToast();
-
-  onMount(async () => {
-    notify.loading("Logging...");
-    await sleep(1000);
-    const {status, message} = await AuthService.status();
-
-    if (status === "error") {
-      notify.error(message);
-      navigate("/auth/sign-in");
-      return;
-    }
-
-    notify.success(message);
-    setIsAuthenticated(true);
-  });
 
   async function handleSignIn(credentials: SignIn) {
     notify.loading("Logging...");
@@ -110,7 +96,7 @@ export default function AuthProvider(props: ParentProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, handleSignIn, handleSignUp, handleLogOut, handleRecoverAccount, handleResetPassword }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, handleSignIn, handleSignUp, handleLogOut, handleRecoverAccount, handleResetPassword }}>
       {props.children}
     </AuthContext.Provider>
   )
@@ -119,13 +105,26 @@ export default function AuthProvider(props: ParentProps) {
 export const useAuth = (): Auth => useContext(AuthContext) as unknown as Auth;
 
 export function AuthRoute(props: ParentProps) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const notify = useToast();
 
-  if (!isAuthenticated()) {
-    navigate("/auth/sign-in");
-    return;
-  }
+  (async () => {
+    const {status, message} = await AuthService.status();
 
-  return props.children;
+    if (status === "error") {
+      notify.error(message);
+      navigate("/auth/sign-in");
+      return;
+    }
+
+    notify.success(message);
+    setIsAuthenticated(true);
+  })();
+
+  return (
+    <Show when={isAuthenticated()}>
+      {props.children}
+    </Show>
+  );
 }
