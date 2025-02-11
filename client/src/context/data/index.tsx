@@ -79,7 +79,7 @@ export default function DataProvider(props: ParentProps) {
 
   onMount(async () => {
     if (!localStorage.getItem("lastSync")) {
-      localStorage.setItem("lastSync", new Date().toISOString());
+      localStorage.setItem("lastSync", new Date("0").toISOString());
     }
 
     notify.loading("Synchronizing...");

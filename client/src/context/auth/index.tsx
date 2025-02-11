@@ -1,9 +1,10 @@
-import { Accessor, Setter, createContext, createSignal, onMount, ParentProps, useContext, Show } from "solid-js";
+import { Accessor, Setter, createContext, createSignal, ParentProps, useContext, Show } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { sleep } from "@utilify/core";
 import AuthService from "@services/auth";
 import type { SignIn, SignUp } from "@services/auth/interfaces";
 import useToast from "@hooks/useToast";
+import { useIndexedDB } from "../indexedDB";
 
 const AuthContext = createContext<Auth>();
 
@@ -21,6 +22,7 @@ export default function AuthProvider(props: ParentProps) {
   const [isAuthenticated, setIsAuthenticated] = createSignal(false);
   const navigate = useNavigate();
   const notify = useToast();
+  const [_, {delete: deleteDatabase}] = useIndexedDB();
 
   async function handleSignIn(credentials: SignIn) {
     notify.loading("Logging...");
@@ -63,6 +65,8 @@ export default function AuthProvider(props: ParentProps) {
 
     notify.success(message);
     setIsAuthenticated(false);
+    localStorage.clear();
+    await deleteDatabase();
     navigate("/auth/sign-in");
   }
 
