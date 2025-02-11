@@ -23,6 +23,11 @@ const error = {
     status: "error",
     statusCode: HttpStatus.UNAUTHORIZED,
     message: "Invalid Token",
+  },
+  TOKEN_NOT_FOUND: {
+    status: "error",
+    statusCode: HttpStatus.UNAUTHORIZED,
+    message: "Token Not Found",
   }
 }
 

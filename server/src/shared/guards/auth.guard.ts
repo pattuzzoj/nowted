@@ -12,7 +12,7 @@ export class AuthGuard implements CanActivate {
 
     if(!token) {
       throw new UnauthorizedException({
-        ...messages.INVALID_TOKEN,
+        ...messages.TOKEN_NOT_FOUND,
         timestamp: new Date().toISOString()
       });
     }
