@@ -57,7 +57,7 @@ export default class SyncService {
       }
     }
 
-    localStorage.setItem("lastSync", response.timestamp!);
+    localStorage.setItem("lastSync", new Date(response.timestamp!).toISOString());
     return response;
   }
 
