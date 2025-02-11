@@ -41,10 +41,10 @@ export class FolderService {
     return folder[0];
   }
 
-  async create(userId: string, folderId: string) {
+  async create(userId: string, folder: Folder) {
     return await this.db
     .insert(folderSchema)
-    .values({id: folderId, user_id: userId, updated_at: sql`NOW()`});
+    .values({user_id: userId, ...folder, updated_at: sql`NOW()`});
   }
 
   async update(userId: string, folder: Folder) {

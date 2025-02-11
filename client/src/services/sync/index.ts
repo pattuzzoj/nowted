@@ -96,8 +96,8 @@ export default class SyncService {
     })
   }
 
-  public async createFolder(id: string) {
-    await this.createPending("create", "folder", {id});
+  public async createFolder(folder: Folder) {
+    await this.createPending("create", "folder", folder);
   }
 
   public async createNote(noteId: string, folderId: string) {

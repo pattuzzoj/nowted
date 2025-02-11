@@ -45,10 +45,10 @@ export class NoteService {
     return note[0];
   }
 
-  async create(userId: string, noteId: string) {
+  async create(userId: string, data: Note) {
     return await this.db
     .insert(noteSchema)
-    .values({id: noteId, user_id: userId, updated_at: sql`NOW()`});
+    .values({user_id: userId, ...data, updated_at: sql`NOW()`});
   }
 
   async update(userId: string, note: Note) {

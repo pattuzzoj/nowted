@@ -36,7 +36,7 @@ export class SyncService {
   
       switch (type) {
         case "create":
-          await entityService.create(userId, data.id);
+          await entityService.create(userId, data);
           break;
         case "update":
           await entityService.update(userId, data);

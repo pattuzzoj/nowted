@@ -48,7 +48,7 @@ export default class FolderService {
 
   async createFolder(folder: Folder) {
     const id = await this.folderStore.add(new Folder({...folder}));
-    await this.syncService?.createFolder(id as string);
+    await this.syncService?.createFolder({...folder, id: id as string});
     return id;
   }
 
