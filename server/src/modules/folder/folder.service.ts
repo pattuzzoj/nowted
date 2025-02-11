@@ -13,6 +13,7 @@ export class FolderService {
     .select({
       id: folderSchema.id,
       name: folderSchema.name,
+      color: folderSchema.color,
       order: folderSchema.order,
       created_at: folderSchema.created_at,
       updated_at: folderSchema.updated_at,

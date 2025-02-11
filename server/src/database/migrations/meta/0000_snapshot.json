@@ -1,5 +1,5 @@
 {
-  "id": "9051379e-b5d3-4d2c-abff-822bc5c2e445",
+  "id": "96a4a42b-f2cc-40c8-b3f5-f7061009ebbf",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -21,6 +21,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'new folder'"
+        },
+        "color": {
+          "name": "color",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'#facc15'"
         },
         "order": {
           "name": "order",
@@ -94,13 +101,21 @@
           "type": "varchar(48)",
           "primaryKey": false,
           "notNull": true,
-          "default": "'new note'"
+          "default": "'note'"
+        },
+        "preview": {
+          "name": "preview",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
         },
         "content": {
           "name": "content",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "''"
         },
         "favorite": {
           "name": "favorite",

@@ -16,6 +16,7 @@ export const userSchema = pgTable("users", {
 export const folderSchema = pgTable("folders", {
   id: uuid().default(sql`gen_random_uuid()`).primaryKey(),
   name: varchar({length: 24}).notNull().default("new folder"),
+  color: varchar({length: 10}).notNull().default("#facc15"),
   order: integer().default(0).notNull(),
   ...timestamps,
   user_id: uuid().references(() => userSchema.id, { onDelete: "cascade" }),

@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1737295439546,
-      "tag": "0000_giant_rictor",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1738901265417,
-      "tag": "0001_freezing_orphan",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1739266365806,
-      "tag": "0002_yellow_changeling",
+      "when": 1739281189847,
+      "tag": "0000_freezing_rockslide",
       "breakpoints": true
     }
   ]
