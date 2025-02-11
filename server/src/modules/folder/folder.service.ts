@@ -51,7 +51,12 @@ export class FolderService {
   async update(userId: string, folder: Folder) {
     await this.db
     .update(folderSchema)
-    .set({...folder, updated_at: new Date()})
+    .set({
+      name: sql`COALESCE(${folderSchema.name}, ${folder.name})`,
+      color: sql`COALESCE(${folderSchema.color}, ${folder.color})`,
+      order: sql`COALESCE(${folderSchema.order}, ${folder.order})`,
+      updated_at: new Date()
+    })
     .where(
       and(
         eq(folderSchema.user_id, userId),
