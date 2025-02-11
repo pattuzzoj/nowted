@@ -36,7 +36,7 @@ export default class SyncService {
     const lastSync = localStorage.getItem("lastSync");
     const response = await this.fetchService.get<{folders: Folder[], notes: Note[]}>(`/${lastSync}`);
 
-    if (response.status === "error") {
+    if (response.status === "error" || !("status" in response)) {
       return response;
     }
     
@@ -68,7 +68,7 @@ export default class SyncService {
 
     const response = await this.fetchService.post("", syncPending);
 
-    if (response.status === "error") {
+    if (response.status === "error" || !("status" in response)) {
       return response;
     }
 
