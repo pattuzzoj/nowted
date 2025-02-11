@@ -46,7 +46,7 @@ export class AuthService {
 
     if (alreadyHasUsername) {
       throw new ConflictException({
-        ...messages.USER_ALREADY_USED,
+        ...messages.USERNAME_ALREADY_USED,
         timestamp: new Date().toISOString()
       });
     }
