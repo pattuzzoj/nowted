@@ -55,9 +55,9 @@ export default class NoteService {
   }
 
   async createNote(name: string, folderId: string) {
-    const id = await this.noteStore.add(new Note(name, folderId));
-    await this.syncService?.createNote(id as string);
-    return id;
+    const noteId = await this.noteStore.add(new Note(name, folderId));
+    await this.syncService?.createNote(noteId as string, folderId);
+    return noteId;
   }
 
   async updateNote(note: Note) {

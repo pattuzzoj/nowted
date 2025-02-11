@@ -64,7 +64,7 @@ export default class SyncService {
   async syncPush() {
     const pendingCount = await this.syncStore.count();
 
-    if (pendingCount < 10) {
+    if (pendingCount < 1) {
       return;
     }
 
@@ -108,8 +108,11 @@ export default class SyncService {
     await this.createPending("create", "folder", {id});
   }
 
-  public async createNote(id: string) {
-    await this.createPending("create", "note", {id});
+  public async createNote(noteId: string, folderId: string) {
+    await this.createPending("create", "note", {
+      id: noteId,
+      folder_id: folderId
+    });
   }
 
   public async updateFolder(data: SyncData) {
