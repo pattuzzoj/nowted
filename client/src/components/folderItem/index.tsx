@@ -10,7 +10,7 @@ import X from "lucide-solid/icons/x";
 import Dropdown from "@components/dropdown";
 import Dialog from "@components/dialog";
 import Backdrop from "@components/backdrop";
-import { Folder as IFolder } from "@types/interfaces";
+import { Folder as IFolder } from "@/types";
 import UpdateFolderForm from "@components/form/editNameFolder";
 import DeleteFolderForm from "@components/form/deleteFolder";
 

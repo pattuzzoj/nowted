@@ -1,23 +1,22 @@
 import FetchService from "@services/fetch";
 import { baseURL } from "@utils/constants";
-import { SyncData } from "./interface/syncData.interface";
 import { StoreOperations } from "@/context/indexedDB";
-import { FolderService } from "../folder";
-import { NoteService } from "../note";
-import { Folder, Note } from "@/types/interfaces";
+import FolderService from "../folder";
+import NoteService from "../note";
+import { EntityType, Folder, Note, OperationType, SyncData, SyncPending } from "@/types";
 
 export default class SyncService {
   private static instance: SyncService;
-  private syncStore: StoreOperations<SyncData>;
+  private syncStore: StoreOperations<SyncPending>;
   private fetchService: FetchService = new FetchService(baseURL.concat("/sync"));
   private folderService: FolderService | null = null;
   private noteService: NoteService | null = null;
 
-  private constructor(syncStore: StoreOperations<SyncData>) {
+  private constructor(syncStore: StoreOperations<SyncPending>) {
     this.syncStore = syncStore;
   }
 
-  public static getInstance(syncStore: StoreOperations<SyncData>) {
+  public static getInstance(syncStore: StoreOperations<SyncPending>) {
     if (!this.instance) {
       SyncService.instance = new SyncService(syncStore);
     }
@@ -70,14 +69,15 @@ export default class SyncService {
     }
 
     const syncPending = await this.syncStore.getAll();
-    const syncData: {note: SyncData[], folder: SyncData[]} = {
-      note: [],
-      folder: []
-    };
+    const syncData = syncPending;
+    // const syncData: {note: SyncData[], folder: SyncData[]} = {
+    //   note: [],
+    //   folder: []
+    // };
   
-    for (const item of syncPending) {
-      syncData[item.entity].push(item);
-    }
+    // for (const item of syncPending) {
+    //   syncData[item.entity].push(item);
+    // }
 
     const response = await this.fetchService.post("", syncData);
 
@@ -92,5 +92,47 @@ export default class SyncService {
     }
 
     return;
+  }
+
+  public async createPending(type: OperationType, entity: EntityType, data: SyncData) {
+    await this.syncStore.add({
+      id: crypto.randomUUID(),
+      type,
+      entity,
+      data,
+      timestamp: Date.now()
+    })
+  }
+
+  public async createFolder(id: string) {
+    await this.createPending("create", "folder", {id});
+  }
+
+  public async createNote(id: string) {
+    await this.createPending("create", "note", {id});
+  }
+
+  public async updateFolder(data: SyncData) {
+    await this.createPending("update", "folder", data);
+  }
+
+  public async updateNote(data: SyncData) {
+    await this.createPending("update", "note", data);
+  }
+
+  public async deleteFolder(id: string) {
+    await this.createPending("delete", "folder", {id});
+  }
+
+  public async deleteNote(id: string) {
+    await this.createPending("delete", "note", {id});
+  }
+
+  public async restoreFolder(id: string) {
+    await this.createPending("restore", "folder", {id});
+  }
+
+  public async restoreNote(id: string) {
+    await this.createPending("restore", "note", {id});
   }
 }

@@ -3,7 +3,7 @@ import Folder from "lucide-solid/icons/folder";
 import Error from "@components/form/error/error";
 import Submit from "@components/form/submit";
 import { useData } from "@context/data";
-import { Folder as IFolder } from "@types/interfaces";
+import { Folder as IFolder } from "@/types";
 import InputIcon from "../inputIcon";
 
 interface FolderProps extends Partial<IFolder> {}

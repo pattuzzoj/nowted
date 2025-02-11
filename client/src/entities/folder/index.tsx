@@ -1,4 +1,4 @@
-import { Folder as IFolder } from "@types/interfaces";
+import { Folder as IFolder } from "@/types";
 
 export class Folder implements IFolder {
   id: string;

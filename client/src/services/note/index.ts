@@ -1,11 +1,13 @@
 import { adjustDate } from "@utilify/core";
 import { StoreOperations } from "@context/indexedDB";
 import { Note } from "@entities/note";
-import { FolderService } from "@services/folder";
+import FolderService from "@services/folder";
+import SyncService from "@services/sync";
 
-export class NoteService {
+export default class NoteService {
   private static instance: NoteService;
   private folderService: FolderService | null = null;
+  private syncService: SyncService | null = null;
   private noteStore: StoreOperations<Note>;
 
   private constructor(noteStore: StoreOperations<Note>) {
@@ -22,6 +24,10 @@ export class NoteService {
 
   public setFolderService(folderService: FolderService) {
     this.folderService = folderService;
+  }
+
+  public setSyncService(syncService: SyncService) {
+    this.syncService = syncService;
   }
 
   async getNoteById(id: string) {
@@ -49,11 +55,14 @@ export class NoteService {
   }
 
   async createNote(name: string, folderId: string) {
-    return await this.noteStore.add(new Note(name, folderId));
+    const id = await this.noteStore.add(new Note(name, folderId));
+    await this.syncService?.createNote(id as string);
+    return id;
   }
 
   async updateNote(note: Note) {
     await this.noteStore.put(note);
+    await this.syncService?.updateNote(note);
   }
 
   async restoreNote(id: string) {
@@ -68,6 +77,8 @@ export class NoteService {
       await this.folderService!.restoreFolder(folder.id);
     }
 
+    await this.syncService?.restoreNote(id);
+
     return note;
   }
 
@@ -75,7 +86,7 @@ export class NoteService {
     const note = await this.noteStore.get(id);
     note.updated_at = note.deleted_at = new Date().toISOString();
     await this.noteStore.put(note);
-
+    await this.syncService?.deleteNote(id);
     return note;
   }
 

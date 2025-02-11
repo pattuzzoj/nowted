@@ -1,7 +1,7 @@
 import { For, JSXElement, ParentProps, Show } from "solid-js";
 import { useParams } from "@solidjs/router";
 import FilePlus from "lucide-solid/icons/file-plus";
-import type { Note as INote } from "@types/interfaces";
+import type { Note as INote } from "@/types";
 import Note from "@components/note";
 import { useData } from "@context/data";
 

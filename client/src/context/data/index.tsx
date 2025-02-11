@@ -4,11 +4,10 @@ import { useParams } from "@solidjs/router";
 import { sleep } from "@utilify/core";
 import { useIndexedDB } from "@context/indexedDB";
 import useToast from "@hooks/useToast";
-import { FolderService } from "@services/folder";
-import { NoteService } from "@services/note";
+import FolderService from "@services/folder";
+import NoteService from "@services/note";
 import SyncService from "@services/sync";
-import { Folder, Note } from "@types/interfaces";
-import { SyncData } from "@/services/sync/interface/syncData.interface";
+import { Folder, Note, SyncPending } from "@/types";
 
 type DataContextType = [
   data: {
@@ -65,12 +64,14 @@ export default function DataProvider(props: ParentProps) {
   const [useStore] = useIndexedDB();
   const folderStore = useStore<Folder>("folder");
   const noteStore = useStore<Note>("note");
-  const syncStore = useStore<SyncData>("syncPending");
+  const syncStore = useStore<SyncPending>("syncPending");
   const folderService = FolderService.getInstance(folderStore);
   const noteService = NoteService.getInstance(noteStore);
   const syncService = SyncService.getInstance(syncStore);
   folderService.setNoteService(noteService);
+  folderService.setSyncService(syncService);
   noteService.setFolderService(folderService);
+  noteService.setSyncService(syncService);
   syncService.setFolderService(folderService);
   syncService.setNoteService(noteService);
   const params = useParams();

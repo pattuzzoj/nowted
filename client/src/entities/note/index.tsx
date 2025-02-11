@@ -1,4 +1,4 @@
-import { Note as INote } from "@types/interfaces";
+import { Note as INote } from "@/types";
 
 export class Note implements INote {
   id: string;
