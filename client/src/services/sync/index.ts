@@ -42,14 +42,13 @@ export default class SyncService {
     
     try {
       for (const folder of response.data.folders) {
-        await this.folderService?.updateFolder(folder)
+        await this.folderService?.updateFolder(folder);
       }
 
       for (const note of response.data.notes) {
-        await this.noteService?.updateNote(note)
+        await this.noteService?.updateNote(note);
       }
     } catch (error) {
-      console.error(error);
       return {
         status: "error",
         message: "Internal Error",
@@ -62,14 +61,7 @@ export default class SyncService {
   }
 
   async syncPush() {
-    const pendingCount = await this.syncStore.count();
-
-    if (pendingCount < 1) {
-      return;
-    }
-
     const syncPending = await this.syncStore.getAll();
-    const syncData = syncPending;
     // const syncData: {note: SyncData[], folder: SyncData[]} = {
     //   note: [],
     //   folder: []
@@ -79,13 +71,13 @@ export default class SyncService {
     //   syncData[item.entity].push(item);
     // }
 
-    const response = await this.fetchService.post("", syncData);
+    const response = await this.fetchService.post("", syncPending);
 
     if (response.status === "error") {
       return response;
     }
 
-    localStorage.setItem("lastSync", response.timestamp);
+    localStorage.setItem("lastSync", new Date(response.timestamp).toISOString());
 
     for (const item of syncPending) {
       await this.syncStore.delete(item.id);

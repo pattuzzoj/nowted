@@ -15,7 +15,7 @@ export class SyncController {
 
     return {
       ...messages.SYNCHRONIZED,
-      data: data,
+      data,
       timestamp: new Date().toISOString()
     }
   }
