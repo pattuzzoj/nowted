@@ -1,10 +1,11 @@
-import { ConflictException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
+import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import { UserService } from "@modules/users/user.service";
 import { MailService } from "@modules/mail/mail.service";
 import SignInDto from "../auth/dto/signIn.dto";
 import SignUpDto from "../auth/dto/signUp.dto";
+import { messages } from "@utils/messages";
 
 @Injectable()
 export class AuthService {
@@ -15,9 +16,7 @@ export class AuthService {
 
     if (!user) {
       throw new UnauthorizedException({
-        status: "error",
-        statusCode: HttpStatus.UNAUTHORIZED,
-        message: "Invalid credentials",
+        ...messages.INVALID_CREDENTIALS,
         timestamp: new Date().toISOString()
       });
     }
@@ -26,9 +25,7 @@ export class AuthService {
 
     if (!isSamePassword) {
       throw new UnauthorizedException({
-        status: "error",
-        statusCode: HttpStatus.UNAUTHORIZED,
-        message: "Invalid credentials",
+        ...messages.INVALID_CREDENTIALS,
         timestamp: new Date().toISOString()
       });
     }
@@ -42,18 +39,14 @@ export class AuthService {
 
     if (alreadyHasEmail) {
       throw new ConflictException({
-        status: "error",
-        statusCode: HttpStatus.CONFLICT,
-        message: "Email already used",
+        ...messages.EMAIL_ALREADY_USED,
         timestamp: new Date().toISOString()
       });
     }
 
     if (alreadyHasUsername) {
       throw new ConflictException({
-        status: "error",
-        statusCode: HttpStatus.CONFLICT,
-        message: "Username already used",
+        ...messages.USER_ALREADY_USED,
         timestamp: new Date().toISOString()
       });
     }
@@ -70,9 +63,7 @@ export class AuthService {
 
     if (!user) {
       throw new UnauthorizedException({
-        status: "error",
-        statusCode: HttpStatus.UNAUTHORIZED,
-        message: "Account not exists",
+        ...messages.ACCOUNT_NOT_EXIST,
         timestamp: new Date().toISOString()
       });
     }

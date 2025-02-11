@@ -58,7 +58,7 @@ export class NoteService {
 
   async restoreNote(id: string) {
     const note = await this.noteStore.get(id);
-    note.updated_at = (new Date()).toISOString();
+    note.updated_at = new Date().toISOString();
     note.deleted_at = null;
     await this.noteStore.put(note);
 
@@ -73,7 +73,7 @@ export class NoteService {
 
   async deleteNote(id: string) {
     const note = await this.noteStore.get(id);
-    note.updated_at = note.deleted_at = (new Date()).toISOString();
+    note.updated_at = note.deleted_at = new Date().toISOString();
     await this.noteStore.put(note);
 
     return note;
@@ -83,7 +83,7 @@ export class NoteService {
     const notes = await this.getDeletedNotes();
 
     for (const note of notes) {
-      const deletedAt = new Date(note.deleted_at as string);
+      const deletedAt = new Date(note.deleted_at!);
       const deletedDate = adjustDate(deletedAt, 30, "days");
       const now = new Date();
       

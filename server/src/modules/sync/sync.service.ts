@@ -1,84 +1,58 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotImplementedException } from "@nestjs/common";
 import { FolderService } from "@modules/folder/folder.service";
 import { NoteService } from "@modules/note/note.service";
-import { Folder } from "@modules/folder/interface/folder.interface";
-import { Note } from "@modules/note/interface/note.interface";
+import { messages } from "@utils/messages";
 
 @Injectable()
 export class SyncService {
   constructor(private folderService: FolderService, private noteService: NoteService) {}
 
   async getData(userId: string, lastSync: Date) {
-    console.log("1", userId, lastSync);
-
     const folders = await this.folderService.getFolders(userId, lastSync);
     const notes = await this.noteService.getNotes(userId, lastSync);
 
-    console.log("2", userId, lastSync);
-
     return {
       notes,
-      folders,
-      lastSync: (new Date()).toISOString()
+      folders
     }
   }
 
-  async syncData(userId: string, syncData: any) {
-    const {folders, notes} = syncData;
+  async syncData(userId: string, syncPending: any[]) {
+    const syncList = syncPending.sort((item, nextItem) => item.timestamp - nextItem.timestamp);
 
-    console.log("1", userId, syncData);
-
-    folders.forEach(async (folder: Folder) => {
-      const existFolder = await this.folderService.checkIfFolderExist(userId, folder.id);
-
-      if (existFolder) {
-        this.folderService.create(userId, folder);
-      } else {
-        this.folderService.update(userId, folder);
-      }
-    });
-
-    notes.forEach(async (note: Note) => {
-      const existFolder = await this.noteService.checkIfNoteExist(userId, note.id);
-
-      if (existFolder) {
-        this.noteService.create(userId, note);
-      } else {
-        this.noteService.update(userId, note);
-      }
-    });
-
-    // for (const {entity, type, data} of syncData) {
-    //   let entityService;
+    for (const {entity, type, data} of syncList) {
+      let entityService;
   
-    //   if (entity === "folder") {
-    //     entityService = this.folderService;
-    //   } else if (entity === "note") {
-    //     entityService = this.noteService;
-    //   } else {
-    //     throw new NotImplementedException("entity not exist");
-    //   }
+      if (entity === "folder") {
+        entityService = this.folderService;
+      } else if (entity === "note") {
+        entityService = this.noteService;
+      } else {
+        throw new NotImplementedException({
+          ...messages.ENTITY_NOT_EXIST,
+          timestamp: new Date().toISOString()
+        });
+      }
   
-    //   switch (type) {
-    //     case "create":
-    //       entityService.create(userId, data);
-    //       break;
-    //     case "update":
-    //       entityService.update(userId, data);
-    //       break;
-    //     case "delete":
-    //       entityService.delete(userId, data);
-    //       break;
-    //     case "restore":
-    //       entityService.restore(userId, data);
-    //       break;
-    //     default:
-    //       throw new NotImplementedException("task not exist");
-    //   }
-    // }
-
-    return {
-      lastSync: (new Date()).toISOString()
+      switch (type) {
+        case "create":
+          await entityService.create(userId, data.id);
+          break;
+        case "update":
+          await entityService.update(userId, data);
+          break;
+        case "delete":
+          await entityService.delete(userId, data.id);
+          break;
+        case "restore":
+          await entityService.restore(userId, data.id);
+          break;
+        default:
+          throw new NotImplementedException({
+            ...messages.TYPE_OPERATION_NOT_EXIST,
+            timestamp: new Date().toISOString()
+          });
+      }
     }
   }
 }

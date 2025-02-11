@@ -8,6 +8,7 @@ import { FolderService } from "@services/folder";
 import { NoteService } from "@services/note";
 import SyncService from "@services/sync";
 import { Folder, Note } from "@types/interfaces";
+import { SyncData } from "@/services/sync/interface/syncData.interface";
 
 type DataContextType = [
   data: {
@@ -64,11 +65,12 @@ export default function DataProvider(props: ParentProps) {
   const [useStore] = useIndexedDB();
   const folderStore = useStore<Folder>("folder");
   const noteStore = useStore<Note>("note");
+  const syncStore = useStore<SyncData>("syncPending");
   const folderService = FolderService.getInstance(folderStore);
   const noteService = NoteService.getInstance(noteStore);
+  const syncService = SyncService.getInstance(syncStore);
   folderService.setNoteService(noteService);
   noteService.setFolderService(folderService);
-  const syncService = SyncService.getInstance();
   syncService.setFolderService(folderService);
   syncService.setNoteService(noteService);
   const params = useParams();
@@ -76,7 +78,7 @@ export default function DataProvider(props: ParentProps) {
 
   onMount(async () => {
     if (!localStorage.getItem("lastSync")) {
-      localStorage.setItem("lastSync", (new Date()).toISOString());
+      localStorage.setItem("lastSync", new Date().toISOString());
     }
 
     notify.loading("Synchronizing...");

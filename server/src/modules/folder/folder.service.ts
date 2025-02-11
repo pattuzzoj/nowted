@@ -24,7 +24,7 @@ export class FolderService {
         eq(folderSchema.user_id, userId),
         gt(folderSchema.updated_at, lastSync)
       )
-    ).orderBy(folderSchema.order);
+    );
   }
 
   async checkIfFolderExist(userId: string, folderId: string) {
@@ -41,11 +41,10 @@ export class FolderService {
     return folder[0];
   }
 
-  async create(userId: string, folder: Folder) {
+  async create(userId: string, folderId: string) {
     return await this.db
     .insert(folderSchema)
-    .values({user_id: userId, ...folder, updated_at: sql`NOW()`})
-    .returning({id: folderSchema.id});
+    .values({id: folderId, user_id: userId, updated_at: sql`NOW()`});
   }
 
   async update(userId: string, folder: Folder) {
@@ -60,16 +59,16 @@ export class FolderService {
     );
   }
 
-  async restore(userId: string, folder: Folder) {
+  async restore(userId: string, folderId: string) {
     await this.db.batch([
       this.db
       .update(folderSchema)
       .set({updated_at: sql`NOW()`, deleted_at: null})
       .where(
         and(
-          isNotNull(folderSchema.deleted_at),
           eq(folderSchema.user_id, userId),
-          eq(folderSchema.id, folder.id)
+          eq(folderSchema.id, folderId),
+          isNotNull(folderSchema.deleted_at)
         )
       ),
       this.db
@@ -78,14 +77,14 @@ export class FolderService {
       .where(
         and(
           eq(noteSchema.user_id, userId),
-          eq(noteSchema.folder_id, folder.id),
-          isNotNull(noteSchema.deleted_at),
+          eq(noteSchema.folder_id, folderId),
+          isNotNull(noteSchema.deleted_at)
         )
       )
     ]);
   }
 
-  async delete(userId: string, folder: Folder) {
+  async delete(userId: string, folderId: string) {
     await this.db.batch([
       this.db
       .update(folderSchema)
@@ -93,7 +92,7 @@ export class FolderService {
       .where(
         and(
           eq(folderSchema.user_id, userId),
-          eq(folderSchema.id, folder.id)
+          eq(folderSchema.id, folderId)
         )
       ),
       this.db
@@ -102,7 +101,7 @@ export class FolderService {
       .where(
         and(
           eq(noteSchema.user_id, userId),
-          eq(noteSchema.folder_id, folder.id)
+          eq(noteSchema.folder_id, folderId)
         )
       )
     ]);

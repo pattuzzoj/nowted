@@ -1,21 +1,25 @@
-import { FolderService } from "@services/folder";
-import { NoteService } from "@services/note";
 import FetchService from "@services/fetch";
-import type { Folder, Note } from "@types/interfaces";
 import { baseURL } from "@utils/constants";
-import { SyncData } from "./interfaces";
+import { SyncData } from "./interface/syncData.interface";
+import { StoreOperations } from "@/context/indexedDB";
+import { FolderService } from "../folder";
+import { NoteService } from "../note";
+import { Folder, Note } from "@/types/interfaces";
 
 export default class SyncService {
   private static instance: SyncService;
-  private noteService: NoteService | null = null;
-  private folderService: FolderService | null = null;
+  private syncStore: StoreOperations<SyncData>;
   private fetchService: FetchService = new FetchService(baseURL.concat("/sync"));
+  private folderService: FolderService | null = null;
+  private noteService: NoteService | null = null;
 
-  private constructor() {}
+  private constructor(syncStore: StoreOperations<SyncData>) {
+    this.syncStore = syncStore;
+  }
 
-  public static getInstance() {
+  public static getInstance(syncStore: StoreOperations<SyncData>) {
     if (!this.instance) {
-      SyncService.instance = new SyncService();
+      SyncService.instance = new SyncService(syncStore);
     }
 
     return SyncService.instance;
@@ -31,18 +35,20 @@ export default class SyncService {
 
   async syncFetch() {
     const lastSync = localStorage.getItem("lastSync");
-    const response = await this.fetchService.get<{folders: Folder[], notes: Note[], lastSync: string}>(`/${lastSync}`);
+    const response = await this.fetchService.get<{folders: Folder[], notes: Note[]}>(`/${lastSync}`);
 
-    if (response.status === "error" || response.data === null) {
+    if (response.status === "error") {
       return response;
     }
-
-    localStorage.setItem("lastSync", response.data.lastSync);
-
+    
     try {
-      response.data.folders.forEach(async (folder) => await this.folderService?.updateFolder(folder));
-      response.data.notes.forEach(async (note) => await this.noteService?.updateNote(note));
-      return response;
+      for (const folder of response.data.folders) {
+        await this.folderService?.updateFolder(folder)
+      }
+
+      for (const note of response.data.notes) {
+        await this.noteService?.updateNote(note)
+      }
     } catch (error) {
       console.error(error);
       return {
@@ -51,37 +57,40 @@ export default class SyncService {
         data: null
       }
     }
+
+    localStorage.setItem("lastSync", response.timestamp!);
+    return response;
   }
 
   async syncPush() {
-    const lastSync = new Date(localStorage.getItem("lastSync")!);
+    const pendingCount = await this.syncStore.count();
 
-    const folders = (await this.folderService?.getAllFolders())!.filter((folder) => (
-      new Date(folder.updated_at) > lastSync
-    ));
-    const notes = (await this.noteService?.getNotes())!.filter((note) => (
-      new Date(note.updated_at) > lastSync
-    ));
-
-    const data: SyncData = {
-      folders,
-      notes,
-      lastSync: lastSync.toISOString()
-    };
-
-    if (notes.length > 0 || folders.length > 0) {
-      return {
-        status: "success",
-        message: ""
-      };
+    if (pendingCount < 10) {
+      return;
     }
 
-    const response = await this.fetchService.post("", data);
+    const syncPending = await this.syncStore.getAll();
+    const syncData: {note: SyncData[], folder: SyncData[]} = {
+      note: [],
+      folder: []
+    };
+  
+    for (const item of syncPending) {
+      syncData[item.entity].push(item);
+    }
 
-    if (response.status === "error" || response.data === null) {
+    const response = await this.fetchService.post("", syncData);
+
+    if (response.status === "error") {
       return response;
     }
 
-    localStorage.setItem("lastSync", response.data.lastSync);
+    localStorage.setItem("lastSync", response.timestamp);
+
+    for (const item of syncPending) {
+      await this.syncStore.delete(item.id);
+    }
+
+    return;
   }
 }

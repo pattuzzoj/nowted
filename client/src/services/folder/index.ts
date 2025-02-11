@@ -50,14 +50,14 @@ export class FolderService {
 
   async restoreFolder(id: string) {
     const folder = await this.folderStore.get(id);
-    folder.updated_at = (new Date()).toISOString();
+    folder.updated_at = new Date().toISOString();
     folder.deleted_at = null;
     await this.folderStore.put(folder);
   }
 
   async deleteFolder(id: string) {
     const folder = await this.getFolderById(id);
-    folder.updated_at = folder.deleted_at = (new Date()).toISOString();
+    folder.updated_at = folder.deleted_at = new Date().toISOString();
     await this.folderStore.put(folder);
 
     const notes = await this.noteService!.getNotesByFolderId(folder.id);
@@ -71,7 +71,7 @@ export class FolderService {
     const folders = await this.getDeletedFolders();
 
     for (const folder of folders) {
-      const deletedAt = new Date(folder.deleted_at as string);
+      const deletedAt = new Date(folder.deleted_at!);
       const deletedDate = adjustDate(deletedAt, 30, "days");
       const now = new Date();
       

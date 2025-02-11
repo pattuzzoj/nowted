@@ -45,11 +45,10 @@ export class NoteService {
     return note[0];
   }
 
-  async create(userId: string, note: Note) {
+  async create(userId: string, noteId: string) {
     return await this.db
     .insert(noteSchema)
-    .values({user_id: userId, ...note, updated_at: sql`NOW()`})
-    .returning({id: noteSchema.id});
+    .values({id: noteId, user_id: userId, updated_at: sql`NOW()`});
   }
 
   async update(userId: string, note: Note) {
@@ -64,39 +63,40 @@ export class NoteService {
     );
   }
 
-  async restore(userId: string, note: Note) {
-    if(note?.folder_id) {
+  async restore(userId: string, noteId: string) {
+    const [folderId] = await this.db
+    .update(noteSchema)
+    .set({updated_at: sql`NOW()`, deleted_at: null})
+    .where(
+      and(
+        eq(noteSchema.user_id, userId),
+        eq(noteSchema.id, noteId),
+        isNotNull(noteSchema.deleted_at),
+      )
+    )
+    .returning({folderId: noteSchema.folder_id});
+
+    if(folderId) {
       await this.db
       .update(folderSchema)
       .set({updated_at: sql`NOW()`, deleted_at: null})
       .where(
         and(
           eq(folderSchema.user_id, userId),
-          eq(folderSchema.id, note.id),
+          eq(folderSchema.id, noteId),
         )
       );
     }
-
-    await this.db
-    .update(noteSchema)
-    .set({updated_at: sql`NOW()`, deleted_at: null})
-    .where(
-      and(
-        eq(noteSchema.user_id, userId),
-        eq(noteSchema.id, note.id),
-        isNotNull(noteSchema.deleted_at),
-      )
-    );
   }
 
-  async delete(userId: string, note: Note) {
+  async delete(userId: string, noteId: string) {
     await this.db
     .update(noteSchema)
     .set({updated_at: sql`NOW()`, deleted_at: sql`NOW()`})
     .where(
       and(
         eq(noteSchema.user_id, userId),
-        eq(noteSchema.id, note.id),
+        eq(noteSchema.id, noteId),
       )
     );
   }

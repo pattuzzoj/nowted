@@ -4,6 +4,7 @@ import { AuthGuard } from "@shared/guards/auth.guard";
 import { AuthService } from "./auth.service";
 import SignInDto from "../auth/dto/signIn.dto";
 import SignUpDto from "../auth/dto/signUp.dto";
+import { messages } from "@utils/messages";
 
 @Controller("/auth")
 export class AuthController {
@@ -14,8 +15,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async status() {
     return {
-      status: "success",
-      message: "logged",
+      ...messages.LOGGED,
       timestamp: new Date().toISOString()
     }
   }
@@ -32,8 +32,7 @@ export class AuthController {
       sameSite: "strict",
       domain: "nowted-server.vercel.app"
     }).status(HttpStatus.OK).send({
-      status: "success",
-      message: "logged",
+      ...messages.LOGGED,
       timestamp: new Date().toISOString()
     });
   }
@@ -41,7 +40,12 @@ export class AuthController {
   @Post("/sign-up")
   @HttpCode(HttpStatus.CREATED)
   async signUp(@Body() user: SignUpDto) {
-    return await this.authService.signUp(user);
+    await this.authService.signUp(user);
+
+    return {
+      ...messages.REGISTERED,
+      timestamp: new Date().toISOString()
+    }
   }
 
   @Delete("/log-out")
@@ -65,6 +69,11 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async recoverAccount(@Body("account") account: string) {
     await this.authService.recoverAccount(account);
+
+    return {
+      ...messages.EMAIL_SENT,
+      timestamp: new Date().toISOString()
+    }
   }
 
   @Post("/reset-password")

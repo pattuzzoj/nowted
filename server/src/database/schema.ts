@@ -23,9 +23,9 @@ export const folderSchema = pgTable("folders", {
 
 export const noteSchema = pgTable("notes", {
   id: uuid().default(sql`gen_random_uuid()`).primaryKey(),
-  name: varchar({length: 48}).notNull().default("new note"),
-  preview: text(),
-  content: text(),
+  name: varchar({length: 48}).notNull().default("note"),
+  preview: text().notNull().default(""),
+  content: text().notNull().default(""),
   favorite: boolean().notNull().default(false),
   archived: boolean().notNull().default(false),
   ...timestamps,

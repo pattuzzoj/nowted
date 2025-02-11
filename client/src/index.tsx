@@ -26,6 +26,12 @@ const stores: StoreSchema[] = [
     options: {
       keyPath: "id"
     },
+  },
+  {
+    name: "syncPending",
+    options: {
+      keyPath: "id"
+    }
   }
 ];
 

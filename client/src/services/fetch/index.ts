@@ -25,10 +25,11 @@ export default class FetchService {
       return await this.deserialize<FetchResponse<T>>(response);
     } catch (error: any) {
       console.error(error);
+      
+      // @ts-ignore
       return {
         status: "error",
-        message: "Internal Error",
-        data: null
+        message: "Internal Error"
       };
     }
   }
