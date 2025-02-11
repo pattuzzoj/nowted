@@ -9,10 +9,10 @@ export class SyncService {
 
   async getData(userId: string, lastSync: Date) {
     const folders = await this.folderService.getFolders(userId, lastSync);
-    const notes = await this.noteService.getNotes(userId, lastSync);
+    // const notes = await this.noteService.getNotes(userId, lastSync);
 
     return {
-      notes,
+      // notes,
       folders
     }
   }

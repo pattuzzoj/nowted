@@ -34,7 +34,7 @@ export default class SyncService {
 
   async syncFetch() {
     const lastSync = localStorage.getItem("lastSync");
-    const response = await this.fetchService.get<{folders: Folder[], notes: Note[]}>(`/${lastSync}`);
+    const response = await this.fetchService.get<{folders: Folder[]}>(`/${lastSync}`);
 
     if (response.status === "error" || !("status" in response)) {
       return response;
@@ -42,7 +42,7 @@ export default class SyncService {
     
     try {
       await this.folderService?.populateFolder(response.data.folders);
-      await this.noteService?.populateNote(response.data.notes);
+      // await this.noteService?.populateNote(response.data.notes);
     } catch (error) {
       return {
         status: "error",
@@ -57,16 +57,8 @@ export default class SyncService {
 
   async syncPush() {
     const syncPending = await this.syncStore.getAll();
-    // const syncData: {note: SyncData[], folder: SyncData[]} = {
-    //   note: [],
-    //   folder: []
-    // };
-  
-    // for (const item of syncPending) {
-    //   syncData[item.entity].push(item);
-    // }
-
-    const response = await this.fetchService.post("", syncPending);
+    const pendingList = syncPending.filter((item) => item.entity === "folder");
+    const response = await this.fetchService.post("", pendingList);
 
     if (response.status === "error" || !("status" in response)) {
       return response;
@@ -74,7 +66,7 @@ export default class SyncService {
 
     localStorage.setItem("lastSync", new Date(response.timestamp).toISOString());
 
-    for (const item of syncPending) {
+    for (const item of pendingList) {
       await this.syncStore.delete(item.id);
     }
 
