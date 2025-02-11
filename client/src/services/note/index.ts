@@ -65,6 +65,12 @@ export default class NoteService {
     await this.syncService?.updateNote(note);
   }
 
+  async populateNote(notes: Note[]) {
+    for (const note of notes) {
+      await this.noteStore.put(note);
+    }
+  }
+
   async restoreNote(id: string) {
     const note = await this.noteStore.get(id);
     note.updated_at = new Date().toISOString();

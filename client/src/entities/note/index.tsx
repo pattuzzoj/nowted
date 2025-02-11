@@ -13,7 +13,7 @@ export class Note implements INote {
   deleted_at: string | null = null;
 
   constructor(name: string, folderId: string) {
-    const date = (new Date()).toISOString();
+    const date = new Date().toISOString();
 
     this.id = crypto.randomUUID();
     this.name = name;

@@ -10,7 +10,7 @@ export class Folder implements IFolder {
   deleted_at: string | null = null;
 
   constructor({name, color, order}: {name: string, color: string, order: number}) {
-    const date = (new Date()).toISOString();
+    const date = new Date().toISOString();
 
     this.id = crypto.randomUUID();
     this.name = name;

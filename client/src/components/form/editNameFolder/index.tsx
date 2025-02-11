@@ -5,6 +5,7 @@ import Submit from "@components/form/submit";
 import { useData } from "@context/data";
 import { Folder as IFolder } from "@/types";
 import InputIcon from "../inputIcon";
+import { For } from "solid-js";
 
 interface FolderProps extends Partial<IFolder> {}
 
@@ -23,6 +24,33 @@ export default function UpdateFolderForm(props: FolderProps) {
     revalidateOn: "input"
   });
   const [_data, { folderService }] = useData();
+  const colors = [
+    "#991b1b",
+    "#dc2626",
+    "#f87171",
+    "#fecaca",
+    "#fee2e2",
+    "#6b21a8",
+    "#9333ea",
+    "#c084fc",
+    "#e9d5ff",
+    "#f3e8ff",
+    "#1e40af",
+    "#2563eb",
+    "#60a5fa",
+    "#bfdbfe",
+    "#dbeafe",
+    "#166534",
+    "#16a34a",
+    "#4ade80",
+    "#bbf7d0",
+    "#dcfce7",
+    "#854d0e",
+    "#ca8a04",
+    "#facc15",
+    "#fef08a",
+    "#fef9c3"
+  ]
 
   async function updateFolderSubmit(schema: Schema) {
     if (props.id) {
@@ -49,206 +77,18 @@ export default function UpdateFolderForm(props: FolderProps) {
       </Field>
       <h5>Color</h5>
       <div class="grid grid-cols-5 gap-3">
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-red-800 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#991b1b" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
+        <For each={colors}>
+          {(color) => (
+          <Field name="color">
+            {(_field, props) => (
+              <label class={`flex items-center justify-center size-10 rounded-full bg-[${color}] cursor-pointer`}>
+                <input {...props} class="border-0 hidden peer" type="radio" value={color} />
+                <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
+              </label>
+            )}
+          </Field>
           )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-red-600 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#dc2626" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-red-400 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#f87171" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-red-200 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#fecaca" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-red-100 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#fee2e2" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-purple-800 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#6b21a8" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-purple-600 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#9333ea" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-purple-400 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#c084fc" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-purple-200 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#e9d5ff" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-purple-100 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#f3e8ff" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-blue-800 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#1e40af" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-blue-600 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#2563eb" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-blue-400 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#60a5fa" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-blue-200 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#bfdbfe" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-blue-100 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#dbeafe" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-green-800 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#166534" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-green-600 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#16a34a" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-green-400 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#4ade80" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-green-200 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#bbf7d0" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-green-100 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#dcfce7" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-yellow-800 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#854d0e" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-yellow-600 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#ca8a04" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-yellow-400 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#facc15" checked/>
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-yellow-200 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#fef08a" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
-        <Field name="color">
-          {(_field, props) => (
-            <label class="flex items-center justify-center size-10 rounded-full bg-yellow-100 cursor-pointer">
-              <input {...props} class="border-0 hidden peer" type="radio" value="#fef9c3" />
-              <span class="inline size-5 rounded-full bg-transparent peer-checked:bg-white"></span>
-            </label>
-          )}
-        </Field>
+        </For>
       </div>
       <Submit title={props.id ? "Update Folder" : "Create Folder"} active={form.submitting} />
     </Form>

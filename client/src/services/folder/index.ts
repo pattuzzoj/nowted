@@ -57,6 +57,12 @@ export default class FolderService {
     await this.syncService?.updateFolder(folder);
   }
 
+  async populateFolder(folders: Folder[]) {
+    for (const folder of folders) {
+      await this.folderStore.put(folder);
+    }
+  }
+
   async restoreFolder(id: string) {
     const folder = await this.folderStore.get(id);
     folder.updated_at = new Date().toISOString();

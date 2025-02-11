@@ -22,8 +22,8 @@ type DataContextType = [
   },
   services: {
     folderService: {
-      createFolder: (newFolder: Folder) => Promise<void>;
-      updateFolder: (folder: Folder) => Promise<void>;
+      createFolder: (newFolder: Partial<Folder>) => Promise<void>;
+      updateFolder: (folder: Partial<Folder>) => Promise<void>;
       deleteFolder: (id: string) => Promise<void>;
     };
     noteService: {

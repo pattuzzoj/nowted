@@ -41,13 +41,8 @@ export default class SyncService {
     }
     
     try {
-      for (const folder of response.data.folders) {
-        await this.folderService?.updateFolder(folder);
-      }
-
-      for (const note of response.data.notes) {
-        await this.noteService?.updateNote(note);
-      }
+      await this.folderService?.populateFolder(response.data.folders);
+      await this.noteService?.populateNote(response.data.notes);
     } catch (error) {
       return {
         status: "error",
