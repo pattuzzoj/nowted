@@ -29,7 +29,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: "strict",
+      sameSite: "none",
       domain: "nowted-server.vercel.app"
     }).status(HttpStatus.OK).send({
       ...messages.LOGGED,
@@ -56,7 +56,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: "strict",
+      sameSite: "none",
       domain: "nowted-server.vercel.app"
     }).status(HttpStatus.OK).send({
       ...messages.LOGOUT,
