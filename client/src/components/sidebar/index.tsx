@@ -112,8 +112,8 @@ export default function Sidebar() {
           </A>
         </nav>
       </div>
-      <button class="flex items-center gap-3 -ml-4 p-4 py-1 rounded-r-lg hover:bg-link-hover">
-        <LogOut class="size-5" onClick={handleLogOut}/>
+      <button class="flex items-center gap-3 -ml-4 p-4 py-1 rounded-r-lg hover:bg-link-hover" onClick={handleLogOut}>
+        <LogOut class="size-5"/>
         Log out
       </button>
     </div>

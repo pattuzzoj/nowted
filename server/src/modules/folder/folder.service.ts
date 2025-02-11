@@ -45,13 +45,13 @@ export class FolderService {
   async create(userId: string, folder: Folder) {
     return await this.db
     .insert(folderSchema)
-    .values({user_id: userId, ...folder, updated_at: sql`NOW()`});
+    .values({user_id: userId, ...folder, updated_at: new Date()});
   }
 
   async update(userId: string, folder: Folder) {
     await this.db
     .update(folderSchema)
-    .set({...folder, updated_at: sql`NOW()`})
+    .set({...folder, updated_at: new Date()})
     .where(
       and(
         eq(folderSchema.user_id, userId),
@@ -64,7 +64,7 @@ export class FolderService {
     await this.db.batch([
       this.db
       .update(folderSchema)
-      .set({updated_at: sql`NOW()`, deleted_at: null})
+      .set({updated_at: new Date(), deleted_at: null})
       .where(
         and(
           eq(folderSchema.user_id, userId),
@@ -74,7 +74,7 @@ export class FolderService {
       ),
       this.db
       .update(noteSchema)
-      .set({updated_at: sql`NOW()`, deleted_at: null })
+      .set({updated_at: new Date(), deleted_at: null })
       .where(
         and(
           eq(noteSchema.user_id, userId),
@@ -89,7 +89,7 @@ export class FolderService {
     await this.db.batch([
       this.db
       .update(folderSchema)
-      .set({updated_at: sql`NOW()`, deleted_at: sql`NOW()`})
+      .set({updated_at: new Date(), deleted_at: new Date()})
       .where(
         and(
           eq(folderSchema.user_id, userId),
@@ -98,7 +98,7 @@ export class FolderService {
       ),
       this.db
       .update(noteSchema)
-      .set({updated_at: sql`NOW()`, deleted_at: sql`NOW()` })
+      .set({updated_at: new Date(), deleted_at: new Date() })
       .where(
         and(
           eq(noteSchema.user_id, userId),
