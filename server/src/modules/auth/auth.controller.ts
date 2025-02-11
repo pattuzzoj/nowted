@@ -59,8 +59,7 @@ export class AuthController {
       sameSite: "strict",
       domain: "nowted-server.vercel.app"
     }).status(HttpStatus.OK).send({
-      status: "success",
-      message: "logged",
+      ...messages.LOGOUT,
       timestamp: new Date().toISOString()
     });
   }
@@ -71,7 +70,7 @@ export class AuthController {
     await this.authService.recoverAccount(account);
 
     return {
-      ...messages.EMAIL_SENT,
+      ...messages.MAIL_SENT,
       timestamp: new Date().toISOString()
     }
   }
@@ -80,5 +79,10 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async resetPassword(@Body("token") token: string, @Body("password") password: string) {
    await this.authService.resetPassword(token, password);
+
+   return {
+    ...messages.PASSWORD_UPDATED,
+    timestamp: new Date().toISOString()
+   }
   }
 }
