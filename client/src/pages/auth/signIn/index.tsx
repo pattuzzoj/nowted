@@ -18,7 +18,7 @@ export default function SignIn() {
   const {handleSignIn} = useAuth();
 
   return (
-    <Form class="w-full max-w-96 flex flex-col justify-center gap-6" onSubmit={handleSignIn}>
+    <Form class={`"w-full max-w-96 flex flex-col justify-center gap-6"`} onSubmit={handleSignIn}>
       <Field
       name="login"
       validate={[
