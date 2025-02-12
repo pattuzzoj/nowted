@@ -82,9 +82,9 @@ export default function DataProvider(props: ParentProps) {
       localStorage.setItem("lastSync", new Date("0").toISOString());
     }
 
+    const response = await syncService.syncFetch();
     notify.loading("Synchronizing...");
     await sleep(1000);
-    const response = await syncService.syncFetch();
 
     if (response.status === "error") {
       notify.error(response.message);
@@ -387,13 +387,26 @@ export default function DataProvider(props: ParentProps) {
     }
   });
 
-  const syncId = setInterval(() => {
-    if (navigator.onLine) {
-      syncService.syncPush();
-    }
-  }, 5000);
+  function backoff(attempt: number = 0) {
+    const baseDelay = 1000;
+    const maxDelay = 30000;
+    const delay = Math.min(baseDelay * (2 ** attempt), maxDelay);
+  
+    return setTimeout(async () => {
+      const response = await syncService.syncPush();
 
-  onCleanup(() => clearInterval(syncId));
+      if (response.status === "error") {
+        backoff(attempt + 1);
+        return;
+      }
+
+      backoff(0);
+    }, delay);
+  }
+
+  const backoffId = backoff();
+
+  onCleanup(() => clearTimeout(backoffId));
 
   return (
     <DataContext.Provider value={

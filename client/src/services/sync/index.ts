@@ -70,7 +70,7 @@ export default class SyncService {
       await this.syncStore.delete(item.id);
     }
 
-    return;
+    return response;
   }
 
   public async createPending(type: OperationType, entity: EntityType, data: SyncData) {

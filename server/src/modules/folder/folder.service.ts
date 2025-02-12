@@ -52,9 +52,9 @@ export class FolderService {
     await this.db
     .update(folderSchema)
     .set({
-      name: sql`COALESCE(${folderSchema.name}, ${folder.name})`,
-      color: sql`COALESCE(${folderSchema.color}, ${folder.color})`,
-      order: sql`COALESCE(${folderSchema.order}, ${folder.order})`,
+      name: sql`COALESCE(${folder.name}, ${folderSchema.name})`,
+      color: sql`COALESCE(${folder.color}, ${folderSchema.color})`,
+      order: sql`COALESCE(${folder.order}, ${folderSchema.order})`,
       updated_at: new Date()
     })
     .where(
