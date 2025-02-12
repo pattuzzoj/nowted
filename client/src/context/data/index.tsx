@@ -7,7 +7,7 @@ import useToast from "@hooks/useToast";
 import FolderService from "@services/folder";
 import NoteService from "@services/note";
 import SyncService from "@services/sync";
-import { Folder, Note, SyncPending } from "@/types";
+import { Folder, Note, SyncRecord } from "@/types";
 
 type DataContextType = [
   data: {
@@ -64,7 +64,7 @@ export default function DataProvider(props: ParentProps) {
   const [useStore] = useIndexedDB();
   const folderStore = useStore<Folder>("folder");
   const noteStore = useStore<Note>("note");
-  const syncStore = useStore<SyncPending>("syncPending");
+  const syncStore = useStore<SyncRecord>("SyncRecord");
   const folderService = FolderService.getInstance(folderStore);
   const noteService = NoteService.getInstance(noteStore);
   const syncService = SyncService.getInstance(syncStore);
@@ -82,8 +82,8 @@ export default function DataProvider(props: ParentProps) {
       localStorage.setItem("lastSync", new Date("0").toISOString());
     }
 
-    const response = await syncService.syncFetch();
     notify.loading("Synchronizing...");
+    const response = await syncService.syncFetch();
     await sleep(1000);
 
     if (response.status === "error") {
@@ -93,7 +93,7 @@ export default function DataProvider(props: ParentProps) {
     }
     
     await sleep(1000);
-    notify.loading("Loading local data...");
+    notify.loading("Loading data...");
     await sleep(1000);
 
     try {

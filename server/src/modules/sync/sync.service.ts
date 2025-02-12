@@ -2,6 +2,7 @@ import { Injectable, NotImplementedException } from "@nestjs/common";
 import { FolderService } from "@modules/folder/folder.service";
 import { NoteService } from "@modules/note/note.service";
 import { messages } from "@utils/messages";
+import { SyncRecord } from "./sync.interface";
 
 @Injectable()
 export class SyncService {
@@ -17,7 +18,7 @@ export class SyncService {
     }
   }
 
-  async syncData(userId: string, syncPending: any[]) {
+  async syncData(userId: string, syncPending: SyncRecord[]) {
     const syncList = syncPending.sort((item, nextItem) => item.timestamp - nextItem.timestamp);
 
     for (const {entity, type, data} of syncList) {

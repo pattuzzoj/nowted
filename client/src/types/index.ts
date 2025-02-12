@@ -25,10 +25,10 @@ export type SyncData = Partial<Folder | Note>;
 export type EntityType = "folder" | "note";
 export type OperationType = "create" | "update" | "delete" | "restore";
 
-export interface SyncPending {
+export interface SyncRecord {
   id: string;
   type: OperationType;
   entity: EntityType;
-  data: SyncData;
+  data: Partial<Folder | Note>;
   timestamp: number;
 }

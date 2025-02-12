@@ -4,6 +4,7 @@ moduleAlias.addAliases({
   "@database": __dirname.concat("/database"),
   "@modules": __dirname.concat("/modules"),
   "@shared": __dirname.concat("/shared"),
+  "@types": __dirname.concat("/types"),
   "@utils": __dirname.concat("/utils"),
 });
 

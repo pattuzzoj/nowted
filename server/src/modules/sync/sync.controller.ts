@@ -3,6 +3,7 @@ import type { AuthRequest } from "@modules/auth/interface/authRequest.interface"
 import { AuthGuard } from "@shared/guards/auth.guard";
 import { SyncService } from "./sync.service";
 import { messages } from "@utils/messages";
+import { SyncRecord } from "./sync.interface";
 
 @Controller("sync")
 @UseGuards(AuthGuard)
@@ -21,7 +22,7 @@ export class SyncController {
   }
 
   @Post()
-  async syncPostData(@Request() req: AuthRequest, @Body() data: any) {
+  async syncPostData(@Request() req: AuthRequest, @Body() data: SyncRecord[]) {
     await this.syncService.syncData(req.user.sub, data);
     
     return {

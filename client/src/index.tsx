@@ -28,7 +28,7 @@ const stores: StoreSchema[] = [
     },
   },
   {
-    name: "syncPending",
+    name: "SyncRecord",
     options: {
       keyPath: "id"
     }

@@ -2,7 +2,7 @@ import { Injectable, Inject } from "@nestjs/common";
 import { and, eq, gt, isNotNull, sql } from "drizzle-orm";
 import type { DatabaseType } from "../../../drizzle.config";
 import { folderSchema, noteSchema } from "@database/schema";
-import { Note } from "./interface/note.interface";
+import { Note } from "./note.interface";
 
 @Injectable()
 export class NoteService {
@@ -54,7 +54,14 @@ export class NoteService {
   async update(userId: string, note: Note) {
     await this.db
     .update(noteSchema)
-    .set({...note, updated_at: sql`NOW()`})
+    .set({
+      name: sql`${note.name}, ${noteSchema.name}`,
+      preview: sql`${note.preview}, ${noteSchema.preview}`,
+      content: sql`${note.content}, ${noteSchema.content}`,
+      favorite: sql`${note.favorite}, ${noteSchema.favorite}`,
+      archived: sql`${note.archived}, ${noteSchema.archived}`,
+      updated_at: sql`NOW()`
+    })
     .where(
       and(
         eq(noteSchema.user_id, userId),
