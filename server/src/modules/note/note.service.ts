@@ -55,11 +55,11 @@ export class NoteService {
     await this.db
     .update(noteSchema)
     .set({
-      name: sql`${note.name}, ${noteSchema.name}`,
-      preview: sql`${note.preview}, ${noteSchema.preview}`,
-      content: sql`${note.content}, ${noteSchema.content}`,
-      favorite: sql`${note.favorite}, ${noteSchema.favorite}`,
-      archived: sql`${note.archived}, ${noteSchema.archived}`,
+      name: sql`COALESCE(${note.name}, ${noteSchema.name})`,
+      preview: sql`COALESCE(${note.preview}, ${noteSchema.preview})`,
+      content: sql`COALESCE(${note.content}, ${noteSchema.content})`,
+      favorite: sql`COALESCE(${note.favorite}, ${noteSchema.favorite})`,
+      archived: sql`COALESCE(${note.archived}, ${noteSchema.archived})`,
       updated_at: sql`NOW()`
     })
     .where(
