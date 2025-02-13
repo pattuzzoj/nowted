@@ -19,7 +19,7 @@ interface Auth {
 }
 
 export default function AuthProvider(props: ParentProps) {
-  const [isAuthenticated, setIsAuthenticated] = createSignal(true);
+  const [isAuthenticated, setIsAuthenticated] = createSignal(false);
   const navigate = useNavigate();
   const notify = useToast();
   const [_, {delete: deleteDatabase}] = useIndexedDB();
@@ -113,18 +113,18 @@ export function AuthRoute(props: ParentProps) {
   const navigate = useNavigate();
   const notify = useToast();
 
-  // (async () => {
-  //   const {status, message} = await AuthService.status();
+  (async () => {
+    const {status, message} = await AuthService.status();
 
-  //   if (status === "error") {
-  //     notify.error(message);
-  //     navigate("/auth/sign-in");
-  //     return;
-  //   }
+    if (status === "error") {
+      notify.error(message);
+      navigate("/auth/sign-in");
+      return;
+    }
 
-  //   notify.success(message);
-  //   setIsAuthenticated(true);
-  // })();
+    notify.success(message);
+    setIsAuthenticated(true);
+  })();
 
   return (
     <Show when={isAuthenticated()}>
