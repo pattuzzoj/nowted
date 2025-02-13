@@ -10,7 +10,7 @@ export default function Recents() {
     <Show when={data.recents.length}>
       <div class="space-y-2">
         <h2 id="folders" class="text-sm">Recents</h2>
-        <nav aria-labelledby="folders" class="-ml-4 space-y-1">
+        <nav aria-labelledby="folders" class="space-y-1">
           <For each={data.recents}>
             {(note) => (
               <A class="flex items-center gap-3 p-4 py-1 rounded-r-lg" href={`/folder/${note.folder_id}/note/${note.id}`} activeClass="bg-active">

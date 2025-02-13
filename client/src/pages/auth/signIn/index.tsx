@@ -47,7 +47,7 @@ export default function SignIn() {
       </Field>
       <Submit title="Login" active={form.submitting} />
       <br />
-      <span class="text-center">Don't remember your password? <a class="underline" href="/auth/recover-account">Recover account</a></span>
+      <span class="text-center">Don't remember your password? <a class="underline" href="/auth/forgot-password">Forgot Password</a></span>
       <span class="text-center">Don't have an account? <a class="underline" href="/auth/sign-up">Register</a></span>
     </Form>
   )

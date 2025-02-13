@@ -22,8 +22,8 @@ type DataContextType = [
   },
   services: {
     folderService: {
-      createFolder: (newFolder: Partial<Folder>) => Promise<void>;
-      updateFolder: (folder: Partial<Folder>) => Promise<void>;
+      createFolder: (newFolder: Folder) => Promise<void>;
+      updateFolder: (folder: Folder) => Promise<void>;
       deleteFolder: (id: string) => Promise<void>;
     };
     noteService: {
@@ -406,7 +406,9 @@ export default function DataProvider(props: ParentProps) {
 
   const backoffId = backoff();
 
-  onCleanup(() => clearTimeout(backoffId));
+  onCleanup(() => {
+    clearTimeout(backoffId);
+  });
 
   return (
     <DataContext.Provider value={

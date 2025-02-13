@@ -43,8 +43,8 @@ const config = {
 
 render(() => (
   <ErrorBoundary fallback={(err) => <div class="flex justify-center items-center">Error: {err.message}</div>}>
+    <Toaster />
     <IndexedDBProvider value={config}>
-      <Toaster />
       <Routing />
     </IndexedDBProvider>
   </ErrorBoundary>

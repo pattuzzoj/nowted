@@ -120,11 +120,13 @@ export default function Editor(props: EditorProps) {
       </span>
       <hr class="text-white/20" />
       <div class="flex max-md:flex-col items-start md:items-center gap-4">
-        <span class="flex justify-between items-center">
+        <span class="flex justify-between items-center space-x-1">
           <TypographMenu editor={editor}/>
           <SizeMenu editor={editor}/>
-          <AlignMenu editor={editor}/>
         </span>
+        <span class="flex items-center text-tertiary font-extrabold">|</span>
+        <AlignMenu editor={editor}/>
+        <span class="flex items-center text-tertiary font-extrabold">|</span>
         <span>
           <MarkingMenu editor={editor}/>
         </span>
@@ -144,7 +146,7 @@ export default function Editor(props: EditorProps) {
           <Table class="size-5" />
         </button> */}
       </div>
-      <div role="textbox" aria-multiline="true" class="flex grow focus-visible:outline-0 bg-secondary rounded-lg" id="editor" ref={ref}/>
+      <div role="textbox" aria-multiline="true" class="flex grow focus-visible:outline-0 bg-tertiary rounded-lg" id="editor" ref={ref}/>
     </div>
   )
 }

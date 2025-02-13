@@ -62,7 +62,7 @@ export default function AlignMenu(props: MarkProps) {
   };
 
   return (
-    <span class="space-x-2">
+    <span class="space-x-1">
       <button title="align-left" class={`${isLeftActive() ? "bg-accent" : "hover:bg-tertiary"} p-2 rounded-lg`} onClick={toggleAlignLeft}>
         <AlignLeft class="size-5" />
       </button>

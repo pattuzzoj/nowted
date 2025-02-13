@@ -44,7 +44,7 @@ export default function MarkingMenu(props: MarkProps) {
   const toggleSupercript = () => props.editor().chain().focus().toggleSuperscript().run();
 
   return (
-    <span class="space-x-2">
+    <span class="space-x-1">
       <button title="bold" class={`${isBold() ? "bg-accent" : "hover:bg-tertiary"} p-2 rounded-lg`} onClick={toggleBold}>
         <Bold class="size-5" />
       </button>

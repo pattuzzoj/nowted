@@ -15,17 +15,17 @@
 }
 
 :root[data-theme="dark"] {
-  --primary: #1A1A1A;
-  --secondary: #1C1C1C;
-  --tertiary: #232323;
-  --hover: #ffffff08;
+  --primary: #16141C;
+  --secondary: #16141C;
+  --tertiary: #24212B;
+  --hover: #24212B;
   --accent: #312EB5;
-  --active: #312EB5;
+  --active: #24212B;
   --inactive: ;
   --disabled: ;
   --focus: ;
   --shadow: ;
 
-  --link-hover: #ffffff08;
-  --note-hover: #333333;
+  --link-hover: #24212B;
+  --note-hover: #1E1C26;
 }

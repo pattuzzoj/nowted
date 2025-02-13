@@ -1,5 +1,5 @@
 import { ParentProps } from "solid-js";
-import Sidebar from "@components/sidebar";
+import LayoutMenu from "@/components/layoutMenu";
 import { AuthRoute } from "@context/auth";
 import DataProvider from "@context/data";
 
@@ -7,9 +7,8 @@ export default function App(props: ParentProps) {
   return (
     <AuthRoute>
       <DataProvider>
-        <div class="flex w-screen">
-          <Sidebar />
-          <div class="md:flex md:grow"></div>
+        <div class="w-screen h-screen flex max-md:flex-col">
+          <LayoutMenu />
           {props.children}
         </div>
       </DataProvider>
