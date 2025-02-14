@@ -146,7 +146,7 @@ export default function Editor(props: EditorProps) {
           <Table class="size-5" />
         </button> */}
       </div>
-      <div role="textbox" aria-multiline="true" class="flex grow focus-visible:outline-0 bg-tertiary rounded-lg" id="editor" ref={ref}/>
+      <div role="textbox" aria-multiline="true" class="flex grow focus-visible:outline-0 rounded-lg p-4 bg-tertiary" id="editor" ref={ref}/>
     </div>
   )
 }

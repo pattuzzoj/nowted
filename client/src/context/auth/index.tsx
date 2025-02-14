@@ -22,7 +22,7 @@ export default function AuthProvider(props: ParentProps) {
   const [isAuthenticated, setIsAuthenticated] = createSignal(false);
   const navigate = useNavigate();
   const notify = useToast();
-  const [_, {delete: deleteDatabase}] = useIndexedDB();
+  const [_, {clearDatabase}] = useIndexedDB();
 
   async function handleSignIn(credentials: SignIn) {
     notify.loading("Logging...");
@@ -63,10 +63,10 @@ export default function AuthProvider(props: ParentProps) {
       return;
     }
 
+    localStorage.clear();
+    await clearDatabase();
     notify.success(message);
     setIsAuthenticated(false);
-    localStorage.clear();
-    await deleteDatabase();
     navigate("/auth/sign-in");
   }
 

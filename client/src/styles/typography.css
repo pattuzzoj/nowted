@@ -1,6 +1,6 @@
 @layer base {
   html {
-    font-size: clamp(12px, 2vw, 18px);
+    font-size: clamp(14px, 2vw, 18px);
   }
 
   html[data-theme="dark"] {

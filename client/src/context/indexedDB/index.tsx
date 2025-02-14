@@ -1,12 +1,15 @@
 import { createContext, createSignal, JSXElement, onCleanup, onMount, Show, useContext } from "solid-js";
 
-export const IndexedDBContext = createContext<[
+type IndexedDBContextReturn = [
   <T>(name: string) => StoreOperations<T>,
   {
     transaction: (name: string, mode: Exclude<IDBTransactionMode, "versionchange">) => IDBTransaction | undefined
-    delete: () => Promise<null> 
+    deleteDatabase: () => Promise<null>,
+    clearDatabase: () => Promise<void>;
   }
-]>([] as any);
+]
+
+export const IndexedDBContext = createContext<IndexedDBContextReturn>([] as any);
 
 export interface StoreSchema {
   name: string,
@@ -307,7 +310,7 @@ export default function IndexedDBProvider(props: IndexedDBProps) {
     }
   }
 
-  function deleteDatabase(): Promise<null> {
+  async function deleteDatabase(): Promise<null> {
     return new Promise((resolve, reject) => {
       try {
         if(database()) {
@@ -329,10 +332,21 @@ export default function IndexedDBProvider(props: IndexedDBProps) {
     })
   }
 
+  async function clearDatabase() {
+    try {
+      for (const store of stores) {
+        const currentStore = useStore(store.name);
+        await currentStore.clear();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   onCleanup(() => database()?.close());
 
   return (
-		<IndexedDBContext.Provider value={[useStore, {transaction, delete: deleteDatabase}]}>
+		<IndexedDBContext.Provider value={[useStore, {transaction, deleteDatabase, clearDatabase}]}>
       <Show when={database()}>
         {props.children}
       </Show>
@@ -340,10 +354,4 @@ export default function IndexedDBProvider(props: IndexedDBProps) {
 	);
 }
 
-export const useIndexedDB = () => useContext(IndexedDBContext) as unknown as [
-  <T>(name: string) => StoreOperations<T>,
-  {
-    transaction: (name: string, mode: Exclude<IDBTransactionMode, "versionchange">) => IDBTransaction | undefined
-    delete: () => Promise<null> 
-  }
-]; 
+export const useIndexedDB = () => useContext(IndexedDBContext) as unknown as IndexedDBContextReturn; 

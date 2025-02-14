@@ -12,13 +12,12 @@ import FileText from "lucide-solid/icons/file-text";
 import LogOut from "lucide-solid/icons/log-out";
 import FolderItem from "@/components/layoutMenu/folderItem";
 import Logo from "@components/logo";
-import Dialog from "@components/dialog";
 import Backdrop from "@components/backdrop";
 import UpdateFolderForm from "@components/form/editNameFolder";
 import { useData } from "@context/data";
 import { useAuth } from "@context/auth";
 import MenuIcon from "lucide-solid/icons/menu";
-import { Menu } from "@ark-ui/solid";
+import { Menu, Dialog } from "@ark-ui/solid";
 import { createMediaQuery } from "@solid-primitives/media";
 
 export default function LayoutMenu() {
@@ -62,25 +61,25 @@ export default function LayoutMenu() {
             <div class="h-2/6 grow space-y-2">
               <div class="flex items-center justify-between">
                 <h2 id="folders" class="text-sm">Folders</h2>
-                <Dialog>
-                  <Dialog.Trigger action="open" title="create folder" class="p-1.5 rounded-lg hover:bg-tertiary">
+                <Dialog.Root>
+                  <Dialog.Trigger title="create folder" class="p-1.5 rounded-lg hover:bg-tertiary">
                     <FolderPlus class="size-5" />
                   </Dialog.Trigger>
                   <Portal>
                     <Dialog.Content>
                       <Backdrop />
-                      <div class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 z-10 w-96 flex flex-col gap-6 p-2 rounded-lg bg-primary border-2 border-white/10">
+                      <div class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 z-10 w-96 flex flex-col gap-6 p-4 rounded-lg bg-primary border-2 border-white/10">
                         <span class="flex items-center justify-between">
                           <h4 class="font-medium">Folder</h4>
-                          <Dialog.Trigger action="close" title="close new folder form" class="p-1 rounded-lg hover:bg-red-500/50" as={"button"}>
+                          <Dialog.CloseTrigger title="close new folder form" class="p-1 rounded-lg hover:bg-red-500/50">
                             <X />
-                          </Dialog.Trigger>
+                          </Dialog.CloseTrigger>
                         </span>
                         <UpdateFolderForm />
                       </div>
                     </Dialog.Content>
                   </Portal>
-                </Dialog>
+                </Dialog.Root>
               </div>
               <nav aria-labelledby="folders" class="h-5/6 overflow-y-scroll space-y-1">
                 <For each={data.folders}>
@@ -150,25 +149,25 @@ export default function LayoutMenu() {
           <div class="h-2/6 grow space-y-2">
             <div class="flex items-center justify-between">
               <h2 id="folders" class="text-sm">Folders</h2>
-              <Dialog>
-                <Dialog.Trigger action="open" title="create folder" class="p-1.5 rounded-lg hover:bg-tertiary">
+              <Dialog.Root>
+                <Dialog.Trigger title="create folder" class="p-1.5 rounded-lg hover:bg-tertiary">
                   <FolderPlus class="size-5" />
                 </Dialog.Trigger>
                 <Portal>
                   <Dialog.Content>
                     <Backdrop />
-                    <div class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 z-10 w-96 flex flex-col gap-6 p-2 rounded-lg bg-primary border-2 border-white/10">
+                    <div class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 z-10 w-96 flex flex-col gap-6 p-4 rounded-lg bg-primary border-2 border-white/10">
                       <span class="flex items-center justify-between">
                         <h4 class="font-medium">Folder</h4>
-                        <Dialog.Trigger action="close" title="close new folder form" class="p-1 rounded-lg hover:bg-red-500/50" as={"button"}>
+                        <Dialog.CloseTrigger title="close new folder form" class="p-1 rounded-lg hover:bg-red-500/50">
                           <X />
-                        </Dialog.Trigger>
+                        </Dialog.CloseTrigger>
                       </span>
                       <UpdateFolderForm />
                     </div>
                   </Dialog.Content>
                 </Portal>
-              </Dialog>
+              </Dialog.Root>
             </div>
             <nav aria-labelledby="folders" class="h-5/6 overflow-y-scroll space-y-1">
               <For each={data.folders}>
@@ -184,21 +183,21 @@ export default function LayoutMenu() {
                   <Star class="size-4" />
                   Favorites
                 </span>
-                <span class="flex justify-center items-center bg-accent rounded-full size-5 text-[0.8rem]">{data.favorites.length}</span>
+                <span class="flex justify-center items-center bg-primary rounded-lg size-6 text-xs">{data.favorites.length}</span>
               </A>
               <A class="flex items-center justify-between hover:bg-link-hover p-1.5 rounded-lg" href="/archived" activeClass="bg-active">
                 <span class="flex items-center gap-2">
                   <Archive class="size-4" />
                   Archived
                 </span>
-                <span class="flex justify-center items-center bg-accent rounded-full size-5 text-[0.8rem]">{data.archived.length}</span>
+                <span class="flex justify-center items-center bg-primary rounded-lg size-6 text-xs">{data.archived.length}</span>
               </A>
               <A class="flex items-center justify-between hover:bg-link-hover p-1.5 rounded-lg" href="/trash" activeClass="bg-active">
                 <span class="flex items-center gap-2">
                   <Trash class="size-4" />
                   Trash
                 </span>
-                <span class="flex justify-center items-center bg-accent rounded-full size-5 text-[0.8rem]">{data.trash.length}</span>
+                <span class="flex justify-center items-center bg-primary rounded-lg size-6 text-xs">{data.trash.length}</span>
               </A>
             </nav>
           </div>

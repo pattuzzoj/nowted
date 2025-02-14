@@ -38,19 +38,19 @@ export default function Note(props: NoteProps) {
       group-hover:opacity-100
       rounded-lg
       mx-3 my-4 transition duration-0 group-hover:duration-200 z-50">
-        <button title="Delete Note" class="p-1 rounded-lg hover:text-red-400" onClick={() => {props.deleted_at != null ? noteService.restoreNote(props.id) : noteService.deleteNote(props.id)}}>
+        <button title="Delete Note" class="flex justify-center items-center size-6 p-1 rounded-lg hover:text-red-400 bg-primary" onClick={() => {props.deleted_at != null ? noteService.restoreNote(props.id) : noteService.deleteNote(props.id)}}>
           <Show when={props.deleted_at != null} fallback={<Trash class="size-4"/>}>
-            <RefreshCcw class="size-4"/>
+            <RefreshCcw class="size-3.5"/>
           </Show>
         </button>
-        <button title="Archive Note" class="p-1 rounded-lg hover:text-blue-400" onClick={() => {props.archived ? noteService.unarchiveNote(props.id) : noteService.archiveNote(props.id)}}>
+        <button title="Archive Note" class="flex justify-center items-center size-6 p-1 rounded-lg hover:text-blue-400 bg-primary" onClick={() => {props.archived ? noteService.unarchiveNote(props.id) : noteService.archiveNote(props.id)}}>
           <Show when={props.archived} fallback={<Archive class="size-4"/>}>
-            <ArchiveRestore class="size-4"/>
+            <ArchiveRestore class="size-3.5"/>
           </Show>
         </button>
-        <button title="Favorite Note" class="p-1 rounded-lg hover:text-yellow-400" onClick={() => {props.favorite ? noteService.unfavoriteNote(props.id) : noteService.favoriteNote(props.id)}}>
+        <button title="Favorite Note" class="flex justify-center items-center size-6 p-1 rounded-lg hover:text-yellow-400 bg-primary" onClick={() => {props.favorite ? noteService.unfavoriteNote(props.id) : noteService.favoriteNote(props.id)}}>
           <Show when={props.favorite} fallback={<Star class="size-4"/>}>
-            <StarOff class="size-4"/>
+            <StarOff class="size-3.5"/>
           </Show>
         </button>
       </span>

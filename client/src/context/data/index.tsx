@@ -64,7 +64,7 @@ export default function DataProvider(props: ParentProps) {
   const [useStore] = useIndexedDB();
   const folderStore = useStore<Folder>("folder");
   const noteStore = useStore<Note>("note");
-  const syncStore = useStore<SyncRecord>("SyncRecord");
+  const syncStore = useStore<SyncRecord>("sync-record");
   const folderService = FolderService.getInstance(folderStore);
   const noteService = NoteService.getInstance(noteStore);
   const syncService = SyncService.getInstance(syncStore);
