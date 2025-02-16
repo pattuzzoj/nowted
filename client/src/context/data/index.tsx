@@ -81,7 +81,7 @@ export default function DataProvider(props: ParentProps) {
       localStorage.setItem("lastSync", new Date("0").toISOString());
     }
 
-    await notify.promise(syncService.syncFetch, messages.SYNC_ALL);
+    await notify.promise(async () => syncService.syncFetch(), messages.SYNC_ALL);
     await notify.promise(async () => {
       const folders = (await folderService.getAll()).filter((folder) => folder.deleted_at === null);
       const favorites = await noteService.getFavoriteNotes();
