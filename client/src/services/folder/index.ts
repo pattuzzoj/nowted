@@ -53,6 +53,8 @@ export default class FolderService {
     folder.updated_at = new Date().toISOString();
     await this.folderStore.put(folder);
     await this.actionRecordService.create("update", "folder", folder);
+
+    return folder;
   }
 
   async delete(id: string) {
@@ -65,6 +67,8 @@ export default class FolderService {
       updated_at: folder.updated_at,
       deleted_at: folder.deleted_at
     });
+
+    return folder;
   }
 
   async restore(id: string) {
@@ -78,6 +82,8 @@ export default class FolderService {
       updated_at: folder.updated_at,
       deleted_at: folder.deleted_at
     });
+
+    return folder;
   }
 
   async clear() {

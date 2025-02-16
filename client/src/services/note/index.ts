@@ -33,9 +33,9 @@ export default class NoteService {
   async getNotesByFolderId(folderId: string) {
     const notes = await this.getAll();
     return notes.filter((note) =>
-        note.folder_id === folderId &&
-        note.archived === false &&
-        note.deleted_at === null
+      note.folder_id === folderId &&
+      note.archived === false &&
+      note.deleted_at === null
     );
   }
 
@@ -72,30 +72,32 @@ export default class NoteService {
     note.updated_at = new Date().toISOString();
     await this.noteStore.put(note);
     await this.actionRecordService.create("update", "note", note);
+
+    return note;
   }
 
   async favorite(id: string) {
     const note = await this.noteStore.get(id);
     note.favorite = true;
-    await this.update(note);
+    return await this.update(note);
   }
 
   async unfavorite(id: string) {
     const note = await this.noteStore.get(id);
     note.favorite = false;
-    await this.update(note);
+    return await this.update(note);
   }
 
   async archive(id: string) {
     const note = await this.noteStore.get(id);
     note.archived = true;
-    await this.update(note);
+    return await this.update(note);
   }
 
   async unarchive(id: string) {
     const note = await this.noteStore.get(id);
     note.archived = false;
-    await this.update(note);
+    return await this.update(note);
   }
 
   async delete(id: string) {
@@ -108,6 +110,8 @@ export default class NoteService {
       updated_at: note.updated_at,
       deleted_at: note.deleted_at
     });
+
+    return note;
   }
 
   async restore(id: string) {
@@ -122,6 +126,8 @@ export default class NoteService {
       updated_at: note.updated_at,
       deleted_at: note.deleted_at
     });
+
+    return note;
   }
 
   async clear() {

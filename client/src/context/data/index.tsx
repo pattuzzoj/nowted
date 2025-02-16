@@ -1,13 +1,12 @@
 import { createContext, createEffect, onCleanup, onMount, ParentProps, useContext } from "solid-js";
 import { createStore } from "solid-js/store";
 import { useParams } from "@solidjs/router";
-import { sleep } from "@utilify/core";
 import { useIndexedDB } from "@context/indexedDB";
 import useToast from "@hooks/useToast";
 import FolderService from "@services/folder";
 import NoteService from "@services/note";
 import SyncService from "@services/sync";
-import { ActionRecord, Folder, Note, SyncRecord } from "@/types";
+import { ActionRecord, Folder, Note } from "@/types";
 import FetchService from "@/services/fetch";
 import { baseURL } from "@/utils/constants";
 import ActionRecordService from "@/services/actionRecord";
@@ -82,22 +81,9 @@ export default function DataProvider(props: ParentProps) {
       localStorage.setItem("lastSync", new Date("0").toISOString());
     }
 
-    notify.loading("Synchronizing...");
-    const response = await syncService.syncFetch();
-    await sleep(1000);
-
-    if (response.status === "error") {
-      notify.error(response.message);
-    } else {
-      notify.success(response.message);
-    }
-    
-    await sleep(1000);
-    notify.loading("Loading data...");
-    await sleep(1000);
-
-    try {
-      const folders = await folderService.getFolders();
+    await notify.promise(syncService.syncFetch, messages.SYNC_ALL);
+    await notify.promise(async () => {
+      const folders = (await folderService.getAll()).filter((folder) => folder.deleted_at === null);
       const favorites = await noteService.getFavoriteNotes();
       const archived = await noteService.getArchivedNotes();
       const trash = await noteService.getDeletedNotes();
@@ -106,260 +92,216 @@ export default function DataProvider(props: ParentProps) {
       setData("favorites", favorites);
       setData("archived", archived);
       setData("trash", trash);
-
-      notify.success("Data loaded successfully");
-    } catch (error) {
-      console.error(error);
-      notify.error("Internal Error");
-    }
+    }, messages.LOAD_ALL);
   });
 
-  async function createFolder(data: Folder) {
-    messages.CREATE_FOLDER.loading
-
-    const folder = await notify.promise(async () => {
-      return await folderService.create(data);
-
-    }, messages.CREATE_FOLDER);
-    
-    setData("folders", (folders) => [
-      ...folders,
-      folder
-    ]);
+  async function createFolder(folderData: Folder) {
+    await notify.promise<Folder>(
+      async () => {
+        const folder = await folderService.create(folderData);
+        setData("folders", data.folders.length, folder);
+        return folder;
+      },
+      messages.CREATE_FOLDER
+    );
   }
 
   async function updateFolder(folder: Folder) {
-    notify.loading(messages.UPDATE_FOLDER.loading);
-    await sleep(1000);
+    await notify.promise<Folder>(
+      async () => {
+        await folderService.update(folder);
+        setData("folders", (folders) => [
+          ...folders.map((currentFolder) => {
+            if (currentFolder.id === folder.id) {
+              return folder;
+            }
 
-    try {
-      await folderService.update(folder);
-
-      setData("folders", (folders) => [
-        ...folders.map((currentFolder) => {
-          if (currentFolder.id === folder.id) {
-            return folder;
-          }
-
-          return currentFolder;
-        })
-      ]);
-
-      notify.success("Folder updated successfully");
-    } catch {
-      notify.error("Error updating folder");
-    }
+            return currentFolder;
+          })
+        ]);
+        return folder;
+      },
+      messages.UPDATE_FOLDER
+    );
   }
 
   async function deleteFolder(id: string) {
-    notify.loading("Deleting Folder...");
-    await sleep(1000);
+    await notify.promise<void>(
+      async () => {
+        await folderService.delete(id);
+        const notes = await noteService.getNotesByFolderId(id);
 
-    try {
-      await folderService.delete(id);
-      const notes = await noteService.getNotesByFolderId(id);
+        for (const note of notes) {
+          await noteService.delete(note.id);
+        }
 
-      for (const note of notes) {
-        await noteService.delete(note.id);
-      }
-
-      setData("folders", (folders) => [
-        ...folders.filter((folder) => folder.id != id)
-      ]);
-
-      notify.success("Folder deleted successfully");
-    } catch (error) {
-      notify.error("Could not delete the folder");
-    }
+        setData("folders", (folders) => [
+          ...folders.filter((folder) => folder.id != id)
+        ]);
+      },
+      messages.DELETE_FOLDER
+    );
   }
 
   async function restoreFolder(id: string) {
-    notify.loading("Restoring folder...");
-    await sleep(1000);
+    await notify.promise<Folder>(
+      async () => {
+        const folder = await folderService.get(id);
+        if (folder.deleted_at !== null) {
+          await folderService.restore(folder.id);
+        }
 
-    try {
-      const folder = await folderService.get(id);
-    
-      if (folder.deleted_at !== null) {
-        await folderService.restore(folder.id);
-      }
-
-      setData("folders", data.folders.length, folder);
-
-      notify.success("Folder restored successfully");
-    } catch {
-      notify.error("Error restoring folder");
-    }
+        setData("folders", data.folders.length, folder);
+        return folder;
+      },
+      messages.RESTORE_FOLDER
+    );
   }
 
   async function createNote(folderId: string) {
-    notify.loading("Creating note...");
-    await sleep(1000);
-
-    try {
-      const note = await noteService.create({name: "new note", folder_id: folderId});
-
-      setData("notes", data.notes.length, note);
-
-      notify.success("Note created successfully");
-    } catch {
-      notify.error("Error creating note");
-    }
+    await notify.promise<Note>(
+      async () => {
+        const note = await noteService.create({ name: "New Note", folder_id: folderId } as Note);
+        setData("notes", data.notes.length, note);
+        return note;
+      },
+      messages.CREATE_NOTE
+    );
   }
 
   async function updateNote(note: Note) {
-    await noteService.update(note);
+    await notify.promise<Note>(
+      async () => {
+        await noteService.update(note);
+        setData("notes", (notes) => [
+          ...notes.map((currentNote) => {
+            if (currentNote.id === note.id) {
+              return note;
+            }
 
-    setData("notes", (notes) => [
-      ...notes.map((currentNote) => {
-        if (currentNote.id === note.id) {
-          return note;
-        }
-
-        return currentNote;
-      })
-    ]);
+            return currentNote;
+          })
+        ]);
+        return note;
+      },
+      messages.UPDATE_NOTE
+    );
   }
 
   async function updateContent(id: string, preview: string, content: string) {
-    notify.loading("Updating content...");
-    await sleep(1000);
-
-    try {
-      const note = await noteService.get(id);
-      note.preview = preview;
-      note.content = content;
-      await updateNote(note);
-
-      notify.success("Content updated successfully");
-    } catch {
-      notify.error("Error updating content");
-    }
+    await notify.promise<Note>(
+      async () => {
+        const note = await noteService.get(id);
+        note.preview = preview;
+        note.content = content;
+        await updateNote(note);
+        return note;
+      },
+      messages.UPDATE_CONTENT
+    );
   }
 
-  function favoriteNote(id: string) {
-    notify.promise(async () => {
-      await noteService.favorite(id);
-
-      setData("favorites", data.favorites.length, note);
-    }, messages.FAVORITE_NOTE)
+  async function favoriteNote(id: string) {
+    await notify.promise<Note>(
+      async () => {
+        const note = await noteService.favorite(id);
+        setData("favorites", data.favorites.length, note);
+        return note;
+      },
+      messages.FAVORITE_NOTE
+    );
   }
 
   async function unfavoriteNote(id: string) {
-    notify.loading("Removing from favorites...");
-    await sleep(1000);
-
-    try {
-      const note = await noteService.get(id);
-      note.favorite = false;
-      await updateNote(note);
-
-      setData("favorites", (notes) => [
-        ...(notes).filter((currentNote) => currentNote.id != note.id)
-      ]);
-
-      notify.success("Note removed from favorites");
-    } catch {
-      notify.error("Error removing note from favorites");
-    }
+    await notify.promise<Note>(
+      async () => {
+        const note = await noteService.unfavorite(id);
+        setData("favorites", (notes) => [
+          ...(notes).filter((currentNote) => currentNote.id != note.id)
+        ]);
+        return note;
+      },
+      messages.UNFAVORITE_NOTE
+    );
   }
 
   async function archiveNote(id: string) {
-    notify.loading("Archiving note...");
-    await sleep(1000);
+    await notify.promise<Note>(
+      async () => {
+        const note = await noteService.archive(id);
+        setData("notes", (notes) => [
+          ...notes.filter((note) => note.id != id)
+        ]);
 
-    try {
-      const note = await noteService.get(id);
-      note.archived = true;
-      await updateNote(note);
-
-      setData("notes", (notes) => [
-        ...notes.filter((note) => note.id != id)
-      ]);
-
-      setData("archived", data.archived.length, note);
-
-      notify.success("Note archived successfully");
-    } catch {
-      notify.error("Error archiving note");
-    }
+        setData("archived", data.archived.length, note);
+        return note;
+      },
+      messages.ARCHIVE_NOTE
+    );
   }
 
   async function unarchiveNote(id: string) {
-    notify.loading("Unarchiving note...");
-    await sleep(1000);
-
-    try {
-      const note = await noteService.get(id);
-      note.archived = false;
-      await updateNote(note);
-
-      setData("archived", (notes) => [
-        ...(notes).filter((currentNote) => currentNote.id != note.id)
-      ]);
-
-      notify.success("Note unarchived successfully");
-    } catch {
-      notify.error("Error unarchiving note");
-    }
+    await notify.promise<Note>(
+      async () => {
+        const note = await noteService.unarchive(id);
+        setData("archived", (notes) => [
+          ...(notes).filter((currentNote) => currentNote.id != note.id)
+        ]);
+        setData("notes", data.archived.length, note);
+        return note;
+      },
+      messages.UNARCHIVE_NOTE
+    );
   }
 
   async function restoreNote(id: string) {
-    notify.loading("Restoring note...");
-    await sleep(1000);
+    await notify.promise<Note>(
+      async () => {
+        const note = await noteService.restore(id);
+        await restoreFolder(note.folder_id);
+        setData("trash", (notes) => [
+          ...notes.filter((note) => note.id != id)
+        ]);
 
-    try {
-      const note = await noteService.restore(id);
-      await restoreFolder(note.folder_id);
+        if (note.favorite) {
+          setData("favorites", data.favorites.length, note);
+        }
 
-      setData("trash", (notes) => [
-        ...notes.filter((note) => note.id != id)
-      ]);
+        if (note.archived) {
+          setData("archived", data.archived.length, note);
+        }
 
-      if (note.favorite) {
-        setData("favorites", data.favorites.length, note);
-      }
+        if (data.folders.every((folder) => folder.id !== note.folder_id)) {
+          const folders = (await folderService.getAll()).filter((folder) => folder.deleted_at === null);
+          setData("folders", folders);
+        }
 
-      if (note.archived) {
-        setData("archived", data.archived.length, note);
-      }
-
-      if (data.folders.every((folder) => folder.id !== note.folder_id)) {
-        const folders = await folderService.getFolders();
-        setData("folders", folders);
-      }
-
-      notify.success("Note restored successfully");
-    } catch {
-      notify.error("Error restoring note");
-    }
+        return note;
+      },
+      messages.RESTORE_NOTE
+    );
   }
 
   async function deleteNote(id: string) {
-    notify.loading("Deleting note...");
-    await sleep(1000);
+    await notify.promise<void>(
+      async () => {
+        const note = await noteService.delete(id);
+        setData("notes", (notes) => [
+          ...notes.filter((note) => note.id != id)
+        ]);
 
-    try {
-      const note = await noteService.delete(id);
+        setData("favorites", (notes) => [
+          ...notes.filter((note) => note.id != id)
+        ]);
 
-      setData("notes", (notes) => [
-        ...notes.filter((note) => note.id != id)
-      ]);
+        setData("archived", (notes) => [
+          ...notes.filter((note) => note.id != id)
+        ]);
 
-      setData("favorites", (notes) => [
-        ...notes.filter((note) => note.id != id)
-      ]);
-
-      setData("archived", (notes) => [
-        ...notes.filter((note) => note.id != id)
-      ]);
-
-      setData("trash", data.trash.length, note);
-
-      notify.success("Note deleted successfully");
-    } catch {
-      notify.error("Error deleting note");
-    }
+        setData("trash", data.trash.length, note);
+      },
+      messages.DELETE_NOTE
+    );
   }
 
   createEffect(async () => {
@@ -380,16 +322,16 @@ export default function DataProvider(props: ParentProps) {
       if (!data.recents.find((recentNote) => recentNote.id === note.id)) {
         setData("recents", recents.slice(0, 3));
       }
-      
+
       setData("note", note);
     }
   });
 
   function backoff(attempt: number = 0) {
-    const baseDelay = 1000;
+    const baseDelay = 2000;
     const maxDelay = 30000;
     const delay = Math.min(baseDelay * (2 ** attempt), maxDelay);
-  
+
     return setTimeout(async () => {
       const response = await syncService.syncPush();
 

@@ -66,8 +66,8 @@ export default function useToast() {
         setStatus(status);
       });
     },
-    promise: async (
-      promise: <T>() => Promise<T | null>,
+    promise: async <T>(
+      promise: () => Promise<T | void>,
       message: {
         loading: string,
         success: string,
