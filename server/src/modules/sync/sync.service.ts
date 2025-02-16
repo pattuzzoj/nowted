@@ -43,10 +43,10 @@ export class SyncService {
           await entityService.update(userId, data);
           break;
         case "delete":
-          await entityService.delete(userId, data.id);
+          await entityService.delete(userId, data);
           break;
         case "restore":
-          await entityService.restore(userId, data.id);
+          await entityService.restore(userId, data);
           break;
         default:
           throw new NotImplementedException({

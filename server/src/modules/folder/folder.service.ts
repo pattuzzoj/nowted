@@ -43,20 +43,23 @@ export class FolderService {
   }
 
   async create(userId: string, folder: Folder) {
+    folder.created_at = new Date(folder.created_at);
+    folder.updated_at = new Date(folder.updated_at);
+    folder.deleted_at = folder.deleted_at ? folder.deleted_at : null;
+
     return await this.db
     .insert(folderSchema)
-    .values({user_id: userId, ...folder, updated_at: new Date()});
+    .values({user_id: userId, ...folder});
   }
 
   async update(userId: string, folder: Folder) {
+    folder.created_at = new Date(folder.created_at);
+    folder.updated_at = new Date(folder.updated_at);
+    folder.deleted_at = folder.deleted_at ? folder.deleted_at : null;
+
     await this.db
     .update(folderSchema)
-    .set({
-      name: sql`COALESCE(${folder.name}, ${folderSchema.name})`,
-      color: sql`COALESCE(${folder.color}, ${folderSchema.color})`,
-      order: sql`COALESCE(${folder.order}, ${folderSchema.order})`,
-      updated_at: new Date()
-    })
+    .set(folder)
     .where(
       and(
         eq(folderSchema.user_id, userId),
@@ -65,15 +68,19 @@ export class FolderService {
     );
   }
 
-  async restore(userId: string, folderId: string) {
+  async restore(userId: string, folder: Folder) {
+    folder.created_at = new Date(folder.created_at);
+    folder.updated_at = new Date(folder.updated_at);
+    folder.deleted_at = folder.deleted_at ? folder.deleted_at : null;
+    
     await this.db.batch([
       this.db
       .update(folderSchema)
-      .set({updated_at: new Date(), deleted_at: null})
+      .set({updated_at: folder.updated_at, deleted_at: folder.deleted_at})
       .where(
         and(
           eq(folderSchema.user_id, userId),
-          eq(folderSchema.id, folderId),
+          eq(folderSchema.id, folder.id),
           isNotNull(folderSchema.deleted_at)
         )
       ),
@@ -83,22 +90,26 @@ export class FolderService {
       .where(
         and(
           eq(noteSchema.user_id, userId),
-          eq(noteSchema.folder_id, folderId),
+          eq(noteSchema.folder_id, folder.id),
           isNotNull(noteSchema.deleted_at)
         )
       )
     ]);
   }
 
-  async delete(userId: string, folderId: string) {
+  async delete(userId: string, folder: Folder) {
+    folder.created_at = new Date(folder.created_at);
+    folder.updated_at = new Date(folder.updated_at);
+    folder.deleted_at = folder.deleted_at ? folder.deleted_at : null;
+
     await this.db.batch([
       this.db
       .update(folderSchema)
-      .set({updated_at: new Date(), deleted_at: new Date()})
+      .set({updated_at: folder.updated_at, deleted_at: folder.deleted_at})
       .where(
         and(
           eq(folderSchema.user_id, userId),
-          eq(folderSchema.id, folderId)
+          eq(folderSchema.id, folder.id)
         )
       ),
       this.db
@@ -107,7 +118,7 @@ export class FolderService {
       .where(
         and(
           eq(noteSchema.user_id, userId),
-          eq(noteSchema.folder_id, folderId)
+          eq(noteSchema.folder_id, folder.id)
         )
       )
     ]);

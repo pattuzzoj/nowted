@@ -46,22 +46,23 @@ export class NoteService {
   }
 
   async create(userId: string, note: Note) {
+    note.created_at = new Date(note.created_at);
+    note.updated_at = new Date(note.updated_at);
+    note.deleted_at = note.deleted_at ? note.deleted_at : null;
+    
     return await this.db
     .insert(noteSchema)
-    .values({user_id: userId, ...note, updated_at: sql`NOW()`});
+    .values({user_id: userId, ...note});
   }
 
   async update(userId: string, note: Note) {
+    note.created_at = new Date(note.created_at);
+    note.updated_at = new Date(note.updated_at);
+    note.deleted_at = note.deleted_at ? note.deleted_at : null;
+
     await this.db
     .update(noteSchema)
-    .set({
-      name: sql`COALESCE(${note.name}, ${noteSchema.name})`,
-      preview: sql`COALESCE(${note.preview}, ${noteSchema.preview})`,
-      content: sql`COALESCE(${note.content}, ${noteSchema.content})`,
-      favorite: sql`COALESCE(${note.favorite}, ${noteSchema.favorite})`,
-      archived: sql`COALESCE(${note.archived}, ${noteSchema.archived})`,
-      updated_at: sql`NOW()`
-    })
+    .set(note)
     .where(
       and(
         eq(noteSchema.user_id, userId),
@@ -70,14 +71,18 @@ export class NoteService {
     );
   }
 
-  async restore(userId: string, noteId: string) {
+  async restore(userId: string, note: Note) {
+    note.created_at = new Date(note.created_at);
+    note.updated_at = new Date(note.updated_at);
+    note.deleted_at = note.deleted_at ? note.deleted_at : null;
+
     const [folderId] = await this.db
     .update(noteSchema)
-    .set({updated_at: sql`NOW()`, deleted_at: null})
+    .set({updated_at: note.updated_at, deleted_at: note.deleted_at})
     .where(
       and(
         eq(noteSchema.user_id, userId),
-        eq(noteSchema.id, noteId),
+        eq(noteSchema.id, note.id),
         isNotNull(noteSchema.deleted_at),
       )
     )
@@ -90,20 +95,24 @@ export class NoteService {
       .where(
         and(
           eq(folderSchema.user_id, userId),
-          eq(folderSchema.id, noteId),
+          eq(folderSchema.id, note.id),
         )
       );
     }
   }
 
-  async delete(userId: string, noteId: string) {
+  async delete(userId: string, note: Note) {
+    note.created_at = new Date(note.created_at);
+    note.updated_at = new Date(note.updated_at);
+    note.deleted_at = note.deleted_at ? note.deleted_at : null;
+
     await this.db
     .update(noteSchema)
-    .set({updated_at: sql`NOW()`, deleted_at: sql`NOW()`})
+    .set({updated_at: note.updated_at, deleted_at: note.deleted_at})
     .where(
       and(
         eq(noteSchema.user_id, userId),
-        eq(noteSchema.id, noteId),
+        eq(noteSchema.id, note.id),
       )
     );
   }
