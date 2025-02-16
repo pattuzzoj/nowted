@@ -85,7 +85,9 @@ export default class SyncService {
     const synchronizedRecords = [...nonUpdateRecords, ...mergedUpdates];
 
     if (synchronizedRecords.length < 1) {
-      return;
+      return {
+        status: "error"
+      };
     }
 
     const response = await this.fetchService.post("", synchronizedRecords);

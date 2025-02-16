@@ -14,7 +14,7 @@ const AuthContext = createContext<Auth>();
 interface Auth {
   isAuthenticated: Accessor<boolean>,
   setIsAuthenticated: Setter<boolean>,
-  authStatus: () =>  Promise<FetchResponse<unknown>>,
+  status: () =>  Promise<FetchResponse<unknown>>,
   handleSignIn: (credentials: SignIn) => Promise<void>,
   handleSignUp: (registration: SignUp) => Promise<void>,
   handleLogOut: () => Promise<void>,
@@ -29,6 +29,10 @@ export default function AuthProvider(props: ParentProps) {
   const [_, { clearDatabase }] = useIndexedDB();
   const navigate = useNavigate();
   const notify = useToast();
+
+  async function status() {
+    return await authService.status();
+  }
 
   async function handleSignIn(credentials: SignIn) {
     await notify.promise(
@@ -115,7 +119,7 @@ export default function AuthProvider(props: ParentProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, authStatus: authService.status, handleSignIn, handleSignUp, handleLogOut, handleRecoverAccount, handleResetPassword }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, status, handleSignIn, handleSignUp, handleLogOut, handleRecoverAccount, handleResetPassword }}>
       {props.children}
     </AuthContext.Provider>
   )
@@ -124,12 +128,12 @@ export default function AuthProvider(props: ParentProps) {
 export const useAuth = (): Auth => useContext(AuthContext) as unknown as Auth;
 
 export function AuthRoute(props: ParentProps) {
-  const { isAuthenticated, setIsAuthenticated, authStatus } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, status: checkStatus } = useAuth();
   const navigate = useNavigate();
   const notify = useToast();
 
   (async () => {
-    const { status, message } = await authStatus();
+    const { status, message } = await checkStatus();
 
     if (status === "error") {
       notify.error(message);
