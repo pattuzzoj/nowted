@@ -128,18 +128,18 @@ export function AuthRoute(props: ParentProps) {
   const navigate = useNavigate();
   const notify = useToast();
 
-  // (async () => {
-  //   const { status, message } = authStatus();
+  (async () => {
+    const { status, message } = authStatus();
 
-  //   if (status === "error") {
-  //     notify.error(message);
-  //     navigate("/auth/sign-in");
-  //     return;
-  //   }
+    if (status === "error") {
+      notify.error(message);
+      navigate("/auth/sign-in");
+      return;
+    }
 
-  //   notify.success(message);
-  //   setIsAuthenticated(true);
-  // })();
+    notify.success(message);
+    setIsAuthenticated(true);
+  })();
 
   return (
     <Show when={isAuthenticated()}>
