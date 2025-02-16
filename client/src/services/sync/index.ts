@@ -3,8 +3,7 @@ import FolderService from "../folder";
 import NoteService from "../note";
 import { Folder, Note } from "@/types";
 import ActionRecordService from "../actionRecord";
-import FetchResponse from "../fetch/interface/fetchResponse.interface";
-import { deepMerge, merge } from "@utilify/core";
+import { deepMerge } from "@utilify/core";
 
 export default class SyncService {
   private static instance: SyncService;
@@ -85,9 +84,11 @@ export default class SyncService {
 
     const synchronizedRecords = [...nonUpdateRecords, ...mergedUpdates];
 
-    if (synchronizedRecords.length > 0) {
-      const response = await this.fetchService.post("", synchronizedRecords);
+    if (synchronizedRecords.length < 1) {
+      return;
     }
+
+    const response = await this.fetchService.post("", synchronizedRecords);
 
     if (response.status === "error") {
       return response;

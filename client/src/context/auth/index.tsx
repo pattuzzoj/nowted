@@ -129,7 +129,7 @@ export function AuthRoute(props: ParentProps) {
   const notify = useToast();
 
   (async () => {
-    const { status, message } = authStatus();
+    const { status, message } = await authStatus();
 
     if (status === "error") {
       notify.error(message);
