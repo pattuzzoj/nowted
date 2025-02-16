@@ -3,7 +3,6 @@ import { ParentProps } from "solid-js";
 import { createTiptapEditor } from 'solid-tiptap';
 import CalendarDays from "lucide-solid/icons/calendar-days";
 import Folder from "lucide-solid/icons/folder";
-import ImagePlus from "lucide-solid/icons/image-plus";
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import Link from "@tiptap/extension-link";
@@ -19,11 +18,9 @@ import TypographMenu from "./typographMenu";
 import AlignMenu from "./alignMenu";
 import SizeMenu from "./sizeMenu";
 import { useData } from "@context/data";
+import MediaMenu from "./mediaMenu";
 
-
-interface EditorProps extends ParentProps { }
-
-export default function Editor(props: EditorProps) {
+export default function Editor() {
   const [data, {noteService}] = useData();
   let ref: HTMLDivElement;
 
@@ -47,7 +44,7 @@ export default function Editor(props: EditorProps) {
         allowBase64: true,
         inline: true,
         HTMLAttributes: {
-          class: "size-16"
+          class: "aspect-auto"
         }
       }),
       Link.configure({
@@ -70,34 +67,6 @@ export default function Editor(props: EditorProps) {
     }
   }));
 
-  // const toggleLink = () => editor()?.chain().focus().toggleLink({href:"www.google.com"}).run();
-  // const setLink = (href: string) => editor()?.chain().focus().extendMarkRange("link").setLink({href, target: "_blank"}).run();
-  // const setImage = (title: string, src: string) => editor()?.chain().focus().setImage({src, title}).run();
-
-  // function handlerUploadImage(e) {
-  //   const files = e.target.files;
-    
-  //   for (const file of files) {
-  //     const reader = new FileReader();
-  //     reader.onload = (e: ProgressEvent<FileReader>) => {
-  //       setImage(e.target!.result);
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // }
-
-  // function handlerSetImage(e) {
-  //   const title = window.prompt("Title: ");
-  //   const url = window.prompt("URL: ");
-  //   setImage(title, url);
-  // }
-
-  // function handlerSetLink() {
-  //   const url = window.prompt("");
-  //   const novaurl = new URL(url);
-  //   setLink(novaurl);
-  // }
-
   return (
     <div class="h-screen max-md:w-screen md:basis-full flex flex-col gap-4 p-4 bg-primary">
       <div class="flex justify-between items-center">
@@ -105,7 +74,7 @@ export default function Editor(props: EditorProps) {
       </div>
       <span class="flex gap-4">
         <span class="flex items-center gap-2">
-          <CalendarDays class="size-4" />
+          <CalendarDays class="size-5" />
           Date
         </span>
         {formatDate(new Date(data.note.created_at), "DMY")}
@@ -113,13 +82,13 @@ export default function Editor(props: EditorProps) {
       <hr class="text-white/20" />
       <span class="flex gap-4">
         <span class="flex items-center gap-2">
-          <Folder class="size-4" />
+          <Folder class="size-5" />
           Date
         </span>
         {data.folder.name}
       </span>
       <hr class="text-white/20" />
-      <div class="flex max-md:flex-col items-start md:items-center gap-4">
+      <div class="flex max-md:overflow-x-scroll items-start md:items-center gap-4">
         <span class="flex justify-between items-center space-x-1">
           <TypographMenu editor={editor}/>
           <SizeMenu editor={editor}/>
@@ -127,26 +96,11 @@ export default function Editor(props: EditorProps) {
         <span class="flex items-center text-tertiary font-extrabold">|</span>
         <AlignMenu editor={editor}/>
         <span class="flex items-center text-tertiary font-extrabold">|</span>
-        <span>
-          <MarkingMenu editor={editor}/>
-        </span>
-        <span class="space-x-2">
-          {/* <button title="image" class="p-2 rounded-lg hover:bg-tertiary" onClick={setImageHandler}>
-            <ImagePlus class="size-5" />
-          </button> */}
-          {/* <label title="image" class="p-2 rounded-lg hover:bg-tertiary">
-            <input class="hidden" type="file" accept="image/*" multiple onChange={setImageHandler} />
-            <ImagePlus class="size-5" />
-          </label>
-          <button title="link" class="p-2 rounded-lg hover:bg-tertiary" onClick={setLinkHandler}>
-            <Link class="size-5" />
-          </button> */}
-        </span>
-        {/* <button title="table" class="p-2 rounded-lg hover:bg-tertiary">
-          <Table class="size-5" />
-        </button> */}
+        <MarkingMenu editor={editor}/>
+        <span class="flex items-center text-tertiary font-extrabold">|</span>
+        <MediaMenu editor={editor}/>
       </div>
-      <div role="textbox" aria-multiline="true" class="flex grow focus-visible:outline-0 rounded-lg p-4 bg-tertiary" id="editor" ref={ref}/>
+      <div role="textbox" aria-multiline="true" class="flex grow focus-visible:outline-0 rounded-lg p-4 bg-tertiary overflow-y-scroll" id="editor" ref={ref}/>
     </div>
   )
 }

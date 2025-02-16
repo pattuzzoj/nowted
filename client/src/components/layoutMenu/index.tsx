@@ -21,13 +21,13 @@ import { Menu, Dialog } from "@ark-ui/solid";
 import { createMediaQuery } from "@solid-primitives/media";
 
 export default function LayoutMenu() {
-  const [menuIsActive, setMenuIsActive] = createSignal(false);
-  const [searchIsActive, setSearchIsActive] = createSignal(false);
   const { handleLogOut } = useAuth();
   const [data, { noteService }] = useData();
   const params = useParams();
   const isMobile = createMediaQuery("(max-width: 767px)");
   const isDesktop = createMediaQuery("(min-width: 768px)");
+  const [menuIsActive, setMenuIsActive] = createSignal(isDesktop());
+  const [searchIsActive, setSearchIsActive] = createSignal(false);
 
   return (
     <>
@@ -37,8 +37,10 @@ export default function LayoutMenu() {
             <A class="h-fit w-fit size-25" href="/">
               <Logo />
             </A>
-            <button title="Open/Close Menu" class="p-2 rounded-lg hover:bg-tertiary" onClick={() => setMenuIsActive(!menuIsActive())}>
-              <MenuIcon />
+            <button title="Open/Close Menu" class="flex justify-center items-center btn" onClick={() => setMenuIsActive(!menuIsActive())}>
+              <Show when={menuIsActive()} fallback={<MenuIcon />}>
+                <X />
+              </Show>
             </button>
           </header>
           <div class={`${!menuIsActive() && "-translate-x-full"} absolute top-1/12 left-0 z-10 h-11/12 w-full flex flex-col justify-between gap-8 p-2 bg-primary text-white/80 transition duration-500`}>
@@ -49,7 +51,7 @@ export default function LayoutMenu() {
                 <nav aria-labelledby="folders" class="space-y-1">
                   <For each={data.recents}>
                     {(note) => (
-                      <A class="flex items-center gap-2 hover:bg-link-hover p-1.5 rounded-lg" href={`/folder/${note.folder_id}/note/${note.id}`} activeClass="bg-active ">
+                      <A class="flex justify-start items-center gap-2 btn" href={`/folder/${note.folder_id}/note/${note.id}`} activeClass="bg-active ">
                         <FileText class="size-4" />
                         {note.name}
                       </A>
@@ -62,7 +64,7 @@ export default function LayoutMenu() {
               <div class="flex items-center justify-between">
                 <h2 id="folders" class="text-sm">Folders</h2>
                 <Dialog.Root>
-                  <Dialog.Trigger title="create folder" class="p-1.5 rounded-lg hover:bg-tertiary">
+                  <Dialog.Trigger title="create folder" class="flex justify-center items-center btn">
                     <FolderPlus class="size-5" />
                   </Dialog.Trigger>
                   <Portal>
@@ -90,30 +92,30 @@ export default function LayoutMenu() {
             <div class="space-y-2">
               <h2 id="more" class="text-sm">More</h2>
               <nav aria-labelledby="more" class="space-y-1">
-                <A class="flex items-center justify-between hover:bg-link-hover p-1.5 rounded-lg" href="/favorites" activeClass="bg-active">
+                <A class="flex items-center justify-between btn" href="/favorites" activeClass="bg-active">
                   <span class="flex items-center gap-2">
                     <Star class="size-4" />
                     Favorites
                   </span>
-                  <span class="flex justify-center items-center bg-accent rounded-full size-5 text-[0.8rem]">{data.favorites.length}</span>
+                  <span class="flex justify-center items-center bg-primary rounded-lg size-6 text-xs">{data.favorites.length}</span>
                 </A>
-                <A class="flex items-center justify-between hover:bg-link-hover p-1.5 rounded-lg" href="/archived" activeClass="bg-active">
+                <A class="flex items-center justify-between btn" href="/archived" activeClass="bg-active">
                   <span class="flex items-center gap-2">
                     <Archive class="size-4" />
                     Archived
                   </span>
-                  <span class="flex justify-center items-center bg-accent rounded-full size-5 text-[0.8rem]">{data.archived.length}</span>
+                  <span class="flex justify-center items-center bg-primary rounded-lg size-6 text-xs">{data.archived.length}</span>
                 </A>
-                <A class="flex items-center justify-between hover:bg-link-hover p-1.5 rounded-lg" href="/trash" activeClass="bg-active">
+                <A class="flex items-center justify-between btn" href="/trash" activeClass="bg-active">
                   <span class="flex items-center gap-2">
                     <Trash class="size-4" />
                     Trash
                   </span>
-                  <span class="flex justify-center items-center bg-accent rounded-full size-5 text-[0.8rem]">{data.trash.length}</span>
+                  <span class="flex justify-center items-center bg-primary rounded-lg size-6 text-xs">{data.trash.length}</span>
                 </A>
               </nav>
             </div>
-            <button class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-link-hover" onClick={handleLogOut}>
+            <button class="flex justify-start items-center gap-2 btn" onClick={handleLogOut}>
               <LogOut class="size-4" />
               Log out
             </button>
@@ -121,14 +123,16 @@ export default function LayoutMenu() {
         </>
       </Show>
       <Show when={isDesktop()}>
-        <div class="h-screen w-full max-w-64 flex flex-col justify-between gap-8 p-2 bg-primary text-white/80">
+        <div class={`${!menuIsActive() && "-translate-x-full"} "transition-all duration-500 h-screen w-full max-w-64 flex flex-col justify-between gap-8 p-2 bg-primary text-white/80"`}>
           <div class="flex justify-between items-center">
             <A class="h-fit w-fit size-25" href="/">
               <Logo />
             </A>
-            <button title="Open/Close Menu" class="p-1.5 rounded-lg hover:bg-tertiary" onClick={() => setMenuIsActive(!menuIsActive())}>
-              <MenuIcon class="size-5" />
-            </button>
+            {/* <button title="Open/Close Menu" class="flex justify-center items-center btn" onClick={() => setMenuIsActive(!menuIsActive())}>
+              <Show when={menuIsActive()} fallback={<MenuIcon />}>
+                <X />
+              </Show>
+            </button> */}
           </div>
           <input class="text-center p-2 rounded-lg text-sm bg-tertiary" placeholder="Search Note" />
           <Show when={data.recents.length}>
@@ -137,7 +141,7 @@ export default function LayoutMenu() {
               <nav aria-labelledby="folders" class="space-y-1">
                 <For each={data.recents}>
                   {(note) => (
-                    <A class="flex items-center gap-2 hover:bg-link-hover p-1.5 rounded-lg" href={`/folder/${note.folder_id}/note/${note.id}`} activeClass="bg-active ">
+                    <A class="flex justify-start items-center gap-2 btn" href={`/folder/${note.folder_id}/note/${note.id}`} activeClass="bg-active ">
                       <FileText class="size-4" />
                       {note.name}
                     </A>
@@ -150,7 +154,7 @@ export default function LayoutMenu() {
             <div class="flex items-center justify-between">
               <h2 id="folders" class="text-sm">Folders</h2>
               <Dialog.Root>
-                <Dialog.Trigger title="create folder" class="p-1.5 rounded-lg hover:bg-tertiary">
+                <Dialog.Trigger title="create folder" class="flex justify-center items-center btn">
                   <FolderPlus class="size-5" />
                 </Dialog.Trigger>
                 <Portal>
@@ -178,21 +182,21 @@ export default function LayoutMenu() {
           <div class="space-y-2">
             <h2 id="more" class="text-sm">More</h2>
             <nav aria-labelledby="more" class="space-y-1">
-              <A class="flex items-center justify-between hover:bg-link-hover p-1.5 rounded-lg" href="/favorites" activeClass="bg-active">
+              <A class="flex items-center justify-between btn" href="/favorites" activeClass="bg-active">
                 <span class="flex items-center gap-2">
                   <Star class="size-4" />
                   Favorites
                 </span>
                 <span class="flex justify-center items-center bg-primary rounded-lg size-6 text-xs">{data.favorites.length}</span>
               </A>
-              <A class="flex items-center justify-between hover:bg-link-hover p-1.5 rounded-lg" href="/archived" activeClass="bg-active">
+              <A class="flex items-center justify-between btn" href="/archived" activeClass="bg-active">
                 <span class="flex items-center gap-2">
                   <Archive class="size-4" />
                   Archived
                 </span>
                 <span class="flex justify-center items-center bg-primary rounded-lg size-6 text-xs">{data.archived.length}</span>
               </A>
-              <A class="flex items-center justify-between hover:bg-link-hover p-1.5 rounded-lg" href="/trash" activeClass="bg-active">
+              <A class="flex items-center justify-between btn" href="/trash" activeClass="bg-active">
                 <span class="flex items-center gap-2">
                   <Trash class="size-4" />
                   Trash
@@ -201,7 +205,7 @@ export default function LayoutMenu() {
               </A>
             </nav>
           </div>
-          <button class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-link-hover" onClick={handleLogOut}>
+          <button class="flex justify-start items-center gap-2 btn" onClick={handleLogOut}>
             <LogOut class="size-4" />
             Log out
           </button>

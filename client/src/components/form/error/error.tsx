@@ -7,7 +7,7 @@ interface ErrorProps {
 export default function Error(props: ErrorProps) {
   return (
     <Show when={props.error}>
-      <span class="text-sm text-red-600">{props.error}</span>
+      <span class="text-sm text-red-400">{props.error}</span>
     </Show>
   )
 }

@@ -1,3 +1,4 @@
+import { sleep } from "@utilify/core";
 import { batch, createEffect, createSignal } from "solid-js";
 import toast from "solid-toast";
 
@@ -64,38 +65,32 @@ export default function useToast() {
         setNotifyId(notifyId);
         setStatus(status);
       });
+    },
+    promise: async (
+      promise: <T>() => Promise<T | null>,
+      message: {
+        loading: string,
+        success: string,
+        error: string
+      } = {
+        loading: "Loading",
+        success: "Successfully",
+        error: "Something went wrong"
+      }
+    ) => {
+      notify.loading(message.loading);
+      await sleep(800);
+
+      try {
+        const result = await promise();
+        notify.success(message.success);
+        return result;
+      } catch {
+        notify.error(message.error);
+        return null;
+      }
     }
   }
-
-  // function notifyOnPromise (
-  //   promise: () => Promise<boolean | undefined | null>,
-  //   message: {
-  //     loading: string,
-  //     success: string,
-  //     error: string
-  //   } = {
-  //     loading: "Loading",
-  //     success: "Successfully",
-  //     error: "Something went wrong"
-  //   }
-  // ) {
-  //   notify("loading", message.loading);
-
-  //   return new Promise((resolve, reject) => {
-  //     setTimeout(async () => {
-  //       const success = await promise();
-  
-  //       if (success) {
-  //         notify("success", message.success);
-  //         resolve(success);
-  //       }
-  //       else {
-  //         notify("error", message.error);
-  //         reject(reject);
-  //       }
-  //     }, 1000);
-  //   })
-  // }
 
   createEffect((prevId) => {
     if(prevId) {

@@ -23,16 +23,14 @@ export default function FolderItem(props: FolderProps) {
       <Menu.Root>
         <Menu.ContextTrigger title="Settings Folder" class="w-full">
           <span class="relative group">
-            <A class="w-full flex justify-between items-center gap-3 p-1.5 rounded-lg hover:bg-link-hover" href={`/folder/${props.id}`} activeClass="bg-active">
-              <span class="flex items-center gap-4">
-                <Show when={params.folderId === props.id} fallback={<Folder class="size-4 text-transparent" style={{ fill: props.color }} />}>
-                  <FolderOpen class="size-4 text-transparent" style={{ fill: props.color }} />
-                </Show>
-                {props.name}
-              </span>
+            <A title={props.name} class="w-full flex justify-start items-center gap-2 btn" href={`/folder/${props.id}`} activeClass="bg-active">
+              <Show when={params.folderId === props.id} fallback={<Folder class="size-4 text-transparent" style={{ fill: props.color }} />}>
+                <FolderOpen class="size-4 text-transparent" style={{ fill: props.color }} />
+              </Show>
+              {props.name}
             </A>
-            <Menu.Trigger title="Settings Folder" class="absolute top-1/2 right-0 -translate-y-1/2 flex justify-center items-center bg-primary rounded-lg size-6 mr-1.5">
-              <Settings2 class="size-3.5" />
+            <Menu.Trigger title="Settings Folder" class="absolute top-1/2 right-0 -translate-y-1/2 btn mr-1.5">
+              <Settings2 class="size-4" />
             </Menu.Trigger>
           </span>
         </Menu.ContextTrigger>
@@ -49,7 +47,7 @@ export default function FolderItem(props: FolderProps) {
                   <div class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 z-10 w-96 flex flex-col gap-6 p-4 rounded-lg bg-primary border-2 border-white/10">
                     <span class="flex items-center justify-between">
                       <h4 class="font-medium">Folder</h4>
-                      <Dialog.CloseTrigger title="close form" class="p-1 rounded-lg hover:bg-red-500/50">
+                      <Dialog.CloseTrigger title="close form" class="btn hover:bg-red-500/50">
                         <X />
                       </Dialog.CloseTrigger>
                     </span>
@@ -70,7 +68,7 @@ export default function FolderItem(props: FolderProps) {
                   <div class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 z-50 w-96 flex flex-col gap-6 p-4 rounded-lg bg-primary border-2 border-white/10">
                     <span class="flex items-center justify-between">
                       <h4 class="font-medium">Delete Folder</h4>
-                      <Dialog.CloseTrigger title="close form" class="p-1 rounded-lg hover:bg-red-500/50">
+                      <Dialog.CloseTrigger title="close form" class="btn hover:bg-red-500/50">
                         <X />
                       </Dialog.CloseTrigger>
                     </span>

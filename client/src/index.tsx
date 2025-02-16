@@ -28,7 +28,7 @@ const stores: StoreSchema[] = [
     },
   },
   {
-    name: "sync-record",
+    name: "action-record",
     options: {
       keyPath: "id"
     }

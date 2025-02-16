@@ -22,7 +22,7 @@ export default function NoteList(props: NoteListProps) {
       <div class="flex justify-between items-center">
         <h3 class="flex items-center gap-2">{props.title}</h3>
         <Show when={params.folderId}>
-          <button title="create note" class="p-2 rounded-lg hover:bg-tertiary" onClick={() => noteService.createNote(params.folderId)}>
+          <button title="create note" class="btn" onClick={() => noteService.createNote(params.folderId)}>
             <FilePlus class="size-5"/>
           </button>
         </Show>

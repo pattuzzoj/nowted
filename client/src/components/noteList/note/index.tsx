@@ -20,7 +20,7 @@ export default function Note(props: NoteProps) {
 
   return (
     <div class="relative group">
-      <A class="flex flex-col gap-1 p-4 rounded-lg bg-tertiary hover:bg-note-hover group-hover:bg-note-hover" href={`${props.context}/${props.id}`}>
+      <A class="flex flex-col gap-2 p-4 rounded-lg bg-tertiary hover:bg-note-hover group-hover:bg-note-hover" href={`${props.context}/${props.id}`}>
         <span class="flex items-center justify-between text-lg font-medium">
           {props.name}
           <span class="text-sm">{date}</span>
@@ -37,20 +37,20 @@ export default function Note(props: NoteProps) {
       opacity-0
       group-hover:opacity-100
       rounded-lg
-      mx-3 my-4 transition duration-0 group-hover:duration-200 z-50">
-        <button title="Delete Note" class="flex justify-center items-center size-6 p-1 rounded-lg hover:text-red-400 bg-primary" onClick={() => {props.deleted_at != null ? noteService.restoreNote(props.id) : noteService.deleteNote(props.id)}}>
+      mx-2.5 my-3.5 transition duration-0 group-hover:duration-200 z-50">
+        <button title="Delete Note" class="btn active:bg-red-400 active:text-white hover:text-red-400" onClick={() => {props.deleted_at != null ? noteService.restoreNote(props.id) : noteService.deleteNote(props.id)}}>
           <Show when={props.deleted_at != null} fallback={<Trash class="size-4"/>}>
-            <RefreshCcw class="size-3.5"/>
+            <RefreshCcw class="size-4"/>
           </Show>
         </button>
-        <button title="Archive Note" class="flex justify-center items-center size-6 p-1 rounded-lg hover:text-blue-400 bg-primary" onClick={() => {props.archived ? noteService.unarchiveNote(props.id) : noteService.archiveNote(props.id)}}>
+        <button title="Archive Note" class="btn active:bg-blue-400 active:text-white hover:text-blue-400" onClick={() => {props.archived ? noteService.unarchiveNote(props.id) : noteService.archiveNote(props.id)}}>
           <Show when={props.archived} fallback={<Archive class="size-4"/>}>
-            <ArchiveRestore class="size-3.5"/>
+            <ArchiveRestore class="size-4"/>
           </Show>
         </button>
-        <button title="Favorite Note" class="flex justify-center items-center size-6 p-1 rounded-lg hover:text-yellow-400 bg-primary" onClick={() => {props.favorite ? noteService.unfavoriteNote(props.id) : noteService.favoriteNote(props.id)}}>
+        <button title="Favorite Note" class="btn active:bg-yellow-400 active:text-white hover:text-yellow-400" onClick={() => {props.favorite ? noteService.unfavoriteNote(props.id) : noteService.favoriteNote(props.id)}}>
           <Show when={props.favorite} fallback={<Star class="size-4"/>}>
-            <StarOff class="size-3.5"/>
+            <StarOff class="size-4"/>
           </Show>
         </button>
       </span>

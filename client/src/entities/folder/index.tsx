@@ -1,6 +1,4 @@
-import { Folder as IFolder } from "@/types";
-
-export class Folder implements IFolder {
+export class Folder {
   id: string;
   name: string;
   color: string;
@@ -9,7 +7,7 @@ export class Folder implements IFolder {
   updated_at: string;
   deleted_at: string | null = null;
 
-  constructor({name, color, order}: {name: string, color: string, order: number}) {
+  constructor(name: string, color: string, order: number = 0) {
     const date = new Date().toISOString();
 
     this.id = crypto.randomUUID();

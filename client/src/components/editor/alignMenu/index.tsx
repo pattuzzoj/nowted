@@ -8,7 +8,7 @@ import AlignRight from "lucide-solid/icons/align-right";
 
 
 interface MarkProps {
-  editor: () => Editor
+  editor: () => Editor;
 }
 
 export default function AlignMenu(props: MarkProps) {
@@ -41,7 +41,7 @@ export default function AlignMenu(props: MarkProps) {
     if (isCenterActive()) {
       command().unsetTextAlign().run();
     } else {
-      command().setTextAlign("left").run();
+      command().setTextAlign("center").run();
     }
   };
 
@@ -49,7 +49,7 @@ export default function AlignMenu(props: MarkProps) {
     if (isRightActive()) {
       command().unsetTextAlign().run();
     } else {
-      command().setTextAlign("left").run();
+      command().setTextAlign("right").run();
     }
   };
 
@@ -57,22 +57,22 @@ export default function AlignMenu(props: MarkProps) {
     if (isJustifyActive()) {
       command().unsetTextAlign().run();
     } else {
-      command().setTextAlign("left").run();
+      command().setTextAlign("justify").run();
     }
   };
 
   return (
-    <span class="space-x-1">
-      <button title="align-left" class={`${isLeftActive() ? "bg-accent" : "hover:bg-tertiary"} p-2 rounded-lg`} onClick={toggleAlignLeft}>
+    <span class="flex gap-1">
+      <button title="align-left" class={`${isLeftActive() && "bg-accent"} btn`} onClick={toggleAlignLeft}>
         <AlignLeft class="size-5" />
       </button>
-      <button title="align-center" class={`${isCenterActive() ? "text-white bg-accent" : "hover:bg-tertiary"} p-2 rounded-lg`} onClick={toggleAlignCenter}>
+      <button title="align-center" class={`${isCenterActive() && "bg-accent"} btn`} onClick={toggleAlignCenter}>
         <AlignCenter class="size-5" />
       </button>
-      <button title="align-right" class={`${isRightActive() ? "text-white bg-accent" : "hover:bg-tertiary"} p-2 rounded-lg`} onClick={toggleAlignRight}>
+      <button title="align-right" class={`${isRightActive() && "bg-accent"} btn`} onClick={toggleAlignRight}>
         <AlignRight class="size-5" />
       </button>
-      <button title="justify" class={`${isJustifyActive() ? "text-white bg-accent" : "hover:bg-tertiary"} p-2 rounded-lg`} onClick={toggleAlignJustify}>
+      <button title="justify" class={`${isJustifyActive() && "bg-accent"} btn`} onClick={toggleAlignJustify}>
         <AlignJustify class="size-5" />
       </button>
     </span>

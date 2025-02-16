@@ -1,119 +1,101 @@
 import FetchService from "@services/fetch";
-import { baseURL } from "@utils/constants";
-import { StoreOperations } from "@/context/indexedDB";
 import FolderService from "../folder";
 import NoteService from "../note";
-import { EntityType, Folder, Note, OperationType, SyncData, SyncRecord } from "@/types";
+import { Folder, Note } from "@/types";
+import ActionRecordService from "../actionRecord";
+import FetchResponse from "../fetch/interface/fetchResponse.interface";
+import { deepMerge, merge } from "@utilify/core";
 
 export default class SyncService {
   private static instance: SyncService;
-  private syncStore: StoreOperations<SyncRecord>;
-  private fetchService: FetchService = new FetchService(baseURL.concat("/sync"));
-  private folderService: FolderService | null = null;
-  private noteService: NoteService | null = null;
 
-  private constructor(syncStore: StoreOperations<SyncRecord>) {
-    this.syncStore = syncStore;
-  }
+  private constructor(
+    private fetchService: FetchService,
+    private ActionRecordService: ActionRecordService,
+    private folderService: FolderService,
+    private noteService: NoteService
+  ) {}
 
-  public static getInstance(syncStore: StoreOperations<SyncRecord>) {
+  public static getInstance(
+    fetchService: FetchService,
+    ActionRecordService: ActionRecordService,
+    folderService: FolderService,
+    noteService: NoteService
+  ) {
     if (!this.instance) {
-      SyncService.instance = new SyncService(syncStore);
+      SyncService.instance = new SyncService(
+        fetchService,
+        ActionRecordService,
+        folderService,
+        noteService
+      );
     }
 
     return SyncService.instance;
   }
 
-  public setFolderService(folderService: FolderService) {
-    this.folderService = folderService;
-  }
-
-  public setNoteService(noteService: NoteService) {
-    this.noteService = noteService;
-  }
-
   async syncFetch() {
     const lastSync = localStorage.getItem("lastSync");
-    const response = await this.fetchService.get<{folders: Folder[], notes: Note[]}>(`/${lastSync}`);
+    const response = await this.fetchService.get<{ folders: Folder[]; notes: Note[] }>(`/${lastSync}`);
 
-    if (response.status === "error" || !("status" in response)) {
+    if (response.status === "error") {
       return response;
     }
-    
+
     try {
-      await this.folderService?.populateFolder(response.data.folders);
-      await this.noteService?.populateNote(response.data.notes);
+      await this.folderService.populate(response.data.folders);
+      await this.noteService.populate(response.data.notes);
+
+      localStorage.setItem("lastSync", new Date(response.timestamp).toISOString());
     } catch (error) {
       return {
         status: "error",
         message: "Internal Error",
-        data: null
-      }
+        data: null,
+      };
     }
 
-    localStorage.setItem("lastSync", new Date(response.timestamp!).toISOString());
     return response;
   }
 
   async syncPush() {
-    const recordsList = await this.syncStore.getAll();
-    const response = await this.fetchService.post("", recordsList);
+    const actionRecords = await this.ActionRecordService.getAll();
+    const nonUpdateRecords = actionRecords.filter((record) => record.type !== "update");
+    const updateRecords = actionRecords.filter((record) => record.type === "update");
 
-    if (response.status === "error" || !("status" in response)) {
+    const updatesGroupedById = {};
+
+    for (const updateRecord of updateRecords) {
+      const recordId = updateRecord.data.id;
+
+      if (!(recordId in updatesGroupedById)) {
+        updatesGroupedById[recordId] = [updateRecord];
+        continue;
+      }
+
+      updatesGroupedById[recordId].push(updateRecord);
+    }
+
+    const mergedUpdates = [];
+
+    for (const groupedUpdates of Object.values(updatesGroupedById)) {
+      const sortedUpdates = groupedUpdates.sort((currentRecord, nextRecord) => currentRecord.timestamp - nextRecord.timestamp);
+      mergedUpdates.push(deepMerge(...sortedUpdates));
+    }
+
+    const synchronizedRecords = [...nonUpdateRecords, ...mergedUpdates];
+    const response = await this.fetchService.post("", synchronizedRecords);
+
+    if (response.status === "error") {
       return response;
     }
 
     localStorage.setItem("lastSync", new Date(response.timestamp).toISOString());
 
-    for (const item of recordsList) {
-      await this.syncStore.delete(item.id);
+    for (const item of actionRecords) {
+      await this.ActionRecordService.delete(item.id);
     }
 
     return response;
-  }
-
-  public async createRecord(type: OperationType, entity: EntityType, data: SyncData) {
-    await this.syncStore.add({
-      id: crypto.randomUUID(),
-      type,
-      entity,
-      data,
-      timestamp: Date.now()
-    })
-  }
-
-  public async createFolder(folder: Folder) {
-    await this.createRecord("create", "folder", folder);
-  }
-
-  public async createNote(noteId: string, folderId: string) {
-    await this.createRecord("create", "note", {
-      id: noteId,
-      folder_id: folderId
-    });
-  }
-
-  public async updateFolder(data: SyncData) {
-    await this.createRecord("update", "folder", data);
-  }
-
-  public async updateNote(data: SyncData) {
-    await this.createRecord("update", "note", data);
-  }
-
-  public async deleteFolder(id: string) {
-    await this.createRecord("delete", "folder", {id});
-  }
-
-  public async deleteNote(id: string) {
-    await this.createRecord("delete", "note", {id});
-  }
-
-  public async restoreFolder(id: string) {
-    await this.createRecord("restore", "folder", {id});
-  }
-
-  public async restoreNote(id: string) {
-    await this.createRecord("restore", "note", {id});
   }
 }

@@ -1,31 +1,40 @@
 import FetchService from "@services/fetch";
-import { baseURL } from "@utils/constants";
 import { SignIn, SignUp } from "./interfaces";
 
 export default class AuthService {
-  private static fetchService: FetchService = new FetchService(baseURL.concat("/auth"));
+  private static instance: AuthService;
 
-  static async status() {
+  private constructor(private fetchService: FetchService) {}
+
+  static getInstance(fetchService: FetchService) {
+    if (!AuthService.instance) {
+      AuthService.instance = new AuthService(fetchService);
+    }
+
+    return AuthService.instance;
+  }
+
+  public async status() {
     return await this.fetchService.get("/status");
   }
 
-  static async signIn(credentials: SignIn) {
+  public async signIn(credentials: SignIn) {
     return await this.fetchService.post("/sign-in", credentials);
   }
 
-  static async signUp(registration: SignUp) {
+  public async signUp(registration: SignUp) {
     return await this.fetchService.post("/sign-up", registration);
   }
 
-  static async logOut() {
+  public async logOut() {
     return await this.fetchService.delete("/log-out");
   }
 
-  static async recoverAccount(account: string) {
+  public async recoverAccount(account: string) {
     return await this.fetchService.post("/forgot-password", { account });
   }
 
-  static async resetPassword(token: string, password: string) {
+  public async resetPassword(token: string, password: string) {
     return await this.fetchService.post("/reset-password", { token, password });
   }
 }

@@ -13,14 +13,14 @@ import Heading6 from 'lucide-solid/icons/heading-6';
 import ChevronsUpDown from 'lucide-solid/icons/chevrons-up-down';
 
 interface TypographProps {
-  editor: () => Editor
+  editor: () => Editor;
 }
 export default function TypographMenu(props: TypographProps) {
   const [level, setLevel] = createSignal<Level | null>(null);
 
   const collection = createListCollection({
     items: [
-      { label: "Paragraph", value: "null", icon: <Type class="size-4" /> },
+      { label: "Paragraph", value: "null", icon: <Type class="size-5" /> },
       { label: "Headling 1", value: "1", icon: <Heading1 class="size-5" /> },
       { label: "Headling 2", value: "2", icon: <Heading2 class="size-5" /> },
       { label: "Headling 3", value: "3", icon: <Heading3 class="size-5" /> },
@@ -45,7 +45,7 @@ export default function TypographMenu(props: TypographProps) {
   return (
     <Select.Root title="Heading" defaultValue={[String(level())]} collection={collection} onValueChange={(e) => e.value[0] === "null" ? setParagraph() : setHeading(Number(e.value[0]) as Level)}>
       <Select.Control>
-        <Select.Trigger class="w-16 p-2 flex justify-between items-center hover:bg-tertiary rounded-lg">
+        <Select.Trigger class="flex justify-between items-center gap-2 btn">
           <Switch fallback={<Type class="size-5" />}>
             <Match when={level() === 1}>
               <Heading1 class="size-5" />
@@ -70,22 +70,20 @@ export default function TypographMenu(props: TypographProps) {
             </Match>
           </Switch>
           <Select.Indicator>
-            <ChevronsUpDown class="size-4" />
+            <ChevronsUpDown class="size-5" />
           </Select.Indicator>
         </Select.Trigger>
       </Select.Control>
       <Portal>
         <Select.Positioner>
-          <Select.Content class="w-16 bg-primary rounded-lg">
-            <Select.ItemGroup>
-              <Index each={collection.items}>
-                {(item) => (
-                  <Select.Item item={item()} class="flex justify-center items-center py-2 hover:bg-hover rounded-lg cursor-pointer">
-                    {item().icon}
-                  </Select.Item>
-                )}
-              </Index>
-            </Select.ItemGroup>
+          <Select.Content class="flex flex-col justify-between items-center gap-2 btn bg-primary">
+            <Index each={collection.items}>
+              {(item) => (
+                <Select.Item item={item()} class="btn cursor-pointer">
+                  {item().icon}
+                </Select.Item>
+              )}
+            </Index>
           </Select.Content>
         </Select.Positioner>
       </Portal>

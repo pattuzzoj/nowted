@@ -22,7 +22,7 @@ export default class FetchService {
         ...options
       });
 
-      return await this.deserialize<FetchResponse<T>>(response);
+      return await this.deserialize(response);
     } catch (error: any) {
       console.error(error);
       

@@ -7,7 +7,11 @@ import useToast from "@hooks/useToast";
 import FolderService from "@services/folder";
 import NoteService from "@services/note";
 import SyncService from "@services/sync";
-import { Folder, Note, SyncRecord } from "@/types";
+import { ActionRecord, Folder, Note, SyncRecord } from "@/types";
+import FetchService from "@/services/fetch";
+import { baseURL } from "@/utils/constants";
+import ActionRecordService from "@/services/actionRecord";
+import { messages } from "@/utils/messages/index";
 
 type DataContextType = [
   data: {
@@ -62,18 +66,14 @@ export default function DataProvider(props: ParentProps) {
     trash: []
   });
   const [useStore] = useIndexedDB();
+  const actionRecordStore = useStore<ActionRecord>("action-record");
   const folderStore = useStore<Folder>("folder");
   const noteStore = useStore<Note>("note");
-  const syncStore = useStore<SyncRecord>("sync-record");
-  const folderService = FolderService.getInstance(folderStore);
-  const noteService = NoteService.getInstance(noteStore);
-  const syncService = SyncService.getInstance(syncStore);
-  folderService.setNoteService(noteService);
-  folderService.setSyncService(syncService);
-  noteService.setFolderService(folderService);
-  noteService.setSyncService(syncService);
-  syncService.setFolderService(folderService);
-  syncService.setNoteService(noteService);
+  const actionRecordService = ActionRecordService.getInstance(actionRecordStore);
+  const folderService = FolderService.getInstance(folderStore, actionRecordService);
+  const noteService = NoteService.getInstance(noteStore, actionRecordService);
+  const fetchService = new FetchService(baseURL.concat("/sync"));
+  const syncService = SyncService.getInstance(fetchService, actionRecordService, folderService, noteService);
   const params = useParams();
   const notify = useToast();
 
@@ -114,53 +114,26 @@ export default function DataProvider(props: ParentProps) {
     }
   });
 
-  async function getFolderById(id: string) {
-    const folder = await folderService.getFolderById(id);
-    setData("folder", folder);
-  }
+  async function createFolder(data: Folder) {
+    messages.CREATE_FOLDER.loading
 
-  async function getNoteById(id: string) {
-    const note = await noteService.getNoteById(id);
-    const recents = [...data.recents];
-    recents.unshift(note);
+    const folder = await notify.promise(async () => {
+      return await folderService.create(data);
 
-    if (!data.recents.find((recentNote) => recentNote.id === note.id)) {
-      setData("recents", recents.slice(0, 3));
-    }
+    }, messages.CREATE_FOLDER);
     
-    setData("note", note);
-  }
-
-  async function getNotesByFolderId(id: string) {
-    const notes = await noteService.getNotesByFolderId(id);
-    setData("notes", notes);
-  }
-
-  async function createFolder(newFolder: Folder) {
-    notify.loading("Creating Folder...");
-    await sleep(1000);
-
-    try {
-      const folderId = await folderService.createFolder(newFolder);
-      const folder = await folderService.getFolderById(folderId as string);
-
-      setData("folders", (folders) => [
-        ...folders,
-        folder
-      ]);
-
-      notify.success("Folder created successfully");
-    } catch (error) {
-      notify.error("Could not created the folder");
-    }
+    setData("folders", (folders) => [
+      ...folders,
+      folder
+    ]);
   }
 
   async function updateFolder(folder: Folder) {
-    notify.loading("Updating Folder...");
+    notify.loading(messages.UPDATE_FOLDER.loading);
     await sleep(1000);
 
     try {
-      await folderService.updateFolder(folder);
+      await folderService.update(folder);
 
       setData("folders", (folders) => [
         ...folders.map((currentFolder) => {
@@ -183,7 +156,12 @@ export default function DataProvider(props: ParentProps) {
     await sleep(1000);
 
     try {
-      await folderService.deleteFolder(id);
+      await folderService.delete(id);
+      const notes = await noteService.getNotesByFolderId(id);
+
+      for (const note of notes) {
+        await noteService.delete(note.id);
+      }
 
       setData("folders", (folders) => [
         ...folders.filter((folder) => folder.id != id)
@@ -195,13 +173,31 @@ export default function DataProvider(props: ParentProps) {
     }
   }
 
+  async function restoreFolder(id: string) {
+    notify.loading("Restoring folder...");
+    await sleep(1000);
+
+    try {
+      const folder = await folderService.get(id);
+    
+      if (folder.deleted_at !== null) {
+        await folderService.restore(folder.id);
+      }
+
+      setData("folders", data.folders.length, folder);
+
+      notify.success("Folder restored successfully");
+    } catch {
+      notify.error("Error restoring folder");
+    }
+  }
+
   async function createNote(folderId: string) {
     notify.loading("Creating note...");
     await sleep(1000);
 
     try {
-      const noteId = await noteService.createNote("new note", folderId);
-      const note = await noteService.getNoteById(noteId as string);
+      const note = await noteService.create({name: "new note", folder_id: folderId});
 
       setData("notes", data.notes.length, note);
 
@@ -212,7 +208,7 @@ export default function DataProvider(props: ParentProps) {
   }
 
   async function updateNote(note: Note) {
-    await noteService.updateNote(note);
+    await noteService.update(note);
 
     setData("notes", (notes) => [
       ...notes.map((currentNote) => {
@@ -230,7 +226,7 @@ export default function DataProvider(props: ParentProps) {
     await sleep(1000);
 
     try {
-      const note = await noteService.getNoteById(id);
+      const note = await noteService.get(id);
       note.preview = preview;
       note.content = content;
       await updateNote(note);
@@ -241,21 +237,12 @@ export default function DataProvider(props: ParentProps) {
     }
   }
 
-  async function favoriteNote(id: string) {
-    notify.loading("Adding to favorites...");
-    await sleep(1000);
-
-    try {
-      const note = await noteService.getNoteById(id);
-      note.favorite = true;
-      await updateNote(note);
+  function favoriteNote(id: string) {
+    notify.promise(async () => {
+      await noteService.favorite(id);
 
       setData("favorites", data.favorites.length, note);
-
-      notify.success("Note added to favorites");
-    } catch {
-      notify.error("Error adding note to favorites");
-    }
+    }, messages.FAVORITE_NOTE)
   }
 
   async function unfavoriteNote(id: string) {
@@ -263,7 +250,7 @@ export default function DataProvider(props: ParentProps) {
     await sleep(1000);
 
     try {
-      const note = await noteService.getNoteById(id);
+      const note = await noteService.get(id);
       note.favorite = false;
       await updateNote(note);
 
@@ -282,7 +269,7 @@ export default function DataProvider(props: ParentProps) {
     await sleep(1000);
 
     try {
-      const note = await noteService.getNoteById(id);
+      const note = await noteService.get(id);
       note.archived = true;
       await updateNote(note);
 
@@ -303,7 +290,7 @@ export default function DataProvider(props: ParentProps) {
     await sleep(1000);
 
     try {
-      const note = await noteService.getNoteById(id);
+      const note = await noteService.get(id);
       note.archived = false;
       await updateNote(note);
 
@@ -322,7 +309,8 @@ export default function DataProvider(props: ParentProps) {
     await sleep(1000);
 
     try {
-      const note = await noteService.restoreNote(id);
+      const note = await noteService.restore(id);
+      await restoreFolder(note.folder_id);
 
       setData("trash", (notes) => [
         ...notes.filter((note) => note.id != id)
@@ -352,7 +340,7 @@ export default function DataProvider(props: ParentProps) {
     await sleep(1000);
 
     try {
-      const note = await noteService.deleteNote(id);
+      const note = await noteService.delete(id);
 
       setData("notes", (notes) => [
         ...notes.filter((note) => note.id != id)
@@ -376,14 +364,24 @@ export default function DataProvider(props: ParentProps) {
 
   createEffect(async () => {
     if (params.folderId) {
-      await getFolderById(params.folderId);
-      await getNotesByFolderId(params.folderId);
+      const folder = await folderService.get(params.folderId);
+      const notes = await noteService.getNotesByFolderId(params.folderId);
+      setData("folder", folder);
+      setData("notes", notes);
     }
   });
 
   createEffect(async () => {
     if (params.noteId) {
-      await getNoteById(params.noteId);
+      const note = await noteService.get(params.noteId);
+      const recents = [...data.recents];
+      recents.unshift(note);
+
+      if (!data.recents.find((recentNote) => recentNote.id === note.id)) {
+        setData("recents", recents.slice(0, 3));
+      }
+      
+      setData("note", note);
     }
   });
 

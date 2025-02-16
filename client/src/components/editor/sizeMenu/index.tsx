@@ -7,7 +7,7 @@ import ALargeSmall from 'lucide-solid/icons/a-large-small';
 import ChevronsUpDown from 'lucide-solid/icons/chevrons-up-down';
 
 interface TypographProps {
-  editor: () => Editor
+  editor: () => Editor;
 }
 export default function SizeMenu(props: TypographProps) {
   const [size, setSize] = createSignal<string>();
@@ -28,27 +28,25 @@ export default function SizeMenu(props: TypographProps) {
   return (
     <Select.Root defaultValue={[String(size())]} collection={collection} onValueChange={(e) => setTextSize(e.value[0])}>
       <Select.Control>
-        <Select.Trigger class="w-16 p-2 flex justify-between items-center hover:bg-tertiary rounded-lg">
+        <Select.Trigger class="flex justify-between items-center gap-2 btn">
           <Show when={size() !== "0px"} fallback={<ALargeSmall class="size-5" />}>
             <Select.ValueText class="text-xs" placeholder="16" />
           </Show>
           <Select.Indicator>
-            <ChevronsUpDown class="size-4" />
+            <ChevronsUpDown class="size-5" />
           </Select.Indicator>
         </Select.Trigger>
       </Select.Control>
       <Portal>
         <Select.Positioner>
-          <Select.Content class="w-16 bg-primary rounded-lg">
-            <Select.ItemGroup>
-              <Index each={collection.items}>
-                {(item) => (
-                  <Select.Item item={item()}>
-                    <Select.ItemText class="flex justify-center items-center py-2 hover:bg-hover rounded-lg text-xs cursor-pointer">{item()}</Select.ItemText>
-                  </Select.Item>
-                )}
-              </Index>
-            </Select.ItemGroup>
+          <Select.Content class="flex flex-col justify-between items-center gap-2 btn bg-primary">
+            <Index each={collection.items}>
+              {(item) => (
+                <Select.Item item={item()}>
+                  <Select.ItemText class="btn text-xs cursor-pointer">{item()}</Select.ItemText>
+                </Select.Item>
+              )}
+            </Index>
           </Select.Content>
         </Select.Positioner>
       </Portal>

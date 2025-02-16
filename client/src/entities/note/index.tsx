@@ -1,6 +1,4 @@
-import { Note as INote } from "@/types";
-
-export class Note implements INote {
+export class Note {
   id: string;
   name: string;
   preview: string = "";

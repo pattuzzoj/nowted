@@ -1,5 +1,5 @@
 :root[data-theme="light"] {
-  --primary: rgb(234, 234, 234);
+  --primary: rgb(221, 221, 221);
   --secondary: rgb(221, 221, 221);
   --tertiary: rgb(170, 170, 170);
   --hover: ;
@@ -19,13 +19,13 @@
   --secondary: #16141C;
   --tertiary: #24212B;
   --hover: #24212B;
-  --accent: #312EB5;
-  --active: #24212B;
+  /* --primary: #7F22FE; */
+  --accent: #5D0EC0;
+  --active: #5D0EC0;
   --inactive: ;
   --disabled: ;
   --focus: ;
   --shadow: ;
-
   --link-hover: #24212B;
   --note-hover: #1E1C26;
 }

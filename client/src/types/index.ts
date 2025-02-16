@@ -21,14 +21,14 @@ export interface Note {
   deleted_at: string | null;
 }
 
-export type SyncData = Partial<Folder | Note>;
-export type EntityType = "folder" | "note";
-export type OperationType = "create" | "update" | "delete" | "restore";
+export type ActionData = Partial<Folder | Note>;
+export type ActionEntity = "folder" | "note";
+export type ActionOperation = "create" | "update" | "delete" | "restore";
 
-export interface SyncRecord {
+export interface ActionRecord {
   id: string;
-  type: OperationType;
-  entity: EntityType;
-  data: Partial<Folder | Note>;
+  type: ActionOperation;
+  entity: ActionEntity;
+  data: ActionData;
   timestamp: number;
 }

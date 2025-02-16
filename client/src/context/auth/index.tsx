@@ -5,6 +5,8 @@ import AuthService from "@services/auth";
 import type { SignIn, SignUp } from "@services/auth/interfaces";
 import useToast from "@hooks/useToast";
 import { useIndexedDB } from "../indexedDB";
+import FetchService from "@/services/fetch";
+import { baseURL } from "@/utils/constants";
 
 const AuthContext = createContext<Auth>();
 
@@ -19,15 +21,17 @@ interface Auth {
 }
 
 export default function AuthProvider(props: ParentProps) {
-  const [isAuthenticated, setIsAuthenticated] = createSignal(false);
+  const [isAuthenticated, setIsAuthenticated] = createSignal(true);
+  const fetchService = new FetchService(baseURL.concat("/auth"));
+  const authService = AuthService.getInstance(fetchService);
+  const [_, {clearDatabase}] = useIndexedDB();
   const navigate = useNavigate();
   const notify = useToast();
-  const [_, {clearDatabase}] = useIndexedDB();
 
   async function handleSignIn(credentials: SignIn) {
     notify.loading("Logging...");
     await sleep(1000);
-    const {status, message} = await AuthService.signIn(credentials);
+    const {status, message} = await authService.signIn(credentials);
 
     if (status === "error") {
       notify.error(message);
@@ -42,7 +46,7 @@ export default function AuthProvider(props: ParentProps) {
   async function handleSignUp(registration: SignUp) {
     notify.loading("Registering...");
     await sleep(1000);
-    const {status, message} = await AuthService.signUp(registration);
+    const {status, message} = await authService.signUp(registration);
 
     if (status === "error") {
       notify.error(message);
@@ -56,7 +60,7 @@ export default function AuthProvider(props: ParentProps) {
   async function handleLogOut() {
     notify.loading("Logging out...");
     await sleep(1000);
-    const {status, message} = await AuthService.logOut();
+    const {status, message} = await authService.logOut();
 
     if (status === "error") {
       notify.error(message);
@@ -73,7 +77,7 @@ export default function AuthProvider(props: ParentProps) {
   async function handleRecoverAccount(account: string) {
     notify.loading("Sending email...");
     await sleep(1000);
-    const {status, message} = await AuthService.recoverAccount(account);
+    const {status, message} = await authService.recoverAccount(account);
 
     if (status === "error") {
       notify.error(message);
@@ -87,7 +91,7 @@ export default function AuthProvider(props: ParentProps) {
   async function handleResetPassword(token: string, password: string) {
     notify.loading("Resetting Password...");
     await sleep(1000);
-    const {status, message} = await AuthService.resetPassword(token, password);
+    const {status, message} = await authService.resetPassword(token, password);
 
     if (status === "error") {
       notify.error(message);
@@ -113,18 +117,18 @@ export function AuthRoute(props: ParentProps) {
   const navigate = useNavigate();
   const notify = useToast();
 
-  (async () => {
-    const {status, message} = await AuthService.status();
+  // (async () => {
+  //   const {status, message} = await AuthService.status();
 
-    if (status === "error") {
-      notify.error(message);
-      navigate("/auth/sign-in");
-      return;
-    }
+  //   if (status === "error") {
+  //     notify.error(message);
+  //     navigate("/auth/sign-in");
+  //     return;
+  //   }
 
-    notify.success(message);
-    setIsAuthenticated(true);
-  })();
+  //   notify.success(message);
+  //   setIsAuthenticated(true);
+  // })();
 
   return (
     <Show when={isAuthenticated()}>

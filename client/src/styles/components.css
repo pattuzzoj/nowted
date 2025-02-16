@@ -1,0 +1,10 @@
+@layer components {
+  .btn {
+    @apply
+    p-1.5 rounded-lg hover:bg-hover active:bg-active
+  }
+
+  .note {
+    
+  }
+}

@@ -11,7 +11,7 @@ import Underline from "lucide-solid/icons/underline";
 
 
 interface MarkProps {
-  editor: () => Editor
+  editor: () => Editor;
 }
 
 export default function MarkingMenu(props: MarkProps) {
@@ -44,26 +44,26 @@ export default function MarkingMenu(props: MarkProps) {
   const toggleSupercript = () => props.editor().chain().focus().toggleSuperscript().run();
 
   return (
-    <span class="space-x-1">
-      <button title="bold" class={`${isBold() ? "bg-accent" : "hover:bg-tertiary"} p-2 rounded-lg`} onClick={toggleBold}>
+    <span class="flex gap-1">
+      <button title="bold" class={`${isBold() && "bg-accent"} btn`} onClick={toggleBold}>
         <Bold class="size-5" />
       </button>
-      <button title="italic" class={`${isItalic() ? "text-white bg-accent" : "hover:bg-tertiary"} p-2 rounded-lg`} onClick={toggleItalic}>
+      <button title="italic" class={`${isItalic() && "bg-accent"} btn`} onClick={toggleItalic}>
         <Italic class="size-5" />
       </button>
-      <button title="underline" class={`${isUnderline() ? "text-white bg-accent" : "hover:bg-tertiary"} p-2 rounded-lg`} onClick={toggleUnderline}>
+      <button title="underline" class={`${isUnderline() && "bg-accent"} btn`} onClick={toggleUnderline}>
         <Underline class="size-5" />
       </button>
-      <button title="strike" class={`${isStrike() ? "text-white bg-accent" : "hover:bg-tertiary"} p-2 rounded-lg`} onClick={toggleStrike}>
+      <button title="strike" class={`${isStrike() && "bg-accent"} btn`} onClick={toggleStrike}>
         <Strikethrough class="size-5" />
       </button>
-      <button title="highlight" class={`${isHighlight() ? "text-white bg-accent" : "hover:bg-tertiary"} p-2 rounded-lg`} onClick={toggleHighlight}>
+      <button title="highlight" class={`${isHighlight() && "bg-accent"} btn`} onClick={toggleHighlight}>
         <Highlighter class="size-5" />
       </button>
-      <button title="subscript" class={`${isSubscript() ? "text-white bg-accent" : "hover:bg-tertiary"} p-2 rounded-lg`} onClick={toggleSubscript}>
+      <button title="subscript" class={`${isSubscript() && "bg-accent"} btn`} onClick={toggleSubscript}>
         <Subscript class="size-5" />
       </button>
-      <button title="superscript" class={`${isSuperscript() ? "text-white bg-accent" : "hover:bg-tertiary"} p-2 rounded-lg`} onClick={toggleSupercript}>
+      <button title="superscript" class={`${isSuperscript() && "bg-accent"} btn`} onClick={toggleSupercript}>
         <Superscript class="size-5" />
       </button>
     </span>

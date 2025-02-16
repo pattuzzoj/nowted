@@ -2,6 +2,7 @@
 @import "./base.css";
 @import "./colors.css";
 @import "./typography.css";
+@import "./components.css";
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
