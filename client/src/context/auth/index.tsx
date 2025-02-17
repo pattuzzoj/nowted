@@ -28,7 +28,9 @@ export default function AuthProvider(props: ParentProps) {
       await authService.signIn(credentials);
       setIsAuthenticated(true);
       navigate("/");
-    } catch {}
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async function handleSignUp(registration: SignUp) {

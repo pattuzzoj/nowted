@@ -26,26 +26,26 @@ export default class AuthService {
 
   @Notify(messages.LOGIN)
   public async signIn(credentials: SignIn) {
-    return await this.fetchService.post("/sign-in", credentials);
+    await this.fetchService.post("/sign-in", credentials);
   }
 
   @Notify(messages.REGISTER)
   public async signUp(registration: SignUp) {
-    return await this.fetchService.post("/sign-up", registration);
+    await this.fetchService.post("/sign-up", registration);
   }
 
   @Notify(messages.LOGOUT)
   public async logOut() {
-    return await this.fetchService.delete("/log-out");
+    await this.fetchService.delete("/log-out");
   }
 
   @Notify(messages.ACCOUNT_RECOVERY)
   public async recoverAccount(account: string) {
-    return await this.fetchService.post("/forgot-password", { account });
+    await this.fetchService.post("/forgot-password", { account });
   }
 
   @Notify(messages.RESET_PASSWORD)
   public async resetPassword(token: string, password: string) {
-    return await this.fetchService.post("/reset-password", { token, password });
+    await this.fetchService.post("/reset-password", { token, password });
   }
 }
