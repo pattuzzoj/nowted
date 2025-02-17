@@ -4,26 +4,29 @@ import NoteService from "../note";
 import { Folder, Note } from "@/types";
 import ActionRecordService from "../actionRecord";
 import { deepMerge } from "@utilify/core";
+import { Notify } from "@/utils/notify";
+import { messages } from "@/utils/messages";
+import { baseURL } from "@/utils/constants";
 
 export default class SyncService {
   private static instance: SyncService;
+  private fetchService: FetchService;
 
   private constructor(
-    private fetchService: FetchService,
     private ActionRecordService: ActionRecordService,
     private folderService: FolderService,
     private noteService: NoteService
-  ) {}
+  ) {
+    this.fetchService = new FetchService(baseURL.concat("/sync"));
+  }
 
   public static getInstance(
-    fetchService: FetchService,
     ActionRecordService: ActionRecordService,
     folderService: FolderService,
     noteService: NoteService
   ) {
     if (!this.instance) {
       SyncService.instance = new SyncService(
-        fetchService,
         ActionRecordService,
         folderService,
         noteService
@@ -33,6 +36,7 @@ export default class SyncService {
     return SyncService.instance;
   }
 
+  @Notify(messages.SYNC_ALL)
   async syncFetch() {
     const lastSync = localStorage.getItem("lastSync");
     const response = await this.fetchService.get<{ folders: Folder[]; notes: Note[] }>(`/${lastSync}`);
@@ -57,6 +61,7 @@ export default class SyncService {
     return response;
   }
 
+  @Notify(messages.SYNC_ALL)
   async syncPush() {
     const actionRecords = await this.ActionRecordService.getAll();
     const nonUpdateRecords = actionRecords.filter((record) => record.type !== "update");

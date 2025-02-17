@@ -7,7 +7,7 @@ export default class FetchService {
     this.baseUrl = baseUrl;
   }
 
-  private async request<T = null>(url: string, options: RequestInit): Promise<FetchResponse<T>> {
+  private async request<T>(url: string, options: RequestInit): Promise<FetchResponse<T>> {
     try {
       if ("body" in options) {
         options.body = await this.serialize(options.body);
@@ -22,14 +22,11 @@ export default class FetchService {
         ...options
       });
 
-      return await this.deserialize(response);
+      return await this.deserialize(response) as FetchResponse<T>;
     } catch (error: any) {
-      console.error(error);
-      
-      // @ts-ignore
-      return {
+      throw {
         status: "error",
-        message: "Internal Error"
+        message: error.message
       };
     }
   }

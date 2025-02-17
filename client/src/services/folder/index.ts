@@ -2,6 +2,8 @@ import { adjustDate } from "@utilify/core";
 import { StoreOperations } from "@context/indexedDB";
 import { Folder } from "@entities/folder";
 import ActionRecordService from "../actionRecord";
+import { Notify } from "@/utils/notify";
+import { messages } from "@/utils/messages";
 
 export default class FolderService {
   private static instance: FolderService;
@@ -41,6 +43,7 @@ export default class FolderService {
     }
   }
 
+  @Notify(messages.CREATE_FOLDER)
   async create(data: Folder) {
     const folder = new Folder(data.name, data.color, data.order);
     await this.folderStore.add(folder);
@@ -49,6 +52,7 @@ export default class FolderService {
     return folder;
   }
 
+  @Notify(messages.UPDATE_FOLDER)
   async update(folder: Folder) {
     folder.updated_at = new Date().toISOString();
     await this.folderStore.put(folder);
@@ -57,6 +61,7 @@ export default class FolderService {
     return folder;
   }
 
+  @Notify(messages.DELETE_FOLDER)
   async delete(id: string) {
     const folder = await this.get(id);
     folder.updated_at = folder.deleted_at = new Date().toISOString();
@@ -71,6 +76,7 @@ export default class FolderService {
     return folder;
   }
 
+  @Notify(messages.RESTORE_FOLDER)
   async restore(id: string) {
     const folder = await this.folderStore.get(id);
     folder.updated_at = new Date().toISOString();

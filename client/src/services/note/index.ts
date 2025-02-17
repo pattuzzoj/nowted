@@ -2,6 +2,8 @@ import { adjustDate } from "@utilify/core";
 import { StoreOperations } from "@context/indexedDB";
 import { Note } from "@entities/note";
 import ActionRecordService from "@services/actionRecord";
+import { Notify } from "@/utils/notify";
+import { messages } from "@/utils/messages";
 
 export default class NoteService {
   private static instance: NoteService;
@@ -60,6 +62,7 @@ export default class NoteService {
     }
   }
 
+  @Notify(messages.CREATE_NOTE)
   async create(data: Note) {
     const note = new Note(data.name, data.folder_id);
     await this.noteStore.add(note);
@@ -68,6 +71,7 @@ export default class NoteService {
     return note;
   }
 
+  @Notify(messages.UPDATE_NOTE)
   async update(note: Note) {
     note.updated_at = new Date().toISOString();
     await this.noteStore.put(note);
@@ -76,30 +80,35 @@ export default class NoteService {
     return note;
   }
 
+  @Notify(messages.FAVORITE_NOTE)
   async favorite(id: string) {
     const note = await this.noteStore.get(id);
     note.favorite = true;
     return await this.update(note);
   }
 
+  @Notify(messages.UNFAVORITE_NOTE)
   async unfavorite(id: string) {
     const note = await this.noteStore.get(id);
     note.favorite = false;
     return await this.update(note);
   }
 
+  @Notify(messages.ARCHIVE_NOTE)
   async archive(id: string) {
     const note = await this.noteStore.get(id);
     note.archived = true;
     return await this.update(note);
   }
 
+  @Notify(messages.UNARCHIVE_NOTE)
   async unarchive(id: string) {
     const note = await this.noteStore.get(id);
     note.archived = false;
     return await this.update(note);
   }
 
+  @Notify(messages.DELETE_NOTE)
   async delete(id: string) {
     const note = await this.noteStore.get(id);
     note.updated_at = note.deleted_at = new Date().toISOString();
@@ -114,6 +123,7 @@ export default class NoteService {
     return note;
   }
 
+  @Notify(messages.RESTORE_NOTE)
   async restore(id: string) {
     const note = await this.noteStore.get(id);
     note.deleted_at = null;

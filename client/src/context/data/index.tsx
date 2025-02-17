@@ -2,15 +2,11 @@ import { createContext, createEffect, onCleanup, onMount, ParentProps, useContex
 import { createStore } from "solid-js/store";
 import { useParams } from "@solidjs/router";
 import { useIndexedDB } from "@context/indexedDB";
-import useToast from "@hooks/useToast";
 import FolderService from "@services/folder";
 import NoteService from "@services/note";
 import SyncService from "@services/sync";
 import { ActionRecord, Folder, Note } from "@/types";
-import FetchService from "@/services/fetch";
-import { baseURL } from "@/utils/constants";
 import ActionRecordService from "@/services/actionRecord";
-import { messages } from "@/utils/messages/index";
 
 type DataContextType = [
   data: {
@@ -71,237 +67,158 @@ export default function DataProvider(props: ParentProps) {
   const actionRecordService = ActionRecordService.getInstance(actionRecordStore);
   const folderService = FolderService.getInstance(folderStore, actionRecordService);
   const noteService = NoteService.getInstance(noteStore, actionRecordService);
-  const fetchService = new FetchService(baseURL.concat("/sync"));
-  const syncService = SyncService.getInstance(fetchService, actionRecordService, folderService, noteService);
+  const syncService = SyncService.getInstance(actionRecordService, folderService, noteService);
   const params = useParams();
-  const notify = useToast();
 
   onMount(async () => {
     if (!localStorage.getItem("lastSync")) {
       localStorage.setItem("lastSync", new Date("0").toISOString());
     }
 
-    await notify.promise(async () => syncService.syncFetch(), messages.SYNC_ALL);
-    await notify.promise(async () => {
-      const folders = (await folderService.getAll()).filter((folder) => folder.deleted_at === null);
-      const favorites = await noteService.getFavoriteNotes();
-      const archived = await noteService.getArchivedNotes();
-      const trash = await noteService.getDeletedNotes();
+    await syncService.syncFetch();
 
-      setData("folders", folders);
-      setData("favorites", favorites);
-      setData("archived", archived);
-      setData("trash", trash);
-    }, messages.LOAD_ALL);
+    const folders = (await folderService.getAll()).filter((folder) => folder.deleted_at === null);
+    const favorites = await noteService.getFavoriteNotes();
+    const archived = await noteService.getArchivedNotes();
+    const trash = await noteService.getDeletedNotes();
+
+    setData("folders", folders);
+    setData("favorites", favorites);
+    setData("archived", archived);
+    setData("trash", trash);
   });
 
   async function createFolder(folderData: Folder) {
-    await notify.promise<Folder>(
-      async () => {
-        const folder = await folderService.create(folderData);
-        setData("folders", data.folders.length, folder);
-        return folder;
-      },
-      messages.CREATE_FOLDER
-    );
+    const folder = await folderService.create(folderData);
+    setData("folders", data.folders.length, folder);
   }
 
   async function updateFolder(folder: Folder) {
-    await notify.promise<Folder>(
-      async () => {
-        await folderService.update(folder);
-        setData("folders", (folders) => [
-          ...folders.map((currentFolder) => {
-            if (currentFolder.id === folder.id) {
-              return folder;
-            }
+    await folderService.update(folder);
+    setData("folders", (folders) => [
+      ...folders.map((currentFolder) => {
+        if (currentFolder.id === folder.id) {
+          return folder;
+        }
 
-            return currentFolder;
-          })
-        ]);
-        return folder;
-      },
-      messages.UPDATE_FOLDER
-    );
+        return currentFolder;
+      })
+    ]);
   }
 
   async function deleteFolder(id: string) {
-    await notify.promise<void>(
-      async () => {
-        await folderService.delete(id);
-        const notes = await noteService.getNotesByFolderId(id);
+    await folderService.delete(id);
+    const notes = await noteService.getNotesByFolderId(id);
 
-        for (const note of notes) {
-          await noteService.delete(note.id);
-        }
+    for (const note of notes) {
+      await noteService.delete(note.id);
+    }
 
-        setData("folders", (folders) => [
-          ...folders.filter((folder) => folder.id != id)
-        ]);
-      },
-      messages.DELETE_FOLDER
-    );
+    setData("folders", (folders) => [
+      ...folders.filter((folder) => folder.id != id)
+    ]);
   }
 
   async function restoreFolder(id: string) {
-    await notify.promise<Folder>(
-      async () => {
-        const folder = await folderService.get(id);
-        if (folder.deleted_at !== null) {
-          await folderService.restore(folder.id);
-        }
-
-        setData("folders", data.folders.length, folder);
-        return folder;
-      },
-      messages.RESTORE_FOLDER
-    );
+    const folder = await folderService.get(id);
+    if (folder.deleted_at !== null) {
+      await folderService.restore(folder.id);
+      setData("folders", data.folders.length, folder);
+    }
   }
 
   async function createNote(folderId: string) {
-    await notify.promise<Note>(
-      async () => {
-        const note = await noteService.create({ name: "New Note", folder_id: folderId } as Note);
-        setData("notes", data.notes.length, note);
-        return note;
-      },
-      messages.CREATE_NOTE
-    );
+    const note = await noteService.create({ name: "New Note", folder_id: folderId } as Note);
+    setData("notes", data.notes.length, note);
   }
 
   async function updateNote(note: Note) {
-    await notify.promise<Note>(
-      async () => {
-        await noteService.update(note);
-        setData("notes", (notes) => [
-          ...notes.map((currentNote) => {
-            if (currentNote.id === note.id) {
-              return note;
-            }
+    await noteService.update(note);
+    setData("notes", (notes) => [
+      ...notes.map((currentNote) => {
+        if (currentNote.id === note.id) {
+          return note;
+        }
 
-            return currentNote;
-          })
-        ]);
-        return note;
-      },
-      messages.UPDATE_NOTE
-    );
+        return currentNote;
+      })
+    ]);
   }
 
   async function updateContent(id: string, preview: string, content: string) {
-    await notify.promise<Note>(
-      async () => {
-        const note = await noteService.get(id);
-        note.preview = preview;
-        note.content = content;
-        await updateNote(note);
-        return note;
-      },
-      messages.UPDATE_CONTENT
-    );
+    const note = await noteService.get(id);
+    note.preview = preview;
+    note.content = content;
+    await updateNote(note);
+
   }
 
   async function favoriteNote(id: string) {
-    await notify.promise<Note>(
-      async () => {
-        const note = await noteService.favorite(id);
-        setData("favorites", data.favorites.length, note);
-        return note;
-      },
-      messages.FAVORITE_NOTE
-    );
+    const note = await noteService.favorite(id);
+    setData("favorites", data.favorites.length, note);
   }
 
   async function unfavoriteNote(id: string) {
-    await notify.promise<Note>(
-      async () => {
-        const note = await noteService.unfavorite(id);
-        setData("favorites", (notes) => [
-          ...(notes).filter((currentNote) => currentNote.id != note.id)
-        ]);
-        return note;
-      },
-      messages.UNFAVORITE_NOTE
-    );
+    const note = await noteService.unfavorite(id);
+    setData("favorites", (notes) => [
+      ...(notes).filter((currentNote) => currentNote.id != note.id)
+    ]);
   }
 
   async function archiveNote(id: string) {
-    await notify.promise<Note>(
-      async () => {
-        const note = await noteService.archive(id);
-        setData("notes", (notes) => [
-          ...notes.filter((note) => note.id != id)
-        ]);
+    const note = await noteService.archive(id);
+    setData("notes", (notes) => [
+      ...notes.filter((note) => note.id != id)
+    ]);
 
-        setData("archived", data.archived.length, note);
-        return note;
-      },
-      messages.ARCHIVE_NOTE
-    );
+    setData("archived", data.archived.length, note);
   }
 
   async function unarchiveNote(id: string) {
-    await notify.promise<Note>(
-      async () => {
-        const note = await noteService.unarchive(id);
-        setData("archived", (notes) => [
-          ...(notes).filter((currentNote) => currentNote.id != note.id)
-        ]);
-        setData("notes", data.archived.length, note);
-        return note;
-      },
-      messages.UNARCHIVE_NOTE
-    );
+
+    const note = await noteService.unarchive(id);
+    setData("archived", (notes) => [
+      ...(notes).filter((currentNote) => currentNote.id != note.id)
+    ]);
+    setData("notes", data.archived.length, note);
   }
 
   async function restoreNote(id: string) {
-    await notify.promise<Note>(
-      async () => {
-        const note = await noteService.restore(id);
-        await restoreFolder(note.folder_id);
-        setData("trash", (notes) => [
-          ...notes.filter((note) => note.id != id)
-        ]);
+    const note = await noteService.restore(id);
+    await restoreFolder(note.folder_id);
+    setData("trash", (notes) => [
+      ...notes.filter((note) => note.id != id)
+    ]);
 
-        if (note.favorite) {
-          setData("favorites", data.favorites.length, note);
-        }
+    if (note.favorite) {
+      setData("favorites", data.favorites.length, note);
+    }
 
-        if (note.archived) {
-          setData("archived", data.archived.length, note);
-        }
+    if (note.archived) {
+      setData("archived", data.archived.length, note);
+    }
 
-        if (data.folders.every((folder) => folder.id !== note.folder_id)) {
-          const folders = (await folderService.getAll()).filter((folder) => folder.deleted_at === null);
-          setData("folders", folders);
-        }
-
-        return note;
-      },
-      messages.RESTORE_NOTE
-    );
+    if (data.folders.every((folder) => folder.id !== note.folder_id)) {
+      const folders = (await folderService.getAll()).filter((folder) => folder.deleted_at === null);
+      setData("folders", folders);
+    }
   }
 
   async function deleteNote(id: string) {
-    await notify.promise<void>(
-      async () => {
-        const note = await noteService.delete(id);
-        setData("notes", (notes) => [
-          ...notes.filter((note) => note.id != id)
-        ]);
+    const note = await noteService.delete(id);
+    setData("notes", (notes) => [
+      ...notes.filter((note) => note.id != id)
+    ]);
 
-        setData("favorites", (notes) => [
-          ...notes.filter((note) => note.id != id)
-        ]);
+    setData("favorites", (notes) => [
+      ...notes.filter((note) => note.id != id)
+    ]);
 
-        setData("archived", (notes) => [
-          ...notes.filter((note) => note.id != id)
-        ]);
+    setData("archived", (notes) => [
+      ...notes.filter((note) => note.id != id)
+    ]);
 
-        setData("trash", data.trash.length, note);
-      },
-      messages.DELETE_NOTE
-    );
+    setData("trash", data.trash.length, note);
   }
 
   createEffect(async () => {
