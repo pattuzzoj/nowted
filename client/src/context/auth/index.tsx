@@ -30,7 +30,6 @@ export default function AuthProvider(props: ParentProps) {
   async function handleSignIn(credentials: SignIn) {
     try {
       await authService.signIn(credentials);
-      console.log("logou");
       setIsAuthenticated(true);
       navigate("/");
     } catch (error) {
