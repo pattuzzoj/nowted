@@ -77,14 +77,14 @@ export function AuthRoute(props: ParentProps) {
   const { isAuthenticated, setIsAuthenticated, isValidToken } = useAuth();
   const navigate = useNavigate();
 
-  onMount(async () => {
-    try {
-      await isValidToken();
-      setIsAuthenticated(true);
-    } catch (error) {
-      navigate("/auth/sign-in");
-    }
-  });
+  // onMount(async () => {
+  //   try {
+  //     await isValidToken();
+  //     setIsAuthenticated(true);
+  //   } catch (error) {
+  //     navigate("/auth/sign-in");
+  //   }
+  // });
 
   return (
     <Show when={isAuthenticated()}>
