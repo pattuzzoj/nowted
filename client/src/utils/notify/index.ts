@@ -68,6 +68,7 @@ export const notify = {
       return result;
     } catch (error) {
       notify.error(message.error);
+      console.log(error);
       throw error;
     }
   },
@@ -82,7 +83,7 @@ export function Notify(message: {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
-      return await notify.promise(async () => originalMethod.apply(null, args), message);
+      return await notify.promise(async () => originalMethod.apply(this, args), message);
     };
 
     return descriptor;
