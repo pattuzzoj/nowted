@@ -21,21 +21,22 @@ export default class AuthService {
   }
 
   public async isValidToken() {
-    await this.fetchService.get("/status");
+    return await this.fetchService.get("/status");
   }
 
+  @Notify(messages.LOGIN)
   public async signIn(credentials: SignIn) {
-    await this.fetchService.post("/sign-in", credentials);
+    return await this.fetchService.post("/sign-in", credentials);
   }
 
   @Notify(messages.REGISTER)
   public async signUp(registration: SignUp) {
-    await this.fetchService.post("/sign-up", registration);
+    return await this.fetchService.post("/sign-up", registration);
   }
 
   @Notify(messages.LOGOUT)
   public async logOut() {
-    await this.fetchService.delete("/log-out");
+    return await this.fetchService.delete("/log-out");
   }
 
   @Notify(messages.ACCOUNT_RECOVERY)

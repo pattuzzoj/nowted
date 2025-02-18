@@ -1,4 +1,4 @@
-import { createContext, createSignal, JSXElement, onCleanup, Show, useContext } from "solid-js";
+import { createContext, createSignal, JSXElement, onCleanup, onMount, Show, useContext } from "solid-js";
 
 type IndexedDBContextReturn = [
   <T>(name: string) => StoreOperations<T>,
@@ -55,53 +55,55 @@ export default function IndexedDBProvider(props: IndexedDBProps) {
   const { name, version, stores } = props.value;
   const [database, setDatabase] = createSignal<IDBDatabase>();
 
-  const iDBRequest = indexedDB.open(name, version)
-
-  iDBRequest.onupgradeneeded = (event: IDBVersionChangeEvent) => {
-    const request = event.target as IDBRequest;
-    const iDB = request.result;
-
-    for (const storeName of iDB.objectStoreNames) {
-      if (stores.every(store => store.name !== storeName)) {
-        iDB.deleteObjectStore(storeName);
-      }
-    }
-
-    for (const store of stores) {
-      if (!iDB.objectStoreNames.contains(store.name)) {
-        iDB.createObjectStore(store.name, store?.options);
-      }
-
-      const currentStore = request.transaction!.objectStore(store.name);
-
-      for (const currentIndex of currentStore.indexNames) {
-        if (!store?.index?.some(index => index.name == currentIndex)) {
-          currentStore.deleteIndex(currentIndex);
+  onMount(() => {
+    const iDBRequest = indexedDB.open(name, version)
+  
+    iDBRequest.onupgradeneeded = (event: IDBVersionChangeEvent) => {
+      const request = event.target as IDBRequest;
+      const iDB = request.result;
+  
+      for (const storeName of iDB.objectStoreNames) {
+        if (stores.every(store => store.name !== storeName)) {
+          iDB.deleteObjectStore(storeName);
         }
       }
-
-      store?.index?.forEach(index => {
-        if (!currentStore.indexNames.contains(index.name)) {
-          currentStore.createIndex(index.name, index.keyPath, index?.options)
+  
+      for (const store of stores) {
+        if (!iDB.objectStoreNames.contains(store.name)) {
+          iDB.createObjectStore(store.name, store?.options);
         }
-      })
+  
+        const currentStore = request.transaction!.objectStore(store.name);
+  
+        for (const currentIndex of currentStore.indexNames) {
+          if (!store?.index?.some(index => index.name == currentIndex)) {
+            currentStore.deleteIndex(currentIndex);
+          }
+        }
+  
+        store?.index?.forEach(index => {
+          if (!currentStore.indexNames.contains(index.name)) {
+            currentStore.createIndex(index.name, index.keyPath, index?.options)
+          }
+        })
+      }
     }
-  }
-
-  iDBRequest.onsuccess = (event: Event) => {
-    const iDB = (event.target as IDBOpenDBRequest).result;
-    setDatabase(iDB);
-
-    iDB.onversionchange = () => {
-      iDB.close();
-
-      window.location.reload();
+  
+    iDBRequest.onsuccess = (event: Event) => {
+      const iDB = (event.target as IDBOpenDBRequest).result;
+      setDatabase(iDB);
+  
+      iDB.onversionchange = () => {
+        iDB.close();
+  
+        window.location.reload();
+      }
     }
-  }
-
-  iDBRequest.onerror = (event: Event) => {
-    console.error("Error on open IndexedDB:", (event.target as IDBOpenDBRequest).error);
-  }
+  
+    iDBRequest.onerror = (event: Event) => {
+      console.error("Error on open IndexedDB:", (event.target as IDBOpenDBRequest).error);
+    }
+  })
 
   function transaction(name: string | Iterable<string>, mode: Exclude<IDBTransactionMode, "versionchange">): Promise<IDBTransaction> {
     return new Promise(async (resolve, reject) => {
