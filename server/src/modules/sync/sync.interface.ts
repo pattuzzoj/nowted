@@ -8,6 +8,6 @@ export interface SyncRecord {
   id: string;
   type: OperationType;
   entity: EntityType;
-  data: Partial<Folder | Note>;
+  data: Folder & Note;
   timestamp: number;
 }

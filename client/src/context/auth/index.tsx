@@ -9,7 +9,7 @@ const AuthContext = createContext<Auth>();
 interface Auth {
   isAuthenticated: Accessor<boolean>,
   setIsAuthenticated: Setter<boolean>,
-  isValidToken: () => Promise<void>,
+  status: () => Promise<void>,
   handleSignIn: (credentials: SignIn) => Promise<void>,
   handleSignUp: (registration: SignUp) => Promise<void>,
   handleLogOut: () => Promise<void>,
@@ -23,12 +23,19 @@ export default function AuthProvider(props: ParentProps) {
   const [_, { clearDatabase }] = useIndexedDB();
   const navigate = useNavigate();
 
+  async function status() {
+    await authService.isValidToken();
+  }
+
   async function handleSignIn(credentials: SignIn) {
     try {
       await authService.signIn(credentials);
+      console.log("logou");
       setIsAuthenticated(true);
       navigate("/");
-    } catch {}
+    } catch (error) {
+      console.log("Erro:", error);
+    }
   }
 
   async function handleSignUp(registration: SignUp) {
@@ -65,7 +72,7 @@ export default function AuthProvider(props: ParentProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, isValidToken: authService.isValidToken, handleSignIn, handleSignUp, handleLogOut, handleRecoverAccount, handleResetPassword }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, status, handleSignIn, handleSignUp, handleLogOut, handleRecoverAccount, handleResetPassword }}>
       {props.children}
     </AuthContext.Provider>
   )
@@ -74,12 +81,12 @@ export default function AuthProvider(props: ParentProps) {
 export const useAuth = (): Auth => useContext(AuthContext) as unknown as Auth;
 
 export function AuthRoute(props: ParentProps) {
-  const { isAuthenticated, setIsAuthenticated, isValidToken } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, status } = useAuth();
   const navigate = useNavigate();
 
   onMount(async () => {
     try {
-      await isValidToken();
+      await status();
       setIsAuthenticated(true);
     } catch (error) {
       navigate("/auth/sign-in");
