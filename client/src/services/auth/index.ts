@@ -24,7 +24,7 @@ export default class AuthService {
     return await this.fetchService.get("/status");
   }
 
-  @Notify(messages.LOGIN)
+  // @Notify(messages.LOGIN)
   public async signIn(credentials: SignIn) {
     return await this.fetchService.post("/sign-in", credentials);
   }
