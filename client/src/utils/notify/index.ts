@@ -82,7 +82,7 @@ export function Notify(message: {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
-      return notify.promise(() => originalMethod.apply(this, args), message);
+      return notify.promise(async () => originalMethod.apply(this, args), message);
     };
 
     return descriptor;
