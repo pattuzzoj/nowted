@@ -10,17 +10,17 @@ import { messages } from "@utils/messages";
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Get("/status")
+  @Get("/verify-token")
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
-  async status() {
+  async verifyToken() {
     return {
       ...messages.LOGGED,
       timestamp: new Date().toISOString()
     }
   }
 
-  @Post("/sign-in")
+  @Post("/login")
   @HttpCode(HttpStatus.OK)
   async signIn(@Body() user: SignInDto, @Res() res: Response) {
     const token = await this.authService.signIn(user);
@@ -37,7 +37,7 @@ export class AuthController {
     });
   }
 
-  @Post("/sign-up")
+  @Post("/register")
   @HttpCode(HttpStatus.CREATED)
   async signUp(@Body() user: SignUpDto) {
     await this.authService.signUp(user);
@@ -48,7 +48,18 @@ export class AuthController {
     }
   }
 
-  @Delete("/log-out")
+  @Post("/activate-account")
+  @HttpCode(HttpStatus.OK)
+  async activateAccount(@Body("token") token: string) {
+    await this.authService.activateAccount(token);
+
+    return {
+      ...messages.ACCOUNT_ACTIVATED,
+      timestamp: new Date().toISOString()
+    }
+  }
+
+  @Delete("/logout")
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async logout(@Res() res: Response) {
@@ -60,6 +71,24 @@ export class AuthController {
       domain: "nowted-server.vercel.app"
     }).status(HttpStatus.OK).send({
       ...messages.LOGOUT,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  @Delete("/delete-account")
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteAccount(@Res() res: Response) {
+    await this.authService.deleteAccount();
+
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      secure: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      sameSite: "none",
+      domain: "nowted-server.vercel.app"
+    }).status(HttpStatus.OK).send({
+      ...messages.ACCOUNT_DELETED,
       timestamp: new Date().toISOString()
     });
   }
