@@ -64,7 +64,7 @@ export default function LayoutMenu() {
               <div class="flex items-center justify-between">
                 <h2 id="folders" class="text-sm">Folders</h2>
                 <Dialog.Root>
-                  <Dialog.Trigger title="create folder" class="flex justify-center items-center btn">
+                  <Dialog.Trigger title="create folder" class="flex justify-center items-center btn data-[state=open]:bg-hover">
                     <FolderPlus class="size-5" />
                   </Dialog.Trigger>
                   <Portal>

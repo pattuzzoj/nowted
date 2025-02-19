@@ -2,7 +2,7 @@ import { adjustDate } from "@utilify/core";
 import { StoreOperations } from "@context/indexedDB";
 import { Note } from "@entities/note";
 import ActionRecordService from "@services/actionRecord";
-import { Notify } from "@/utils/notify";
+import { Notify } from "@/utils/decorators/notify";
 import { messages } from "@/utils/messages";
 
 export default class NoteService {
@@ -13,7 +13,7 @@ export default class NoteService {
     private actionRecordService: ActionRecordService
   ) {}
 
-  public static getInstance(
+  static getInstance(
     noteStore: StoreOperations<Note>,
     actionRecordService: ActionRecordService
   ) {

@@ -152,7 +152,6 @@ export default function DataProvider(props: ParentProps) {
     note.preview = preview;
     note.content = content;
     await updateNote(note);
-
   }
 
   async function favoriteNote(id: string) {

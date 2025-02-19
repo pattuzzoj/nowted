@@ -29,7 +29,7 @@ export default function FolderItem(props: FolderProps) {
               </Show>
               {props.name}
             </A>
-            <Menu.Trigger title="Settings Folder" class="absolute top-1/2 right-0 -translate-y-1/2 btn mr-1.5">
+            <Menu.Trigger title="Settings Folder" class="absolute top-1/2 right-0 -translate-y-1/2 btn data-[state=open]:bg-hover mr-1.5">
               <Settings2 class="size-4" />
             </Menu.Trigger>
           </span>

@@ -4,7 +4,7 @@ import NoteService from "../note";
 import { Folder, Note } from "@/types";
 import ActionRecordService from "../actionRecord";
 import { deepMerge } from "@utilify/core";
-import { Notify } from "@/utils/notify";
+import { Notify } from "@/utils/decorators/notify";
 import { messages } from "@/utils/messages";
 import { baseURL } from "@/utils/constants";
 
@@ -36,9 +36,17 @@ export default class SyncService {
     return SyncService.instance;
   }
 
+  private getLastSync() {
+    return localStorage.getItem("lastSync");
+  }
+
+  private setLastSync(lastSync: string) {
+    localStorage.setItem("lastSync", lastSync);
+  }
+
   @Notify(messages.SYNC_ALL)
   async syncFetch() {
-    const lastSync = localStorage.getItem("lastSync");
+    const lastSync = this.getLastSync();
     const response = await this.fetchService.get<{ folders: Folder[]; notes: Note[] }>(`/${lastSync}`);
 
     if (response.status === "error") {
@@ -49,7 +57,7 @@ export default class SyncService {
       await this.folderService.populate(response.data.folders);
       await this.noteService.populate(response.data.notes);
 
-      localStorage.setItem("lastSync", new Date(response.timestamp).toISOString());
+      this.setLastSync(response.timestamp);
     } catch (error) {
       return {
         status: "error",
@@ -101,7 +109,7 @@ export default class SyncService {
       return response;
     }
 
-    localStorage.setItem("lastSync", new Date(response.timestamp).toISOString());
+    this.setLastSync(response.timestamp);
 
     for (const item of actionRecords) {
       await this.ActionRecordService.delete(item.id);

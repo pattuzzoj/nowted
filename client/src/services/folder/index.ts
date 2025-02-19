@@ -2,7 +2,7 @@ import { adjustDate } from "@utilify/core";
 import { StoreOperations } from "@context/indexedDB";
 import { Folder } from "@entities/folder";
 import ActionRecordService from "../actionRecord";
-import { Notify } from "@/utils/notify";
+import { Notify } from "@/utils/decorators/notify";
 import { messages } from "@/utils/messages";
 
 export default class FolderService {
@@ -13,7 +13,7 @@ export default class FolderService {
     private actionRecordService: ActionRecordService
   ) {}
 
-  public static getInstance(
+  static getInstance(
     folderStore: StoreOperations<Folder>,
     actionRecordService: ActionRecordService
   ) {

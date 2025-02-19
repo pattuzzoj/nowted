@@ -1,7 +1,7 @@
 import FetchService from "@services/fetch";
 import type { SignIn, SignUp } from "./interfaces";
 import { messages } from "@/utils/messages";
-import { Notify } from "@/utils/notify";
+import { Notify } from "@/utils/decorators/notify";
 import { baseURL } from "@/utils/constants";
 
 export default class AuthService {
