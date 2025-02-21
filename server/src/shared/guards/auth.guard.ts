@@ -11,10 +11,7 @@ export class AuthGuard implements CanActivate {
     const token = request.cookies?.jwt;
 
     if(!token) {
-      throw new UnauthorizedException({
-        ...messages.TOKEN_NOT_FOUND,
-        timestamp: new Date().toISOString()
-      });
+      throw new UnauthorizedException(messages.TOKEN_NOT_FOUND);
     }
 
     try {
@@ -22,10 +19,7 @@ export class AuthGuard implements CanActivate {
       request.user = payload;
       return true;
     } catch {
-      throw new UnauthorizedException({
-        ...messages.INVALID_TOKEN,
-        timestamp: new Date().toISOString()
-      });
+      throw new UnauthorizedException(messages.INVALID_TOKEN);
     }
   }
 }

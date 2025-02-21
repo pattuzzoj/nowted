@@ -1,12 +1,15 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, uuid, index, boolean, integer } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, uuid, index, boolean, integer, pgEnum } from "drizzle-orm/pg-core";
 import { timestamps } from "./columns.helpers";
+
+export const accountStatusEnum = pgEnum("account_status", ["pending", "active"]);
 
 export const userSchema = pgTable("users", {
   id: uuid().default(sql`gen_random_uuid()`).primaryKey(),
   email: varchar({length: 100}).unique().notNull(),
   username: varchar({length: 16}).unique().notNull(),
   password: varchar({length: 100}).notNull(),
+  account_status: accountStatusEnum().notNull().default("pending"),
   ...timestamps,
 }, (table) => [
     index("emailIndex").on(table.email),

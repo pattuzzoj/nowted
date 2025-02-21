@@ -1,34 +1,13 @@
-import { HttpStatus } from "@nestjs/common";
-
 const success = {
-  LOGGED: {
-    status: "success",
-    statusCode: HttpStatus.OK,
-    message: "Logged Successfully"
-  },
-  LOGOUT: {
-    status: "success",
-    statusCode: HttpStatus.OK,
-    message: "Logout Successfully"
-  }
+  LOGGED: "Logged Successfully",
+  LOGOUT: "Logout Successfully"
 }
 
 const error = {
-  INVALID_CREDENTIALS: {
-    status: "error",
-    statusCode: HttpStatus.UNAUTHORIZED,
-    message: "Invalid Credentials"
-  },
-  INVALID_TOKEN: {
-    status: "error",
-    statusCode: HttpStatus.UNAUTHORIZED,
-    message: "Invalid Token",
-  },
-  TOKEN_NOT_FOUND: {
-    status: "error",
-    statusCode: HttpStatus.UNAUTHORIZED,
-    message: "Token Not Found",
-  }
+  INVALID_CREDENTIALS: "Invalid Credentials",
+  INVALID_TOKEN: "Invalid Token",
+  TOKEN_NOT_FOUND: "Token Not Found",
+  ACCOUNT_NOT_ACTIVE: "Account Not Active"
 }
 
 export const AuthMessages = {

@@ -1,0 +1,55 @@
+@hostname = {{baseUrl}}
+@path = /auth
+@host = {{hostname}}{{path}}
+
+GET {{host}}/verify-token
+
+###
+
+POST {{host}}/login
+Content-type: application/json
+
+{
+  "login": "pattuzzoj@gmail.com",
+  "password": "Ju30042001"
+}
+
+###
+
+POST {{host}}/register
+Content-type: application/json
+
+{
+  "email": "pattuzzoj@gmail.com",
+  "username": "Reiden",
+  "password": "Ju30042001"
+}
+
+POST {{host}}/activate-account
+Content-type: application/json
+
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwYXR0dXp6b2pAZ21haWwuY29tIiwiaWF0IjoxNzM3NzM3MTE1LCJleHAiOjE3NDAzMjkxMTV9.vQ_MLqvfX-a4mW9J613-jXriL7E2CnWvPLQ-T2JBu5Q"
+}
+
+###
+
+DELETE {{host}}/logout
+
+###
+
+@POST {{host}}/forgot-password
+Content-type: application/json
+
+{
+  "email": "pattuzzoj@gmail.com"
+}
+
+###
+
+POST {{host}}/reset-password
+Content-type: application/json
+
+{
+  "password": "Ju30042001"
+}

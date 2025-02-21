@@ -1,0 +1,42 @@
+@hostname = {{baseUrl}}
+@path = /sync
+@host = {{hostname}}{{path}}
+
+GET {{host}}/1970-01-01T00:00:00.000Z
+
+###
+
+export interface SyncRecord {
+  id: string;
+  type: OperationType;
+  entity: EntityType;
+  data: Folder & Note;
+  timestamp: number;
+}
+
+POST {{host}}
+
+Content-Type: application/json
+
+[
+  {
+  "id": 1,
+  "type": "create",
+  "entity": "folder",
+  "data": {
+    "id": "folder-1",
+    "title": "Folder 1",
+  },
+  "timestamp": 1234567890
+  },
+  {
+  "id": 2,
+  "type": "update",
+  "entity": "note",
+  "data": {
+    "id": "note-1",
+    "title": "Note 1",
+  },
+  "timestamp": 1234567890
+  }
+]

@@ -42,21 +42,16 @@ export class FolderService {
     return folder[0];
   }
 
-  async create(userId: string, folder: Folder) {
-    folder.created_at = new Date(folder.created_at);
-    folder.updated_at = new Date(folder.updated_at);
-    folder.deleted_at = folder.deleted_at ? folder.deleted_at : null;
-
-    return await this.db
+  async create(userId: string, data: Folder) {
+    const [folder] = await this.db
     .insert(folderSchema)
-    .values({user_id: userId, ...folder});
+    .values({user_id: userId, ...data})
+    .returning();
+
+    return folder;
   }
 
   async update(userId: string, folder: Folder) {
-    folder.created_at = new Date(folder.created_at);
-    folder.updated_at = new Date(folder.updated_at);
-    folder.deleted_at = folder.deleted_at ? folder.deleted_at : null;
-
     await this.db
     .update(folderSchema)
     .set(folder)
@@ -69,10 +64,6 @@ export class FolderService {
   }
 
   async restore(userId: string, folder: Folder) {
-    folder.created_at = new Date(folder.created_at);
-    folder.updated_at = new Date(folder.updated_at);
-    folder.deleted_at = folder.deleted_at ? folder.deleted_at : null;
-    
     await this.db.batch([
       this.db
       .update(folderSchema)
@@ -98,10 +89,6 @@ export class FolderService {
   }
 
   async delete(userId: string, folder: Folder) {
-    folder.created_at = new Date(folder.created_at);
-    folder.updated_at = new Date(folder.updated_at);
-    folder.deleted_at = folder.deleted_at ? folder.deleted_at : null;
-
     await this.db.batch([
       this.db
       .update(folderSchema)

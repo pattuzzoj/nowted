@@ -1,24 +1,10 @@
-import { HttpStatus } from "@nestjs/common";
-
 const success = {
-  SYNCHRONIZED: {
-    status: "success",
-    statusCode: HttpStatus.OK,
-    message: "Synchronized Successfully"
-  }
+  SYNCHRONIZED: "Synchronized Successfully"
 }
 
 const error = {
-  ENTITY_NOT_EXIST: {
-    status: "error",
-    statusCode: HttpStatus.NOT_IMPLEMENTED,
-    message: "Entity Not Exist"
-  },
-  TYPE_OPERATION_NOT_EXIST: {
-    status: "error",
-    statusCode: HttpStatus.NOT_IMPLEMENTED,
-    message: "Type Operation Not Exist"
-  }
+  ENTITY_NOT_EXIST: "Entity Not Exist",
+  TYPE_OPERATION_NOT_EXIST: "Type Operation Not Exist"
 }
 
 export const SyncMessages = {

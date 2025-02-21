@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { IsEmail, IsLowercase, IsNotEmpty, IsString, Length, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, Length, MinLength } from "class-validator";
 
-export default class UserDto {
+export default class RegisterDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;

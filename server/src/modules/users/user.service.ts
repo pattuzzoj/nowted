@@ -1,16 +1,15 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { eq, or } from "drizzle-orm";
-import * as bcrypt from "bcrypt";
 import type { DatabaseType } from "../../../drizzle.config";
 import { userSchema } from "@database/schema";
-import { User } from "./interface/user.interface";
+import UserDto from "./dto/user.dto";
 
 @Injectable()
 export class UserService {
   constructor(@Inject("DATABASE") private db: DatabaseType) {}
 
-  async createUser(user: User) {
-    return await this.db
+  async createUser(user: UserDto) {
+    await this.db
     .insert(userSchema)
     .values(user);
   }
@@ -21,7 +20,8 @@ export class UserService {
       id: userSchema.id,
       email: userSchema.email,
       username: userSchema.username,
-      password: userSchema.password
+      password: userSchema.password,
+      account_status: userSchema.account_status
     })
     .from(userSchema)
     .where(or(
@@ -32,27 +32,31 @@ export class UserService {
     return user;
   }
 
-  async changeUsername(userId: string, username: string) {
+  async activateAccount(id: string) {
     await this.db
     .update(userSchema)
-    .set({username})
-    .where(eq(userSchema.id, userId));
+    .set({account_status: "active"})
+    .where(eq(userSchema.id, id));
   }
 
-  async changeEmail(userId: string, email: string) {
+  async changeEmail(id: string, email: string) {
     await this.db
     .update(userSchema)
     .set({email})
-    .where(eq(userSchema.id, userId));
+    .where(eq(userSchema.id, id));
   }
 
-  async changePassword(userId: string, password: string) {
-    const salt = await bcrypt.genSalt();
-    const hashPassword = await bcrypt.hash(password, salt);
-
+  async changeUsername(id: string, username: string) {
     await this.db
     .update(userSchema)
-    .set({password: hashPassword})
-    .where(eq(userSchema.id, userId));
+    .set({username})
+    .where(eq(userSchema.id, id));
+  }
+
+  async changePassword(id: string, password: string) {
+    await this.db
+    .update(userSchema)
+    .set({password})
+    .where(eq(userSchema.id, id));
   }
 }

@@ -29,11 +29,12 @@ export class SyncService {
       } else if (entity === "note") {
         entityService = this.noteService;
       } else {
-        throw new NotImplementedException({
-          ...messages.ENTITY_NOT_EXIST,
-          timestamp: new Date().toISOString()
-        });
+        throw new NotImplementedException(messages.ENTITY_NOT_EXIST);
       }
+
+      data.created_at = new Date(data.created_at);
+      data.updated_at = new Date(data.updated_at);
+      data.deleted_at = data.deleted_at ? data.deleted_at : null;
   
       switch (type) {
         case "create":
@@ -49,10 +50,7 @@ export class SyncService {
           await entityService.restore(userId, data);
           break;
         default:
-          throw new NotImplementedException({
-            ...messages.TYPE_OPERATION_NOT_EXIST,
-            timestamp: new Date().toISOString()
-          });
+          throw new NotImplementedException(messages.TYPE_OPERATION_NOT_EXIST);
       }
     }
   }

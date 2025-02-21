@@ -1,0 +1,28 @@
+@hostname = {{baseUrl}}
+@path = /users
+@host = {{hostname}}{{path}}
+
+PATCH {{host}}/change-email
+Content-Type: application/json
+
+{
+  "email": "reidenglobal1@gmail.com"
+}
+
+####
+
+PATCH {{host}}/change-username
+Content-Type: application/json
+
+{
+  "username": "reidenglobal123"
+}
+
+###
+
+PATCH {{host}}/change-password
+Content-Type: application/json
+
+{
+  "password": "new_password123"
+}

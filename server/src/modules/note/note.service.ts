@@ -46,10 +46,6 @@ export class NoteService {
   }
 
   async create(userId: string, note: Note) {
-    note.created_at = new Date(note.created_at);
-    note.updated_at = new Date(note.updated_at);
-    note.deleted_at = note.deleted_at ? note.deleted_at : null;
-    
     return await this.db
     .insert(noteSchema)
     .values({user_id: userId, ...note});
@@ -72,10 +68,6 @@ export class NoteService {
   }
 
   async restore(userId: string, note: Note) {
-    note.created_at = new Date(note.created_at);
-    note.updated_at = new Date(note.updated_at);
-    note.deleted_at = note.deleted_at ? note.deleted_at : null;
-
     const [folderId] = await this.db
     .update(noteSchema)
     .set({updated_at: note.updated_at, deleted_at: note.deleted_at})
@@ -102,10 +94,6 @@ export class NoteService {
   }
 
   async delete(userId: string, note: Note) {
-    note.created_at = new Date(note.created_at);
-    note.updated_at = new Date(note.updated_at);
-    note.deleted_at = note.deleted_at ? note.deleted_at : null;
-
     await this.db
     .update(noteSchema)
     .set({updated_at: note.updated_at, deleted_at: note.deleted_at})

@@ -1,44 +1,16 @@
-import { HttpStatus } from "@nestjs/common";
-
 const success = {
-  REGISTERED: {
-    status: "success",
-    statusCode: HttpStatus.CREATED,
-    message: "Register Successfully"
-  },
-  USERNAME_UPDATED: {
-    status: "success",
-    statusCode: HttpStatus.OK,
-    message: "Username Updated Successfully"
-  },
-  EMAIL_UPDATED: {
-    status: "success",
-    statusCode: HttpStatus.OK,
-    message: "Email Updated Successfully"
-  },
-  PASSWORD_UPDATED: {
-    status: "success",
-    statusCode: HttpStatus.OK,
-    message: "Password Updated Successfully"
-  }
+  REGISTERED: "Register Successfully",
+  USERNAME_UPDATED: "Username Updated Successfully",
+  EMAIL_UPDATED: "Email Updated Successfully",
+  PASSWORD_UPDATED: "Password Updated Successfully",
+  ACCOUNT_ACTIVATED: "Account Activated Successfully",
+  ACCOUNT_DELETED: "Account Deleted Successfully"
 }
 
 const error = {
-  EMAIL_ALREADY_USED: {
-    status: "error",
-    statusCode: HttpStatus.CONFLICT,
-    message: "Email Already Used",
-  },
-  USERNAME_ALREADY_USED: {
-    status: "error",
-    statusCode: HttpStatus.CONFLICT,
-    message: "User Already Used",
-  },
-  ACCOUNT_NOT_EXIST: {
-    status: "error",
-    statusCode: HttpStatus.UNAUTHORIZED,
-    message: "Account Not Exists",
-  }
+  EMAIL_ALREADY_USED: "Email Already Used",
+  USERNAME_ALREADY_USED: "User Already Used",
+  ACCOUNT_NOT_EXIST: "Account Not Exists",
 }
 
 export const UsersMessages = {
