@@ -12,6 +12,7 @@ interface Auth {
   status: () => Promise<void>,
   handleLogin: (credentials: Login) => Promise<void>,
   handleRegister: (registration: Register) => Promise<void>,
+  handleActivateAccount: (token: string) => Promise<void>,
   handleLogout: () => Promise<void>,
   handleRecoverAccount: (account: string) => Promise<void>,
   handleResetPassword: (token: string, password: string) => Promise<void>
@@ -40,8 +41,15 @@ export default function AuthProvider(props: ParentProps) {
   async function handleRegister(registration: Register) {
     try {
       await authService.register(registration);
-      navigate("/auth/sign-in");      
+      navigate("/auth/login");      
     } catch {}
+  }
+
+  async function handleActivateAccount(token: string) {
+    try {
+      await authService.activateAccount(token);
+      navigate("/auth/login");
+    } catch (error) {}
   }
 
   async function handleLogout() {
@@ -51,7 +59,7 @@ export default function AuthProvider(props: ParentProps) {
       localStorage.clear();
       await clearDatabase();
       setIsAuthenticated(false);
-      navigate("/auth/sign-in");
+      navigate("/auth/login");
     } catch {}
   }
 
@@ -64,14 +72,24 @@ export default function AuthProvider(props: ParentProps) {
   async function handleResetPassword(token: string, password: string) {
     try {
       await authService.resetPassword(token, password);
-      navigate("/auth/sign-in");
+      navigate("/auth/login");
     } catch (error) {
       navigate("/auth/recover-account");
     }
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, status, handleLogin, handleRegister, handleLogout, handleRecoverAccount, handleResetPassword }}>
+    <AuthContext.Provider value={{
+      isAuthenticated,
+      setIsAuthenticated,
+      status,
+      handleLogin,
+      handleRegister,
+      handleActivateAccount,
+      handleLogout,
+      handleRecoverAccount,
+      handleResetPassword
+    }}>
       {props.children}
     </AuthContext.Provider>
   )
@@ -88,7 +106,7 @@ export function AuthRoute(props: ParentProps) {
       await status();
       setIsAuthenticated(true);
     } catch (error) {
-      navigate("/auth/sign-in");
+      navigate("/auth/login");
     }
   });
 

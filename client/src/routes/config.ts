@@ -10,7 +10,8 @@ export const routes: RouteDefinition[] = [
       { path: "/login", component: lazy(() => import("@/pages/auth/login"))},
       { path: "/register", component: lazy(() => import("@/pages/auth/register"))},
       { path: "/forgot-password", component: lazy(() => import("@pages/auth/forgotPassword"))},
-      { path: "/reset-password", component: lazy(() => import("@pages/auth/resetPassword"))}
+      { path: "/reset-password", component: lazy(() => import("@pages/auth/resetPassword"))},
+      { path: "/activate-account", component: lazy(() => import("@pages/auth/activateAccount"))},
     ]
   },
   {

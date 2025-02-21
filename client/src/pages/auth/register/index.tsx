@@ -58,7 +58,7 @@ export default function Register() {
       </Field>
       <Submit title="Register" active={form.submitting} />
       <br />
-      <span class="text-center">Already have an account? <a class="underline" href="/auth/sign-in">Login</a></span>
+      <span class="text-center">Already have an account? <a class="underline" href="/auth/login">Login</a></span>
     </Form>
   )
 }

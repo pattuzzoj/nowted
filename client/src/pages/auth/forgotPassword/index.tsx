@@ -42,8 +42,8 @@ export default function RecoverAccount() {
       </Field>
       <Submit title="Recover Account" active={form.submitting} />
       <br />
-      <span class="text-center">Already have an account? <a class="underline" href="/auth/sign-in">Login</a></span>
-      <span class="text-center">Don't have an account? <a class="underline" href="/auth/sign-up">Register</a></span>
+      <span class="text-center">Already have an account? <a class="underline" href="/auth/login">Login</a></span>
+      <span class="text-center">Don't have an account? <a class="underline" href="/auth/register">Register</a></span>
     </Form>
   )
 }

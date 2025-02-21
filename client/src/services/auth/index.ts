@@ -39,6 +39,11 @@ export default class AuthService {
     return await this.fetchService.delete("/logout");
   }
 
+  @Notify(messages.ACTIVATE_ACCOUNT)
+  public async activateAccount(token: string) {
+    await this.fetchService.post("/activate-account", { token });
+  }
+
   @Notify(messages.ACCOUNT_RECOVERY)
   public async recoverAccount(account: string) {
     await this.fetchService.post("/forgot-password", { account });

@@ -14,6 +14,11 @@ export const authMessages = {
     success: "Registration Successful",
     error: "Error Registering"
   },
+  ACTIVATE_ACCOUNT: {
+    loading: "Activating Account...",
+    success: "Account Activated",
+    error: "Error Activating Account"
+  },
   RESET_PASSWORD: {
     loading: "Resetting Password...",
     success: "Password Reset Successful",
