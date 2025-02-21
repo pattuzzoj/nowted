@@ -7,8 +7,8 @@ export const routes: RouteDefinition[] = [
     path: "/auth", component: lazy(() => import("@pages/auth")),
     children: [
       { path: "" },
-      { path: "/sign-in", component: lazy(() => import("@pages/auth/signIn"))},
-      { path: "/sign-up", component: lazy(() => import("@pages/auth/signUp"))},
+      { path: "/login", component: lazy(() => import("@/pages/auth/login"))},
+      { path: "/register", component: lazy(() => import("@/pages/auth/register"))},
       { path: "/forgot-password", component: lazy(() => import("@pages/auth/forgotPassword"))},
       { path: "/reset-password", component: lazy(() => import("@pages/auth/resetPassword"))}
     ]

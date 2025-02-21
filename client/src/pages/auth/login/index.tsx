@@ -10,15 +10,15 @@ type Login = {
   password: string;
 }
 
-export default function SignIn() {
+export default function Login() {
   const [form, { Form, Field }] = createForm<Login>({
     validateOn: "input",
     revalidateOn: "input"
   });
-  const {handleSignIn} = useAuth();
+  const {handleLogin} = useAuth();
 
   return (
-    <Form class="w-full max-w-96 flex flex-col justify-center gap-6" onSubmit={handleSignIn}>
+    <Form class="w-full max-w-96 flex flex-col justify-center gap-6" onSubmit={handleLogin}>
       <Field
       name="login"
       validate={[

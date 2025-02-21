@@ -21,7 +21,7 @@ import { Menu, Dialog } from "@ark-ui/solid";
 import { createMediaQuery } from "@solid-primitives/media";
 
 export default function LayoutMenu() {
-  const { handleLogOut } = useAuth();
+  const { handleLogout } = useAuth();
   const [data, { noteService }] = useData();
   const params = useParams();
   const isMobile = createMediaQuery("(max-width: 767px)");
@@ -115,7 +115,7 @@ export default function LayoutMenu() {
                 </A>
               </nav>
             </div>
-            <button class="flex justify-start items-center gap-2 btn" onClick={handleLogOut}>
+            <button class="flex justify-start items-center gap-2 btn" onClick={handleLogout}>
               <LogOut class="size-4" />
               Log out
             </button>
@@ -205,7 +205,7 @@ export default function LayoutMenu() {
               </A>
             </nav>
           </div>
-          <button class="flex justify-start items-center gap-2 btn" onClick={handleLogOut}>
+          <button class="flex justify-start items-center gap-2 btn" onClick={handleLogout}>
             <LogOut class="size-4" />
             Log out
           </button>

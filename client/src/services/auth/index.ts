@@ -1,5 +1,5 @@
 import FetchService from "@services/fetch";
-import type { SignIn, SignUp } from "./interfaces";
+import type { Login, Register } from "./interfaces";
 import { messages } from "@/utils/messages";
 import { Notify } from "@/utils/decorators/notify";
 import { baseURL } from "@/utils/constants";
@@ -25,18 +25,18 @@ export default class AuthService {
   }
 
   @Notify(messages.LOGIN)
-  public async signIn(credentials: SignIn) {
-    return await this.fetchService.post("/sign-in", credentials);
+  public async login(credentials: Login) {
+    return await this.fetchService.post("/login", credentials);
   }
 
   @Notify(messages.REGISTER)
-  public async signUp(registration: SignUp) {
-    return await this.fetchService.post("/sign-up", registration);
+  public async register(registration: Register) {
+    return await this.fetchService.post("/register", registration);
   }
 
   @Notify(messages.LOGOUT)
-  public async logOut() {
-    return await this.fetchService.delete("/log-out");
+  public async logout() {
+    return await this.fetchService.delete("/logout");
   }
 
   @Notify(messages.ACCOUNT_RECOVERY)

@@ -11,12 +11,12 @@ type Register = {
   password: string;
 }
 
-export default function SignUp() {
+export default function Register() {
   const [form, { Form, Field }] = createForm<Register>();
-  const {handleSignUp} = useAuth();
+  const {handleRegister} = useAuth();
 
   return (
-    <Form class="w-full max-w-96 flex flex-col justify-center gap-6" onSubmit={handleSignUp}>
+    <Form class="w-full max-w-96 flex flex-col justify-center gap-6" onSubmit={handleRegister}>
       <Field
       name="email"
       validate={[

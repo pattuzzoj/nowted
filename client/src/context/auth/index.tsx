@@ -1,7 +1,7 @@
 import { Accessor, Setter, createContext, createSignal, ParentProps, useContext, Show, onMount } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import AuthService from "@services/auth";
-import type { SignIn, SignUp } from "@services/auth/interfaces";
+import type { Login, Register } from "@services/auth/interfaces";
 import { useIndexedDB } from "../indexedDB";
 
 const AuthContext = createContext<Auth>();
@@ -10,9 +10,9 @@ interface Auth {
   isAuthenticated: Accessor<boolean>,
   setIsAuthenticated: Setter<boolean>,
   status: () => Promise<void>,
-  handleSignIn: (credentials: SignIn) => Promise<void>,
-  handleSignUp: (registration: SignUp) => Promise<void>,
-  handleLogOut: () => Promise<void>,
+  handleLogin: (credentials: Login) => Promise<void>,
+  handleRegister: (registration: Register) => Promise<void>,
+  handleLogout: () => Promise<void>,
   handleRecoverAccount: (account: string) => Promise<void>,
   handleResetPassword: (token: string, password: string) => Promise<void>
 }
@@ -27,9 +27,9 @@ export default function AuthProvider(props: ParentProps) {
     await authService.isValidToken();
   }
 
-  async function handleSignIn(credentials: SignIn) {
+  async function handleLogin(credentials: Login) {
     try {
-      await authService.signIn(credentials);
+      await authService.login(credentials);
       setIsAuthenticated(true);
       navigate("/");
     } catch (error) {
@@ -37,16 +37,16 @@ export default function AuthProvider(props: ParentProps) {
     }
   }
 
-  async function handleSignUp(registration: SignUp) {
+  async function handleRegister(registration: Register) {
     try {
-      await authService.signUp(registration);
+      await authService.register(registration);
       navigate("/auth/sign-in");      
     } catch {}
   }
 
-  async function handleLogOut() {
+  async function handleLogout() {
     try {
-      await authService.logOut();
+      await authService.logout();
       
       localStorage.clear();
       await clearDatabase();
@@ -71,7 +71,7 @@ export default function AuthProvider(props: ParentProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, status, handleSignIn, handleSignUp, handleLogOut, handleRecoverAccount, handleResetPassword }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, status, handleLogin, handleRegister, handleLogout, handleRecoverAccount, handleResetPassword }}>
       {props.children}
     </AuthContext.Provider>
   )
