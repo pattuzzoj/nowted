@@ -2,7 +2,7 @@ import { sql } from "drizzle-orm";
 import { pgTable, text, varchar, uuid, index, boolean, integer, pgEnum } from "drizzle-orm/pg-core";
 import { timestamps } from "./columns.helpers";
 
-export const accountStatusEnum = pgEnum("account_status", ["pending", "active"]);
+export const accountStatusEnum = pgEnum("account_status", ["pending", "active", "suspended"]);
 
 export const userSchema = pgTable("users", {
   id: uuid().default(sql`gen_random_uuid()`).primaryKey(),

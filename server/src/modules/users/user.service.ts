@@ -9,9 +9,12 @@ export class UserService {
   constructor(@Inject("DATABASE") private db: DatabaseType) {}
 
   async createUser(user: UserDto) {
-    await this.db
+    const [result] = await this.db
     .insert(userSchema)
-    .values(user);
+    .values(user)
+    .returning();
+
+    return result;
   }
 
   async findOne(login: string) {
@@ -35,28 +38,35 @@ export class UserService {
   async activateAccount(id: string) {
     await this.db
     .update(userSchema)
-    .set({account_status: "active"})
+    .set({account_status: "active", updated_at: new Date()})
     .where(eq(userSchema.id, id));
   }
 
   async changeEmail(id: string, email: string) {
     await this.db
     .update(userSchema)
-    .set({email})
+    .set({email, updated_at: new Date()})
     .where(eq(userSchema.id, id));
   }
 
   async changeUsername(id: string, username: string) {
     await this.db
     .update(userSchema)
-    .set({username})
+    .set({username, updated_at: new Date()})
     .where(eq(userSchema.id, id));
   }
 
   async changePassword(id: string, password: string) {
     await this.db
     .update(userSchema)
-    .set({password})
+    .set({password, updated_at: new Date()})
+    .where(eq(userSchema.id, id));
+  }
+
+  async deleteUser(id: string) {
+    await this.db
+    .update(userSchema)
+    .set({account_status: "suspended", updated_at: new Date()})
     .where(eq(userSchema.id, id));
   }
 }

@@ -1,3 +1,4 @@
+CREATE TYPE "public"."account_status" AS ENUM('pending', 'active');--> statement-breakpoint
 CREATE TABLE "folders" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(24) DEFAULT 'new folder' NOT NULL,
@@ -28,6 +29,7 @@ CREATE TABLE "users" (
 	"email" varchar(100) NOT NULL,
 	"username" varchar(16) NOT NULL,
 	"password" varchar(100) NOT NULL,
+	"account_status" "account_status" DEFAULT 'pending' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp,

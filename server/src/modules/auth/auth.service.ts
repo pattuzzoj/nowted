@@ -48,14 +48,16 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     registerDto.password = await bcrypt.hash(registerDto.password, salt);
 
-    await this.users.createUser(registerDto);
-    await this.mailService.sendWelcomeMail(registerDto.email);
+    const user = await this.users.createUser(registerDto);
+    const token = await this.jwtService.signAsync({sub: user.id, email: user.email});
+    await this.mailService.sendVerificationMail(user.email, `<a href="${process.env["SITE_URL"]!}/auth/activate-account?token=${token}">Activate Account</a>`)
   }
 
   async activateAccount({token}: TokenDto) {
     const payload = await this.jwtService.verifyAsync(token, { secret: process.env["JWT_SECRET"]! });
 
     await this.users.activateAccount(payload.sub);
+    await this.mailService.sendWelcomeMail(payload.email);
   }
 
   async recoverAccount(account: string) {
@@ -77,5 +79,9 @@ export class AuthService {
     
 
     await this.users.changePassword(payload.sub, hashPassword);
+  }
+
+  async deleteAccount(id: string) {
+    await this.users.deleteUser(id);
   }
 }

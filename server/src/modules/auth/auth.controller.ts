@@ -8,6 +8,7 @@ import {
   Get,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthGuard } from '@shared/guards/auth.guard';
@@ -19,6 +20,7 @@ import TokenDto from './dto/token.dto';
 import ForgotPasswordDto from './dto/forgot-password.dto';
 import { messages } from '@utils/messages';
 import { SetMessage } from '@shared/decorators/responseApi.decorator';
+import type { AuthRequest } from '@shared/types';
 
 @Controller('/auth')
 export class AuthController {
@@ -73,23 +75,21 @@ export class AuthController {
     });
   }
 
-  // @Delete("/delete-account")
-  // @UseGuards(AuthGuard)
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // async deleteAccount(@Res() res: Response) {
-  //   await this.authService.deleteAccount();
+  @Delete("/delete-account")
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @SetMessage(messages.ACCOUNT_DELETED)
+  async deleteAccount(@Req() req: AuthRequest, @Res() res: Response) {
+    await this.authService.deleteAccount(req.user.sub);
 
-  //   res.clearCookie("jwt", {
-  //     httpOnly: true,
-  //     secure: true,
-  //     maxAge: 30 * 24 * 60 * 60 * 1000,
-  //     sameSite: "none",
-  //     domain: "nowted-server.vercel.app"
-  //   }).status(HttpStatus.OK).send({
-  //     ...messages.ACCOUNT_DELETED,
-  //     timestamp: new Date().toISOString()
-  //   });
-  // }
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      secure: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      sameSite: "none",
+      domain: "nowted-server.vercel.app"
+    });
+  }
 
   @Post('/forgot-password')
   @HttpCode(HttpStatus.OK)

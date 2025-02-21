@@ -1,6 +1,6 @@
 {
-  "id": "5dfc5f61-70f8-4115-ab59-4ad828896ee6",
-  "prevId": "96a4a42b-f2cc-40c8-b3f5-f7061009ebbf",
+  "id": "b445cc16-b921-4abd-b710-acfd1cd7b4e7",
+  "prevId": "276443a0-0b2b-4526-abfa-9195bcf2e4cd",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -318,7 +318,8 @@
       "schema": "public",
       "values": [
         "pending",
-        "active"
+        "active",
+        "suspended"
       ]
     }
   },
