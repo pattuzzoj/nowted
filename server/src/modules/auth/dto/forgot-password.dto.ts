@@ -2,7 +2,11 @@
 import { IsNotEmpty, IsEmail } from "class-validator";
 
 export default class ForgotPasswordDto {
-  @IsNotEmpty()
-  @IsEmail()
+  @IsNotEmpty({
+    message: "Email is required",
+  })
+  @IsEmail({
+    message: "Invalid email format",
+  })
   account: string;
 }

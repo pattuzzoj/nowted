@@ -1,6 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { SetMessage } from "@shared/decorators/responseApi.decorator";
+import { SetMessage } from "@shared/decorators/setMessage.decorator";
 import { map, Observable } from "rxjs";
 
 @Injectable()

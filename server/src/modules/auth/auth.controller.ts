@@ -19,7 +19,7 @@ import ResetPasswordDto from './dto/reset-password.dto';
 import TokenDto from './dto/token.dto';
 import ForgotPasswordDto from './dto/forgot-password.dto';
 import { messages } from '@utils/messages';
-import { SetMessage } from '@shared/decorators/responseApi.decorator';
+import { SetMessage } from '@shared/decorators/setMessage.decorator';
 import type { AuthRequest } from '@shared/types';
 
 @Controller('/auth')

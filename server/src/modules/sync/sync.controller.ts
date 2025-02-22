@@ -4,7 +4,7 @@ import { AuthGuard } from "@shared/guards/auth.guard";
 import { SyncService } from "./sync.service";
 import { messages } from "@utils/messages";
 import { SyncRecord } from "./sync.interface";
-import { SetMessage } from "@shared/decorators/responseApi.decorator";
+import { SetMessage } from "@shared/decorators/setMessage.decorator";
 
 @Controller("sync")
 @UseGuards(AuthGuard)

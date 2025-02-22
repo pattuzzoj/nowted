@@ -11,7 +11,7 @@ import { AuthGuard } from '@shared/guards/auth.guard';
 import { UserService } from './user.service';
 import type { AuthRequest } from '@shared/types';
 import { messages } from '@utils/messages';
-import { SetMessage } from '@shared/decorators/responseApi.decorator';
+import { SetMessage } from '@shared/decorators/setMessage.decorator';
 
 @Controller('/users')
 @UseGuards(AuthGuard)
