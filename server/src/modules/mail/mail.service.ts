@@ -6,7 +6,6 @@ import type Mail from 'nodemailer/lib/mailer';
 export class MailService {
   private transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    service: 'gmail',
     auth: {
       user: process.env['MAILER_EMAIL']!,
       pass: process.env['MAILER_PASSWORD']!,
