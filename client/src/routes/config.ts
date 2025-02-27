@@ -12,7 +12,7 @@ export const routes: RouteDefinition[] = [
       { path: "/forgot-password", component: lazy(() => import("@pages/auth/forgotPassword"))},
       { path: "/reset-password", component: lazy(() => import("@pages/auth/resetPassword"))},
       {
-        path: "/activate-account/:token", component: lazy(() => import("@pages/auth/activateAccount")),
+        path: "/activate-account", component: lazy(() => import("@pages/auth/activateAccount")),
         matchFilters: { token: isUUID },
       },
     ]
