@@ -6,4 +6,8 @@ export default function activateAccount() {
   const {handleActivateAccount} = useAuth();
   const [params, _setParams] = useSearchParams<{ token: string }>();
   handleActivateAccount(params.token!);
+
+  return (
+    <></>
+  );
 }
