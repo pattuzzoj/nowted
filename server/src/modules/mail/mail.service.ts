@@ -5,10 +5,9 @@ import type Mail from 'nodemailer/lib/mailer';
 @Injectable()
 export class MailService {
   private transporter = nodemailer.createTransport({
-    service: "gmail",
     host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
+    port: 465,
+    secure: true,
     auth: {
       user: process.env['MAILER_EMAIL']!,
       pass: process.env['MAILER_PASSWORD']!,
@@ -16,17 +15,21 @@ export class MailService {
   });
 
   async sendMail(mailOptions: Mail.Options) {
-    this.transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log('Email sent: ' + info.response);
-      }
-    });
+    return new Promise((resolve, reject) => {
+      this.transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log(error);
+          reject(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+          resolve(info.response);
+        }
+      });
+    })
   }
 
   async sendVerificationMail(email: string, token: string) {
-    return await this.sendMail({
+    await this.sendMail({
       from: 'Nowted <no-reply@nowted.com>',
       to: email,
       subject: 'Verify Account',
@@ -46,7 +49,7 @@ export class MailService {
   }
 
   async sendRecoverMail(email: string, token: string) {
-    return await this.sendMail({
+    await this.sendMail({
       from: 'Nowted <no-reply@nowted.com>',
       to: email,
       subject: 'Recover Your Account',
@@ -65,7 +68,7 @@ export class MailService {
   }
 
   async sendWelcomeMail(email: string) {
-    return await this.sendMail({
+    await this.sendMail({
       from: 'Nowted <no-reply@nowted.com>',
       to: email,
       subject: 'Welcome to Nowted',
