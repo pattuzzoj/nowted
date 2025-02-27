@@ -1,10 +1,4 @@
-export interface User {
-  id: string;
-  email: string;
-  username: string;
-  password: string;
-  account_status: "pending" | "active";
-  created_at: Date;
-  updated_at: Date;
-  deleted_at: Date | null;
-}
+import { userSchema } from "@database/schema";
+import { InferInsertModel } from "drizzle-orm";
+
+export type User = InferInsertModel<typeof userSchema>;

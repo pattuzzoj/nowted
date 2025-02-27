@@ -13,7 +13,7 @@ export default class RegisterDto {
   @IsNotEmpty({
     message: "Username is required"
   })
-  @Length(8, 16, {
+  @Length(4, 16, {
     message: "Username must be between 8 and 16 characters long"
   })
   username: string;

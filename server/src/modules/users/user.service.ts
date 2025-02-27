@@ -1,15 +1,14 @@
-import { InternalServerErrorException } from "@nestjs/common";
 import { Injectable, Inject } from "@nestjs/common";
 import { eq, or } from "drizzle-orm";
 import type { DatabaseType } from "../../../drizzle.config";
 import { userSchema } from "@database/schema";
-import UserDto from "./dto/user.dto";
+import { User } from "./user.interface";
 
 @Injectable()
 export class UserService {
   constructor(@Inject("DATABASE") private db: DatabaseType) {}
 
-  async createUser(user: UserDto) {
+  async createUser(user: User) {
     const [result] = await this.db
     .insert(userSchema)
     .values(user)
@@ -20,13 +19,7 @@ export class UserService {
 
   async findOne(login: string) {
     const [user] = await this.db
-    .select({
-      id: userSchema.id,
-      email: userSchema.email,
-      username: userSchema.username,
-      password: userSchema.password,
-      account_status: userSchema.account_status
-    })
+    .select()
     .from(userSchema)
     .where(or(
       eq(userSchema.email, login),
@@ -37,15 +30,10 @@ export class UserService {
   }
 
   async activateAccount(id: string) {
-    try {
-      await this.db
-      .update(userSchema)
-      .set({account_status: "active", updated_at: new Date()})
-      .where(eq(userSchema.id, id));
-    } catch (error) {
-      // @ts-ignore
-      throw new InternalServerErrorException(error);
-    }
+    await this.db
+    .update(userSchema)
+    .set({account_status: "active", updated_at: new Date()})
+    .where(eq(userSchema.id, id));
   }
 
   async changeEmail(id: string, email: string) {

@@ -73,6 +73,7 @@ export class AuthService {
         expiresIn: '5m',
       },
     );
+    
     await this.mailService.sendVerificationMail(user!.email, token);
   }
 

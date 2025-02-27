@@ -27,6 +27,8 @@
     "@nestjs/platform-express": "^11.0.10",
     "@nestjs/schedule": "^5.0.1",
     "@nestjs/swagger": "^11.0.4",
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.11.4",
     "@types/nodemailer": "^6.4.17",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
