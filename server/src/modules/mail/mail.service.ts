@@ -5,13 +5,14 @@ import type Mail from 'nodemailer/lib/mailer';
 @Injectable()
 export class MailService {
   private transporter = nodemailer.createTransport({
+    service: "gmail",
     host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
     auth: {
       user: process.env['MAILER_EMAIL']!,
       pass: process.env['MAILER_PASSWORD']!,
     },
-    secure: true,
-    port: 465,
   });
 
   async sendMail(mailOptions: Mail.Options) {
