@@ -22,7 +22,13 @@ export default class FetchService {
         ...options
       });
 
-      return await this.deserialize(response) as FetchResponse<T>;
+      const data = await this.deserialize(response);
+
+      if (!response.ok) {
+        throw data;
+      }
+
+      return data as FetchResponse<T>;
     } catch (error: any) {
       throw {
         status: "error",
