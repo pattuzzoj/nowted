@@ -21,15 +21,17 @@ Content-type: application/json
 
 {
   "email": "pattuzzoj@gmail.com",
-  "username": "Reiden",
+  "username": "reidenasf",
   "password": "Ju30042001"
 }
+
+###
 
 POST {{host}}/activate-account
 Content-type: application/json
 
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwYXR0dXp6b2pAZ21haWwuY29tIiwiaWF0IjoxNzM3NzM3MTE1LCJleHAiOjE3NDAzMjkxMTV9.vQ_MLqvfX-a4mW9J613-jXriL7E2CnWvPLQ-T2JBu5Q"
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwNGQ4YTRiMC0zMTlmLTQ3ZTQtOTU4Ny02ZDczMmNmMWZjY2EiLCJlbWFpbCI6InBhdHR1enpvakBnbWFpbC5jb20iLCJpYXQiOjE3NDAyODI2ODAsImV4cCI6MTc0MDI4Mjk4MH0.t5RjPKCd-4NbQPsJEJJnYH0p5-363EkVIfdpUM4b9W8"
 }
 
 ###

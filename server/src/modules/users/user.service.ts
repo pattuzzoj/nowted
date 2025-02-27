@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from "@nestjs/common";
 import { Injectable, Inject } from "@nestjs/common";
 import { eq, or } from "drizzle-orm";
 import type { DatabaseType } from "../../../drizzle.config";
@@ -36,10 +37,15 @@ export class UserService {
   }
 
   async activateAccount(id: string) {
-    await this.db
-    .update(userSchema)
-    .set({account_status: "active", updated_at: new Date()})
-    .where(eq(userSchema.id, id));
+    try {
+      await this.db
+      .update(userSchema)
+      .set({account_status: "active", updated_at: new Date()})
+      .where(eq(userSchema.id, id));
+    } catch (error) {
+      // @ts-ignore
+      throw new InternalServerErrorException(error);
+    }
   }
 
   async changeEmail(id: string, email: string) {

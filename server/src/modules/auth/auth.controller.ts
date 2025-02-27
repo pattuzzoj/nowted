@@ -75,19 +75,19 @@ export class AuthController {
     });
   }
 
-  @Delete("/delete-account")
+  @Delete('/delete-account')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @SetMessage(messages.ACCOUNT_DELETED)
   async deleteAccount(@Req() req: AuthRequest, @Res() res: Response) {
     await this.authService.deleteAccount(req.user.sub);
 
-    res.clearCookie("jwt", {
+    res.clearCookie('jwt', {
       httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: "none",
-      domain: "nowted-server.vercel.app"
+      sameSite: 'none',
+      domain: 'nowted-server.vercel.app',
     });
   }
 
