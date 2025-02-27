@@ -38,6 +38,17 @@ export class AuthService {
     }
 
     if (user.account_status !== 'active') {
+      const token = await this.jwtService.signAsync(
+        {
+          sub: user!.id,
+          email: user!.email,
+        },
+        {
+          expiresIn: '5m',
+        },
+      );
+      
+      await this.mailService.sendVerificationMail(user!.email, token);
       throw new UnauthorizedException(messages.ACCOUNT_NOT_ACTIVE);
     }
 
