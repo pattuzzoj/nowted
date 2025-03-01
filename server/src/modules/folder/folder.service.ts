@@ -2,23 +2,16 @@ import { Injectable, Inject } from "@nestjs/common";
 import { and, eq, sql , gt, isNotNull} from "drizzle-orm";
 import type { DatabaseType } from "../../../drizzle.config";
 import { folderSchema, noteSchema } from "@database/schema";
-import { Folder } from "./folder.interface";
+import { Folder } from "./interfaces/folder.interface";
+import IFolderService from "./folder.service.abstract";
 
 @Injectable()
-export class FolderService {
+export class FolderService implements IFolderService {
   constructor(@Inject("DATABASE") private db: DatabaseType) {}
 
-  async getFolders(userId: string, lastSync: Date) {
+  async getFoldersSinceLastSync(userId: string, lastSync: string) {
     return await this.db
-    .select({
-      id: folderSchema.id,
-      name: folderSchema.name,
-      color: folderSchema.color,
-      order: folderSchema.order,
-      created_at: folderSchema.created_at,
-      updated_at: folderSchema.updated_at,
-      deleted_at: folderSchema.deleted_at
-    })
+    .select()
     .from(folderSchema)
     .where(
       and(
@@ -28,59 +21,55 @@ export class FolderService {
     );
   }
 
-  async checkIfFolderExist(userId: string, folderId: string) {
+  async checkIfFolderExists(id: string) {
     const folder = await this.db
     .select({id: folderSchema.id})
     .from(folderSchema)
     .where(
       and(
-        eq(folderSchema.user_id, userId),
-        eq(folderSchema.id, folderId)
+        eq(folderSchema.id, id)
       )
     );
 
-    return folder[0];
+    return Boolean(folder);
   }
 
-  async create(userId: string, data: Folder) {
-    const [folder] = await this.db
+  async create(folder: Folder) {
+    await this.db
     .insert(folderSchema)
-    .values({user_id: userId, ...data})
-    .returning();
-
-    return folder;
+    .values(folder);
   }
 
-  async update(userId: string, folder: Folder) {
+  async update(folder: Folder) {
     await this.db
     .update(folderSchema)
     .set(folder)
     .where(
       and(
-        eq(folderSchema.user_id, userId),
+        eq(folderSchema.user_id, folder.user_id),
         eq(folderSchema.id, folder.id)
       )
     );
   }
 
-  async restore(userId: string, folder: Folder) {
+  async restore(folder: Folder) {
     await this.db.batch([
       this.db
       .update(folderSchema)
-      .set({updated_at: folder.updated_at, deleted_at: folder.deleted_at})
+      .set(folder)
       .where(
         and(
-          eq(folderSchema.user_id, userId),
+          eq(folderSchema.user_id, folder.user_id),
           eq(folderSchema.id, folder.id),
           isNotNull(folderSchema.deleted_at)
         )
       ),
       this.db
       .update(noteSchema)
-      .set({updated_at: new Date(), deleted_at: null })
+      .set({updated_at: new Date().toISOString(), deleted_at: null })
       .where(
         and(
-          eq(noteSchema.user_id, userId),
+          eq(noteSchema.user_id, folder.user_id),
           eq(noteSchema.folder_id, folder.id),
           isNotNull(noteSchema.deleted_at)
         )
@@ -88,23 +77,23 @@ export class FolderService {
     ]);
   }
 
-  async delete(userId: string, folder: Folder) {
+  async delete(folder: Folder) {
     await this.db.batch([
       this.db
       .update(folderSchema)
-      .set({updated_at: folder.updated_at, deleted_at: folder.deleted_at})
+      .set(folder)
       .where(
         and(
-          eq(folderSchema.user_id, userId),
+          eq(folderSchema.user_id, folder.user_id),
           eq(folderSchema.id, folder.id)
         )
       ),
       this.db
       .update(noteSchema)
-      .set({updated_at: new Date(), deleted_at: new Date() })
+      .set({updated_at: new Date().toISOString(), deleted_at: new Date().toISOString() })
       .where(
         and(
-          eq(noteSchema.user_id, userId),
+          eq(noteSchema.user_id, folder.user_id),
           eq(noteSchema.folder_id, folder.id)
         )
       )

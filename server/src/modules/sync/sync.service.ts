@@ -1,16 +1,17 @@
 import { Injectable, NotImplementedException } from "@nestjs/common";
-import { FolderService } from "@modules/folder/folder.service";
-import { NoteService } from "@modules/note/note.service";
 import { messages } from "@utils/messages";
 import { SyncRecord } from "./sync.interface";
+import ISyncService from "./sync.service.abstract";
+import INoteService from "@modules/note/note.service.abstract";
+import IFolderService from "@modules/folder/folder.service.abstract";
 
 @Injectable()
-export class SyncService {
-  constructor(private folderService: FolderService, private noteService: NoteService) {}
+export class SyncService implements ISyncService {
+  constructor(private folderService: IFolderService, private noteService: INoteService) {}
 
-  async getData(userId: string, lastSync: Date) {
-    const folders = await this.folderService.getFolders(userId, lastSync);
-    const notes = await this.noteService.getNotes(userId, lastSync);
+  async fetch(userId: string, lastSync: string) {
+    const folders = await this.folderService.getFoldersSinceLastSync(userId, lastSync);
+    const notes = await this.noteService.getNotesSinceLastSync(userId, lastSync);
 
     return {
       notes,
@@ -18,12 +19,14 @@ export class SyncService {
     }
   }
 
-  async syncData(userId: string, syncPending: SyncRecord[]) {
-    const syncList = syncPending.sort((item, nextItem) => item.timestamp - nextItem.timestamp);
+  async push(userId: string, records: SyncRecord[]) {
+    const orderedRecords = records.sort((item, nextItem) => {
+      return new Date(item.timestamp).getTime() - new Date(nextItem.timestamp).getTime();
+    });
 
-    for (const {entity, type, data} of syncList) {
+    for (const {entity, type, data} of orderedRecords) {
       let entityService;
-  
+
       if (entity === "folder") {
         entityService = this.folderService;
       } else if (entity === "note") {
@@ -32,22 +35,20 @@ export class SyncService {
         throw new NotImplementedException(messages.ENTITY_NOT_EXIST);
       }
 
-      data.created_at = new Date(data.created_at);
-      data.updated_at = new Date(data.updated_at);
-      data.deleted_at = data.deleted_at ? data.deleted_at : null;
-  
+      data.user_id = userId;
+
       switch (type) {
         case "create":
-          await entityService.create(userId, data);
+          await entityService.create(data);
           break;
         case "update":
-          await entityService.update(userId, data);
+          await entityService.update(data);
           break;
         case "delete":
-          await entityService.delete(userId, data);
+          await entityService.delete(data);
           break;
         case "restore":
-          await entityService.restore(userId, data);
+          await entityService.restore(data);
           break;
         default:
           throw new NotImplementedException(messages.TYPE_OPERATION_NOT_EXIST);

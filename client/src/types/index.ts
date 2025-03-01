@@ -30,5 +30,5 @@ export interface ActionRecord {
   type: ActionOperation;
   entity: ActionEntity;
   data: ActionData;
-  timestamp: number;
+  timestamp: string;
 }

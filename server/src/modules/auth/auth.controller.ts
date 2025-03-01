@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthGuard } from '@shared/guards/auth.guard';
-import { AuthService } from './auth.service';
 import LoginDto from './dto/login.dto';
 import RegisterDto from './dto/register.dto';
 import ResetPasswordDto from './dto/reset-password.dto';
@@ -21,10 +20,11 @@ import ForgotPasswordDto from './dto/forgot-password.dto';
 import { messages } from '@utils/messages';
 import { SetMessage } from '@shared/decorators/setMessage.decorator';
 import type { AuthRequest } from '@shared/types';
+import { IAuthService } from './auth.service.abstract';
 
 @Controller('/auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: IAuthService) {}
 
   @Get('/verify-token')
   @UseGuards(AuthGuard)
@@ -58,8 +58,15 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.ACCOUNT_ACTIVATED)
   async activateAccount(@Body() tokenDto: TokenDto) {
-    await this.authService.activateAccount(tokenDto);
+    await this.authService.activateAccount(tokenDto.token);
   }
+
+  // @Post('/resend-activation-token')
+  // @HttpCode(HttpStatus.OK)
+  // @SetMessage(messages.MAIL_SENT)
+  // async resendActivationToken(@Body() tokenDto: TokenDto) {
+  //   await this.authService.resendActivationToken(tokenDto);
+  // }
 
   @Delete('/logout')
   @UseGuards(AuthGuard)
@@ -102,6 +109,6 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.PASSWORD_UPDATED)
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
-    await this.authService.resetPassword(resetPasswordDto);
+    await this.authService.resetPassword(resetPasswordDto.token, resetPasswordDto.password);
   }
 }

@@ -8,15 +8,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@shared/guards/auth.guard';
-import { UserService } from './user.service';
 import type { AuthRequest } from '@shared/types';
 import { messages } from '@utils/messages';
 import { SetMessage } from '@shared/decorators/setMessage.decorator';
+import IUserService from './user.service.abstract';
 
 @Controller('/users')
 @UseGuards(AuthGuard)
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(private userService: IUserService) {}
 
   @Patch('/change-email')
   @HttpCode(HttpStatus.OK)

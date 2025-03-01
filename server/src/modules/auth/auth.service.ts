@@ -5,24 +5,24 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { UserService } from '@modules/users/user.service';
+import IUserService from '@modules/users/user.service.abstract';
 import { MailService } from '@modules/mail/mail.service';
-import LoginDto from './dto/login.dto';
-import RegisterDto from './dto/register.dto';
 import { messages } from '@utils/messages';
-import ResetPasswordDto from './dto/reset-password.dto';
-import TokenDto from './dto/token.dto';
+import { IAuthService } from './auth.service.abstract';
+import { Login } from './interfaces/login.interface';
+import { Register } from './interfaces/register.interface';
+import { Token } from './interfaces/token.type';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements IAuthService {
   constructor(
     private jwtService: JwtService,
-    private users: UserService,
+    private users: IUserService,
     private mailService: MailService,
   ) {}
 
-  async login(credentials: LoginDto) {
-    const user = await this.users.findOne(credentials.login);
+  async login(credentials: Login) {
+    const user = await this.users.findUserByLogin(credentials.login);
 
     if (!user) {
       throw new UnauthorizedException(messages.INVALID_CREDENTIALS);
@@ -55,13 +55,12 @@ export class AuthService {
     return await this.jwtService.signAsync({
       sub: user.id,
       email: user.email,
-      username: user.username,
     });
   }
 
-  async register(registration: RegisterDto) {
-    const alreadyHasEmail = await this.users.findOne(registration.email);
-    const alreadyHasUsername = await this.users.findOne(registration.username);
+  async register(registration: Register) {
+    const alreadyHasEmail = await this.users.findUserByEmail(registration.email);
+    const alreadyHasUsername = await this.users.findUserByUsername(registration.username);
 
     if (alreadyHasEmail) {
       throw new ConflictException(messages.EMAIL_ALREADY_USED);
@@ -88,17 +87,17 @@ export class AuthService {
     await this.mailService.sendVerificationMail(user!.email, token);
   }
 
-  async activateAccount({ token }: TokenDto) {
+  async activateAccount(token: Token) {
     const payload = await this.jwtService.verifyAsync(token, {
       secret: process.env['JWT_SECRET']!,
     });
 
-    await this.users.activateAccount(payload.sub);
+    await this.users.activateUser(payload.sub);
     await this.mailService.sendWelcomeMail(payload.email);
   }
 
-  async recoverAccount(account: string) {
-    const user = await this.users.findOne(account);
+  async recoverAccount(email: string) {
+    const user = await this.users.findUserByEmail(email);
 
     if (!user) {
       throw new UnauthorizedException(messages.ACCOUNT_NOT_EXIST);
@@ -108,7 +107,7 @@ export class AuthService {
     await this.mailService.sendRecoverMail(user.email, token);
   }
 
-  async resetPassword({ token, password }: ResetPasswordDto) {
+  async resetPassword(token: string, password: string) {
     const payload = await this.jwtService.verifyAsync(token, {
       secret: process.env['JWT_SECRET']!,
     });

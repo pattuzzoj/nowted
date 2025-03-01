@@ -20,8 +20,9 @@ export default class ActionRecordService {
       type,
       entity,
       data,
-      timestamp: Date.now()
+      timestamp: new Date().toISOString()
     })
+
   }
 
   public async getAll() {

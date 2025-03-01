@@ -49,7 +49,9 @@ export default function AuthProvider(props: ParentProps) {
     try {
       await authService.activateAccount(token);
       navigate("/auth/login");
-    } catch (error) {}
+    } catch (error) {
+      navigate("/auth/login");
+    }
   }
 
   async function handleLogout() {

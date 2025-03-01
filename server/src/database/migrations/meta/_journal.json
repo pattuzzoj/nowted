@@ -15,6 +15,13 @@
       "when": 1740108949953,
       "tag": "0001_blushing_the_call",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1740864024130,
+      "tag": "0002_clear_bastion",
+      "breakpoints": true
     }
   ]
 }

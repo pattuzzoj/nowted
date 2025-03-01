@@ -2,26 +2,16 @@ import { Injectable, Inject } from "@nestjs/common";
 import { and, eq, gt, isNotNull, sql } from "drizzle-orm";
 import type { DatabaseType } from "../../../drizzle.config";
 import { folderSchema, noteSchema } from "@database/schema";
-import { Note } from "./note.interface";
+import { Note } from "./interfaces/note.interface";
+import INoteService from "./note.service.abstract";
 
 @Injectable()
-export class NoteService {
+export class NoteService implements INoteService {
   constructor(@Inject("DATABASE") private db: DatabaseType) {}
 
-  async getNotes(userId: string, lastSync: Date) {
+  async getNotesSinceLastSync(userId: string, lastSync: string) {
     return await this.db
-    .select({
-      id: noteSchema.id,
-      name: noteSchema.name,
-      preview: noteSchema.preview,
-      content: noteSchema.content,
-      favorite: noteSchema.favorite,
-      archived: noteSchema.archived,
-      folder_id: noteSchema.folder_id,
-      created_at: noteSchema.created_at,
-      updated_at: noteSchema.updated_at,
-      deleted_at: noteSchema.deleted_at
-    })
+    .select()
     .from(noteSchema)
     .where(
       and(
@@ -31,49 +21,44 @@ export class NoteService {
     );
   }
 
-  async checkIfNoteExist(userId: string, noteId: string) {
-    const note = await this.db
+  async checkIfNoteExists(id: string) {
+    const [note] = await this.db
     .select({id: noteSchema.id})
     .from(noteSchema)
     .where(
       and(
-        eq(noteSchema.user_id, userId),
-        eq(noteSchema.id, noteId)
+        eq(noteSchema.id, id)
       )
     );
 
-    return note[0];
+    return Boolean(note);
   }
 
-  async create(userId: string, note: Note) {
-    return await this.db
+  async create(note: Note) {
+    await this.db
     .insert(noteSchema)
-    .values({user_id: userId, ...note});
+    .values(note);
   }
 
-  async update(userId: string, note: Note) {
-    note.created_at = new Date(note.created_at);
-    note.updated_at = new Date(note.updated_at);
-    note.deleted_at = note.deleted_at ? note.deleted_at : null;
-
+  async update(note: Note) {
     await this.db
     .update(noteSchema)
     .set(note)
     .where(
       and(
-        eq(noteSchema.user_id, userId),
+        eq(noteSchema.user_id, note.user_id),
         eq(noteSchema.id, note.id)
       )
     );
   }
 
-  async restore(userId: string, note: Note) {
+  async restore(note: Note) {
     const [folderId] = await this.db
     .update(noteSchema)
     .set({updated_at: note.updated_at, deleted_at: note.deleted_at})
     .where(
       and(
-        eq(noteSchema.user_id, userId),
+        eq(noteSchema.user_id, note.user_id),
         eq(noteSchema.id, note.id),
         isNotNull(noteSchema.deleted_at),
       )
@@ -86,20 +71,20 @@ export class NoteService {
       .set({updated_at: sql`NOW()`, deleted_at: null})
       .where(
         and(
-          eq(folderSchema.user_id, userId),
+          eq(folderSchema.user_id, note.user_id),
           eq(folderSchema.id, note.id),
         )
       );
     }
   }
 
-  async delete(userId: string, note: Note) {
+  async delete(note: Note) {
     await this.db
     .update(noteSchema)
     .set({updated_at: note.updated_at, deleted_at: note.deleted_at})
     .where(
       and(
-        eq(noteSchema.user_id, userId),
+        eq(noteSchema.user_id, note.user_id),
         eq(noteSchema.id, note.id),
       )
     );

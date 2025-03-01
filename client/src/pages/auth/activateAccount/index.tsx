@@ -1,5 +1,6 @@
 import { useSearchParams } from "@solidjs/router";
 import { useAuth } from "@context/auth";
+import LoaderCircle from "lucide-solid/icons/loader-circle";
 
 
 export default function activateAccount() {
@@ -8,6 +9,6 @@ export default function activateAccount() {
   handleActivateAccount(params.token!);
 
   return (
-    <></>
+    <LoaderCircle class="text-center animate-spin size-8" />
   );
 }

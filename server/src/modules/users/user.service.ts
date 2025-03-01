@@ -2,10 +2,11 @@ import { Injectable, Inject } from "@nestjs/common";
 import { eq, or } from "drizzle-orm";
 import type { DatabaseType } from "../../../drizzle.config";
 import { userSchema } from "@database/schema";
-import { User } from "./user.interface";
+import { User } from "./interfaces/user.interface";
+import IUserService from "./user.service.abstract";
 
 @Injectable()
-export class UserService {
+export class UserService implements IUserService {
   constructor(@Inject("DATABASE") private db: DatabaseType) {}
 
   async createUser(user: User) {
@@ -17,7 +18,7 @@ export class UserService {
     return result;
   }
 
-  async findOne(login: string) {
+  async findUserByLogin(login: string) {
     const [user] = await this.db
     .select()
     .from(userSchema)
@@ -29,38 +30,64 @@ export class UserService {
     return user;
   }
 
-  async activateAccount(id: string) {
+  async findUserById(id: string): Promise<User | undefined> {
+    const [user] = await this.db
+    .select()
+    .from(userSchema)
+    .where(eq(userSchema.id, id));
+    return user;
+  }
+
+  async findUserByEmail(email: string) {
+    const [user] = await this.db
+    .select()
+    .from(userSchema)
+    .where(eq(userSchema.email, email));
+
+    return user;
+  }
+
+  async findUserByUsername(username: string) {
+    const [user] = await this.db
+    .select()
+    .from(userSchema)
+    .where(eq(userSchema.username, username));
+
+    return user;
+  }
+
+  async activateUser(id: string) {
     await this.db
     .update(userSchema)
-    .set({account_status: "active", updated_at: new Date()})
+    .set({account_status: "active", updated_at: new Date().toISOString()})
     .where(eq(userSchema.id, id));
   }
 
   async changeEmail(id: string, email: string) {
     await this.db
     .update(userSchema)
-    .set({email, updated_at: new Date()})
+    .set({email, updated_at: new Date().toISOString()})
     .where(eq(userSchema.id, id));
   }
 
   async changeUsername(id: string, username: string) {
     await this.db
     .update(userSchema)
-    .set({username, updated_at: new Date()})
+    .set({username, updated_at: new Date().toISOString()})
     .where(eq(userSchema.id, id));
   }
 
   async changePassword(id: string, password: string) {
     await this.db
     .update(userSchema)
-    .set({password, updated_at: new Date()})
+    .set({password, updated_at: new Date().toISOString()})
     .where(eq(userSchema.id, id));
   }
 
   async deleteUser(id: string) {
     await this.db
     .update(userSchema)
-    .set({account_status: "suspended", updated_at: new Date()})
+    .set({account_status: "suspended", updated_at: new Date().toISOString()})
     .where(eq(userSchema.id, id));
   }
 }

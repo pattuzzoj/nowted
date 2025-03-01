@@ -91,7 +91,9 @@ export default class SyncService {
     const mergedUpdates = [];
 
     for (const groupedUpdates of Object.values(updatesGroupedById)) {
-      const sortedUpdates = groupedUpdates.sort((currentRecord, nextRecord) => currentRecord.timestamp - nextRecord.timestamp);
+      const sortedUpdates = groupedUpdates.sort((currentRecord, nextRecord) => {
+        return new Date(currentRecord.timestamp).getTime() - new Date(nextRecord.timestamp).getTime();
+      });
       mergedUpdates.push(deepMerge(...sortedUpdates));
     }
 
