@@ -20,8 +20,8 @@ POST {{host}}/register
 Content-type: application/json
 
 {
-  "email": "pattuzzoj@gmail.com",
-  "username": "reidenglobal",
+  "email": "pattuzzoj@gmail.comjasfas",
+  "username": "reidfasfasfas",
   "password": "Ju30042001"
 }
 

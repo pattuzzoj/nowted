@@ -8,7 +8,7 @@ import * as bcrypt from 'bcrypt';
 import IUserService from '@modules/users/user.service.abstract';
 import { MailService } from '@modules/mail/mail.service';
 import { messages } from '@utils/messages';
-import { IAuthService } from './auth.service.abstract';
+import IAuthService from './auth.service.abstract';
 import { Login } from './interfaces/login.interface';
 import { Register } from './interfaces/register.interface';
 import { Token } from './interfaces/token.type';
@@ -52,10 +52,12 @@ export class AuthService implements IAuthService {
       throw new UnauthorizedException(messages.ACCOUNT_NOT_ACTIVE);
     }
 
-    return await this.jwtService.signAsync({
+    const token = await this.jwtService.signAsync({
       sub: user.id,
       email: user.email,
     });
+
+    return token;
   }
 
   async register(registration: Register) {

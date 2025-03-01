@@ -20,7 +20,7 @@ import ForgotPasswordDto from './dto/forgot-password.dto';
 import { messages } from '@utils/messages';
 import { SetMessage } from '@shared/decorators/setMessage.decorator';
 import type { AuthRequest } from '@shared/types';
-import { IAuthService } from './auth.service.abstract';
+import IAuthService from './auth.service.abstract';
 
 @Controller('/auth')
 export class AuthController {
@@ -45,6 +45,8 @@ export class AuthController {
       sameSite: 'none',
       domain: 'nowted-server.vercel.app',
     });
+
+    return {token}
   }
 
   @Post('/register')

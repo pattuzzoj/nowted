@@ -2,7 +2,7 @@ import type { Login } from "./interfaces/login.interface";
 import type { Register } from "./interfaces/register.interface";
 import type { Token } from "./interfaces/token.type";
 
-export abstract class IAuthService {
+export default abstract class IAuthService {
   abstract login(credentials: Login): Promise<Token>;
   abstract register(registration: Register): Promise<void>;
   abstract activateAccount(token: Token): Promise<void>;

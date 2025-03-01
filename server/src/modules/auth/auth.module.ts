@@ -5,7 +5,7 @@ import { UserModule } from "@modules/users/user.module";
 import MailModule from "@modules/mail/mail.module";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
-import { IAuthService } from "./auth.service.abstract";
+import IAuthService from "./auth.service.abstract";
 
 @Module({
   controllers: [AuthController],
