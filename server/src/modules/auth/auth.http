@@ -2,7 +2,7 @@
 @path = /auth
 @host = {{hostname}}{{path}}
 
-GET {{host}}/verify-token
+GET {{host}}/verify
 
 ###
 
@@ -20,8 +20,8 @@ POST {{host}}/register
 Content-type: application/json
 
 {
-  "email": "pattuzzoj@gmail.comjasfas",
-  "username": "reidfasfasfas",
+  "email": "pattuzzoj@safas.com",
+  "username": "safsaf",
   "password": "Ju30042001"
 }
 

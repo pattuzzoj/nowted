@@ -4,10 +4,10 @@ import {
   Body,
   HttpStatus,
   HttpCode,
-  Res,
   Get,
   Delete,
   UseGuards,
+  Res,
   Req,
 } from '@nestjs/common';
 import type { Response } from 'express';
@@ -39,14 +39,12 @@ export class AuthController {
     const token = await this.authService.login(loginDto);
 
     res.cookie('jwt', token, {
-      httpOnly: true,
-      secure: true,
+      httpOnly: false,
+      secure: false,
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: 'none',
       domain: 'nowted-server.vercel.app',
     });
-
-    return {token}
   }
 
   @Post('/register')
