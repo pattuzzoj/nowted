@@ -35,12 +35,12 @@ export class AuthController {
   @Post('/login')
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.LOGGED)
-  async login(@Body() loginDto: LoginDto, @Res() res: Response) {
+  async login(@Res({passthrough: true}) res: Response, @Body() loginDto: LoginDto) {
     const token = await this.authService.login(loginDto);
 
     res.cookie('jwt', token, {
-      httpOnly: false,
-      secure: false,
+      httpOnly: true,
+      secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: 'none',
       domain: 'nowted-server.vercel.app',
@@ -72,7 +72,7 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @SetMessage(messages.LOGOUT)
-  async logout(@Res() res: Response) {
+  async logout(@Res({passthrough: true}) res: Response) {
     res.clearCookie('jwt', {
       httpOnly: true,
       secure: true,
@@ -86,7 +86,7 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @SetMessage(messages.ACCOUNT_DELETED)
-  async deleteAccount(@Req() req: AuthRequest, @Res() res: Response) {
+  async deleteAccount(@Req() req: AuthRequest, @Res({passthrough: true}) res: Response) {
     await this.authService.deleteAccount(req.user.sub);
 
     res.clearCookie('jwt', {
