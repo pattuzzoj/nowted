@@ -13,10 +13,12 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import FormatResponseInterceptor from '@shared/interceptors/formatResponse.interceptor';
 import CatchFilter from '@shared/filters/catchFilter.filter';
+import { NestExpressApplication } from '@nestjs/platform-express';
 const cookieParser = require('cookie-parser');
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {rawBody: true});
+  app.useBodyParser('json', { limit: '10mb' });
   app.use(cookieParser());
   app.enableCors({
     origin: ["https://nowted-showcase.vercel.app", "*"],
