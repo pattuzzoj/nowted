@@ -11,13 +11,15 @@ type Password = {
 
 export default function ResetPassword() {
   const [params, _setParams] = useSearchParams<{ token: string }>();
-  const {handleResetPassword} = useAuth();
   const navigate = useNavigate();
   const token = params.token;
-
+  
   if (!token) {
     navigate("/auth/recover-account");
   }
+
+  const {handleResetPassword} = useAuth();
+
 
   const [form, { Form, Field }] = createForm<Password>();
 

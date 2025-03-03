@@ -21,7 +21,7 @@ export default class AuthService {
   }
 
   public async isValidToken() {
-    return await this.fetchService.get("/status");
+    return await this.fetchService.get("/verify-token");
   }
 
   @Notify(messages.LOGIN)

@@ -4,12 +4,10 @@ import AuthService from "@services/auth";
 import type { Login, Register } from "@services/auth/interfaces";
 import { useIndexedDB } from "../indexedDB";
 
-const AuthContext = createContext<Auth>();
-
 interface Auth {
   isAuthenticated: Accessor<boolean>,
   setIsAuthenticated: Setter<boolean>,
-  status: () => Promise<void>,
+  handleVerify: () => Promise<void>,
   handleLogin: (credentials: Login) => Promise<void>,
   handleRegister: (registration: Register) => Promise<void>,
   handleActivateAccount: (token: string) => Promise<void>,
@@ -18,14 +16,31 @@ interface Auth {
   handleResetPassword: (token: string, password: string) => Promise<void>
 }
 
+const AuthContext = createContext<Auth>();
+
 export default function AuthProvider(props: ParentProps) {
   const [isAuthenticated, setIsAuthenticated] = createSignal(false);
   const authService = AuthService.getInstance();
   const [_, { clearDatabase }] = useIndexedDB();
   const navigate = useNavigate();
 
-  async function status() {
-    await authService.isValidToken();
+  onMount(async () => {
+    try {
+      await authService.isValidToken();
+      setIsAuthenticated(true);
+    } catch (error) {
+      navigate("/auth/login");
+    }
+  });
+
+  async function handleVerify() {
+    try {
+      await authService.isValidToken();
+      setIsAuthenticated(true);
+    } catch (error) {
+      setIsAuthenticated(false);
+      navigate("/auth/login");
+    }
   }
 
   async function handleLogin(credentials: Login) {
@@ -41,7 +56,7 @@ export default function AuthProvider(props: ParentProps) {
   async function handleRegister(registration: Register) {
     try {
       await authService.register(registration);
-      navigate("/auth/login");      
+      navigate("/auth/login");
     } catch {}
   }
 
@@ -84,7 +99,7 @@ export default function AuthProvider(props: ParentProps) {
     <AuthContext.Provider value={{
       isAuthenticated,
       setIsAuthenticated,
-      status,
+      handleVerify,
       handleLogin,
       handleRegister,
       handleActivateAccount,
@@ -100,16 +115,10 @@ export default function AuthProvider(props: ParentProps) {
 export const useAuth = (): Auth => useContext(AuthContext) as unknown as Auth;
 
 export function AuthRoute(props: ParentProps) {
-  const { isAuthenticated, setIsAuthenticated, status } = useAuth();
-  const navigate = useNavigate();
+  const { isAuthenticated, handleVerify } = useAuth();
 
   onMount(async () => {
-    try {
-      await status();
-      setIsAuthenticated(true);
-    } catch (error) {
-      navigate("/auth/login");
-    }
+    await handleVerify();
   });
 
   return (
