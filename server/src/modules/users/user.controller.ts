@@ -29,6 +29,7 @@ export default class UserController {
   constructor(private userService: UserService) {}
 
   @Get('/me')
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async getUserInfo(@Req() req: AuthRequest) {
     return await this.userService.getProfile(req.user.sub);
