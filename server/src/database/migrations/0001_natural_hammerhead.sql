@@ -1,0 +1,1 @@
+ALTER TABLE "pending_changes" DROP COLUMN "action";

@@ -1,6 +1,6 @@
 import { Router } from '@solidjs/router';
-import AuthProvider from '@context/auth';
 import { routes } from './config';
+import AuthProvider from '../features/auth/context/authContext';
 
 export default function Routing() {
   return (

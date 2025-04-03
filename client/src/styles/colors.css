@@ -1,31 +1,27 @@
 :root[data-theme="light"] {
-  --primary: rgb(221, 221, 221);
-  --secondary: rgb(221, 221, 221);
-  --tertiary: rgb(170, 170, 170);
-  --hover: ;
-  --accent: #312EB5;
-  --active: #312EB5;
-  --inactive: ;
-  --disabled: ;
-  --focus: ;
-  --shadow: ;
-
-  --link-hover: #ffffff08;
-  --note-hover: #333333;
+  --primary: #1447E6;
+  --secondary: #F5F5F5;
+  --layout-primary: #FFFFFF;
+  --layout-secondary: #F9F9F9;
+  --layout-tertiary: #F0F0F0;
+  --hover: #E0E0E0;
+  --accent: #1447E6;
+  --active: #1447E6;
+  --disabled: #CCCCCC;
+  --link-hover: #E0E0E0;
+  --note-hover: #E0E0E0;
 }
 
 :root[data-theme="dark"] {
-  --primary: #16141C;
-  --secondary: #16141C;
-  --tertiary: #24212B;
-  --hover: #24212B;
-  /* --primary: #7F22FE; */
-  --accent: #5D0EC0;
-  --active: #5D0EC0;
-  --inactive: ;
-  --disabled: ;
-  --focus: ;
-  --shadow: ;
-  --link-hover: #24212B;
-  --note-hover: #1E1C26;
+  --primary: #1447E6;
+  --secondary: #2A2A2A;
+  --layout-primary: #1A1A1A;
+  --layout-secondary: #222222;
+  --layout-tertiary: #2A2A2A;
+  --hover: #2E2E2E;
+  --accent: #1447E6;
+  --active: #1447E6;
+  --disabled: #555555;
+  --link-hover: #3E3E3E;
+  --note-hover: #3E3E3E;
 }

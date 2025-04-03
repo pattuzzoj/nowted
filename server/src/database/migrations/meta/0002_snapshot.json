@@ -1,6 +1,6 @@
 {
-  "id": "085659b8-b4bb-4cdc-a0dd-737670492c50",
-  "prevId": "b445cc16-b921-4abd-b710-acfd1cd7b4e7",
+  "id": "597b68df-dda6-493a-905a-285bf4745d8b",
+  "prevId": "80110353-4d2e-4ad6-9d36-881cfbbc10d3",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -199,6 +199,90 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.pending_changes": {
+      "name": "pending_changes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "old_value": {
+          "name": "old_value",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "new_value": {
+          "name": "new_value",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "action": {
+          "name": "action",
+          "type": "change_action",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "change_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "table_name": {
+          "name": "table_name",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "record_id": {
+          "name": "record_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "metadata": {
+          "name": "metadata",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "pending_changes_user_id_users_id_fk": {
+          "name": "pending_changes_user_id_users_id_fk",
+          "tableFrom": "pending_changes",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.users": {
       "name": "users",
       "schema": "",
@@ -320,6 +404,22 @@
         "pending",
         "active",
         "suspended"
+      ]
+    },
+    "public.change_action": {
+      "name": "change_action",
+      "schema": "public",
+      "values": [
+        "change_email"
+      ]
+    },
+    "public.change_type": {
+      "name": "change_type",
+      "schema": "public",
+      "values": [
+        "insert",
+        "update",
+        "delete"
       ]
     }
   },

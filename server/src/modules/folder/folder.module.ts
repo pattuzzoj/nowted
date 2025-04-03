@@ -1,15 +1,11 @@
-import { Module } from "@nestjs/common";
-import { DatabaseModule } from "@database/database.module";
-import { NoteModule } from "@modules/note/note.module";
-import { FolderService } from "./folder.service";
-import IFolderService from "./folder.service.abstract";
+import { Module } from '@nestjs/common';
+import { DatabaseModule } from '@database/database.module';
+import NoteModule from '@modules/note/note.module';
+import FolderRepository from './folder.repository';
 
 @Module({
-  providers: [{
-    provide: IFolderService,
-    useClass: FolderService
-  }],
+  providers: [FolderRepository],
   imports: [DatabaseModule, NoteModule],
-  exports: [IFolderService]
+  exports: [FolderRepository],
 })
-export class FolderModule {}
+export default class FolderModule {}

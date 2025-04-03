@@ -9,21 +9,19 @@ export default class FormatResponseInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const response = context.switchToHttp().getResponse();
-    const message = this.reflector.get(SetMessage, context.getHandler());
+    const defaultMessage = this.reflector.get(SetMessage, context.getHandler());
     const statusCode = response.statusCode;
 
-    const ApiResponse = {
-      status: "success",
-      statusCode: statusCode,
-      message: message,
-      timestamp: new Date().toISOString()
-    }
-
     return next.handle().pipe(
-      map(data => ({
-        ...ApiResponse,
-        data,
-      }))
+      map(data => {
+        return {
+          success: true,
+          statusCode: statusCode,
+          message: data?.message || defaultMessage,
+          timestamp: new Date().toISOString(),
+          data: data?.data || data,
+        }
+      })
     )
   }
 }

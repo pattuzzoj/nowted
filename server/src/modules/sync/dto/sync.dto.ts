@@ -1,17 +1,17 @@
 // @ts-nocheck
-import { IsNotEmpty, IsObject, IsString } from "class-validator";
-import { Task } from "../interface/sync.interface";
+import { IsNotEmpty, IsObject, IsString } from 'class-validator';
+import { Task } from '../interface/sync.interface';
 
-export class SyncDto implements Task {
+export default class SyncDto implements Task {
   @IsNotEmpty()
   @IsString()
-  entity: "folder" | "note"
+  entity: 'folder' | 'note';
 
   @IsNotEmpty()
   @IsString()
-  type: "create" | "update" | "delete" | "restore"
+  type: 'create' | 'update' | 'delete' | 'restore';
 
   @IsNotEmpty()
   @IsObject()
-  data: Record<string, any>
+  data: Record<string, any>;
 }

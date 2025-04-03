@@ -2,43 +2,16 @@
 import { render } from 'solid-js/web';
 import { ErrorBoundary } from "solid-js";
 import { Toaster } from 'solid-toast';
-import IndexedDBProvider, { StoreSchema } from '@context/indexedDB';
-import Routing from '@routes/index';
-import '@styles/index.css';
-
+import IndexedDBProvider from '@/shared/context/indexedDB';
+import Routing from './routes';
+import '@/styles/index.css';
+import { config } from '@/config/indexedDB';
 const root = document.getElementById('root');
 
 if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
   throw new Error(
     'Root element not found. Did you forget to add it to your index.html? Or maybe the id attribute got misspelled?',
   );
-}
-
-const stores: StoreSchema[] = [
-  {
-    name: "folder",
-    options: {
-      keyPath: "id"
-    },
-  },
-  {
-    name: "note",
-    options: {
-      keyPath: "id"
-    },
-  },
-  {
-    name: "action-record",
-    options: {
-      keyPath: "id"
-    }
-  }
-];
-
-const config = {
-  name: "nowted",
-  version: 1,
-  stores
 }
 
 render(() => (

@@ -9,22 +9,18 @@ export default class CatchFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const catchResponse = {
-      status: "error",
-      statusCode: 500,
+      success: false,
+      statusCode: exception.status || 500,
       message: "Internal server error",
       timestamp: new Date().toISOString()
     }
 
-    if (exception.response) {
-      catchResponse.message = exception.response.message;
-    } else {
-      catchResponse.message = exception.message;
-    }
+    catchResponse.message = exception.response
+      ? exception.response.message
+      : exception.message;
 
-    catchResponse.statusCode = exception.status;
-
-    console.error(exception);
-
-    response.status(catchResponse.statusCode).json(catchResponse);
+    response
+    .status(catchResponse.statusCode)
+    .json(catchResponse);
   }
 }

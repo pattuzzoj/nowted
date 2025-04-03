@@ -1,0 +1,1 @@
+ALTER TABLE "pending_changes" ADD COLUMN "action" "change_action" NOT NULL;

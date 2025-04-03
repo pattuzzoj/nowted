@@ -1,14 +1,10 @@
-import { Module } from "@nestjs/common";
-import { DatabaseModule } from "@database/database.module";
-import { NoteService } from "./note.service";
-import INoteService from "./note.service.abstract";
+import { Module } from '@nestjs/common';
+import { DatabaseModule } from '@database/database.module';
+import NoteRepository from './note.repository';
 
 @Module({
-  providers: [{
-    provide: INoteService,
-    useClass: NoteService,
-  }],
+  providers: [NoteRepository],
   imports: [DatabaseModule],
-  exports: [INoteService]
+  exports: [NoteRepository],
 })
-export class NoteModule {}
+export default class NoteModule {}

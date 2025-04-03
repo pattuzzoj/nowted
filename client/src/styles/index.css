@@ -10,6 +10,9 @@
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
   --color-tertiary: var(--tertiary);
+  --color-layout-primary: var(--layout-primary);
+  --color-layout-secondary: var(--layout-secondary);
+  --color-layout-tertiary: var(--layout-tertiary);
   --color-hover: var(--hover);
   --color-accent: var(--accent);
   --color-active: var(--active);

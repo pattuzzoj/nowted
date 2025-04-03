@@ -1,16 +1,20 @@
-import { Module } from "@nestjs/common";
-import { DatabaseModule } from "@database/database.module";
-import { UserService } from "./user.service";
-import IUserService from "./user.service.abstract";
-import { UserController } from "./user.controller";
+import { Module } from '@nestjs/common';
+import { DatabaseModule } from '@database/database.module';
+import PendingModule from '@modules/pendingChanges/pending.module';
+import MailModule from '@modules/mail/mail.module';
+import UserController from './user.controller';
+import UserRepository from './user.repository';
+import UserService from './user.service';
+import FolderModule from '@modules/folder/folder.module';
+import NoteModule from '@modules/note/note.module';
 
 @Module({
   controllers: [UserController],
-  providers: [{
-    provide: IUserService,
-    useClass: UserService,
-  }],
-  imports: [DatabaseModule],
-  exports: [IUserService]
+  providers: [
+    UserRepository,
+    UserService
+  ],
+  imports: [DatabaseModule, FolderModule, NoteModule, PendingModule, MailModule],
+  exports: [UserRepository, UserService],
 })
-export class UserModule {};
+export default class UserModule {}

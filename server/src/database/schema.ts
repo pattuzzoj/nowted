@@ -1,8 +1,11 @@
 import { sql } from "drizzle-orm";
 import { pgTable, text, varchar, uuid, index, boolean, integer, pgEnum } from "drizzle-orm/pg-core";
 import { timestamps } from "./columns.helpers";
+import { jsonb } from "drizzle-orm/pg-core";
 
 export const accountStatusEnum = pgEnum("account_status", ["pending", "active", "suspended"]);
+export const changeActionEnum = pgEnum('change_action', ['change_email']);
+export const changeTypeEnum = pgEnum('change_type', ['insert', 'update', 'delete']);
 
 export const userSchema = pgTable("users", {
   id: uuid().default(sql`gen_random_uuid()`).primaryKey().notNull(),
@@ -35,4 +38,21 @@ export const noteSchema = pgTable("notes", {
   ...timestamps,
   user_id: uuid().references(() => userSchema.id).notNull(),
   folder_id: uuid().references(() => folderSchema.id, { onDelete: "cascade" }).notNull(),
+});
+
+export const pendingSchema = pgTable('pending_changes', {
+  id: uuid()
+    .default(sql`gen_random_uuid()`)
+    .primaryKey()
+    .notNull(),
+  old_value: jsonb().notNull(),
+  new_value: jsonb().notNull(),
+  action: changeActionEnum().notNull(),
+  type: changeTypeEnum().notNull(),
+  table_name: varchar({ length: 32 }).notNull(),
+  record_id: uuid().notNull(),
+  user_id: uuid()
+    .references(() => userSchema.id, { onDelete: 'cascade' })
+    .notNull(),
+  metadata: jsonb(),
 });

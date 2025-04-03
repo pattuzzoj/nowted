@@ -1,10 +1,45 @@
 @layer components {
   .btn {
     @apply
-    p-1.5 rounded-lg hover:bg-hover active:bg-active
+    p-1.5 rounded-xl hover:bg-hover active:bg-active
   }
 
-  .note {
-    
+  .btn-primary {
+    @apply
+    bg-primary hover:bg-primary/80
+  }
+
+  .btn-background-danger {
+    @apply bg-red-500 hover:bg-red-500/80
+  }
+
+  .btn-toggle[data-active="true"] {
+    @apply
+    bg-active
+  }
+
+  .dialog-btn {
+    @apply
+    p-1.5 rounded-xl
+  }
+
+  .dialog-btn-confirm {
+    @apply
+    bg-blue-700 hover:bg-blue-700/80
+  }
+
+  .dialog-btn-confirm-danger {
+    @apply
+    bg-red-500 hover:bg-red-500/80
+  }
+
+  .dialog-btn-cancel {
+    @apply
+    bg-white/10 hover:bg-white/5
+  }
+
+  .dialog-btn-close {
+    @apply
+    hover:bg-red-500/80
   }
 }

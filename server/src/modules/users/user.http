@@ -2,11 +2,32 @@
 @path = /users
 @host = {{hostname}}{{path}}
 
-PATCH {{host}}/change-email
+GET {{host}}/check-username?username=ReidenGlob
+Content-Type: application/json
+
+####
+
+GET {{host}}/check-email?email=pattuzzoj@gmail.com
+Content-Type: application/json
+
+####
+
+POST {{host}}/request-change-email
 Content-Type: application/json
 
 {
+  "id": "9b702d2d-4280-4fa1-9e7a-7a3622430ddc",
   "email": "reidenglobal1@gmail.com"
+}
+
+####
+
+POST {{host}}/change-email
+Content-Type: application/json
+
+{
+  "id": "9b702d2d-4280-4fa1-9e7a-7a3622430ddc",
+  "pin": 4250
 }
 
 ####

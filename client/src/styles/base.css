@@ -19,7 +19,7 @@
 
   body {
     @apply
-    bg-primary
+    bg-layout-primary
   }
   
   button, a {
