@@ -79,7 +79,7 @@ export default class UserService {
   }
 
   @Notify(messages.EMAIL_CHANGE_CONFIRM)
-  public async confirmChangeEmail(pin: string) {
+  public async confirmChangeEmail(pin: number) {
     const result = await this.fetchService.post("/confirm-change-email", { pin });
     return result.success;
   }

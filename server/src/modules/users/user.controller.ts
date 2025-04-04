@@ -83,7 +83,7 @@ export default class UserController {
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.EMAIL_UPDATED)
   async changeEmail(@Req() req: AuthRequest, @Body() { pin }: ConfirmChangeEmailDto) {
-    await this.userService.handleChangeEmail(req.user.sub, Number(pin));
+    await this.userService.handleChangeEmail(req.user.sub, pin);
   }
 
   @Patch('/me/change-username')

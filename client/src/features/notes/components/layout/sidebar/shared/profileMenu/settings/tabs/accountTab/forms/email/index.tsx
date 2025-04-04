@@ -33,7 +33,7 @@ export default function ChangeEmail(props: ParentProps) {
 
   async function handleConfirmChangeEmail() {
     setSendConfirmationPin(true);
-    await confirmChangeEmail(getValue(form, "email")!, pin());
+    await confirmChangeEmail(getValue(form, "email")!, Number(pin()));
     setSendConfirmationPin(false);
     setVerificationFormIsActive(false);
   }

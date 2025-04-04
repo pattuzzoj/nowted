@@ -10,7 +10,7 @@ export type ProfileContextType = [
     changeUsername: (username: string, password: string) => Promise<void>,
     changePassword: (currentPassword: string, newPassword: string) => Promise<void>,
     requestChangeEmail: (email: string, password: string) => Promise<void>,
-    confirmChangeEmail: (email: string, pin: string) => Promise<void>,
+    confirmChangeEmail: (email: string, pin: number) => Promise<void>,
     deleteData: () => Promise<void>,
     deleteAccount: () => Promise<void>
   }
@@ -42,7 +42,7 @@ export default function ProfileContextProvider(props: ParentProps) {
     }
   }
 
-  async function confirmChangeEmail(email: string, pin: string) {
+  async function confirmChangeEmail(email: string, pin: number) {
     const confirmedChangeEmail = await userService.confirmChangeEmail(pin);
 
     if (confirmedChangeEmail) {
