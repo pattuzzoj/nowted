@@ -10,7 +10,7 @@ export type ProfileContextType = [
     changeUsername: (username: string, password: string) => Promise<void>,
     changePassword: (currentPassword: string, newPassword: string) => Promise<void>,
     requestChangeEmail: (email: string, password: string) => Promise<void>,
-    confirmChangeEmail: (pin: string) => Promise<void>,
+    confirmChangeEmail: (email: string, pin: string) => Promise<void>,
     deleteData: () => Promise<void>,
     deleteAccount: () => Promise<void>
   }
@@ -42,6 +42,14 @@ export default function ProfileContextProvider(props: ParentProps) {
     }
   }
 
+  async function confirmChangeEmail(email: string, pin: string) {
+    const confirmedChangeEmail = await userService.confirmChangeEmail(pin);
+
+    if (confirmedChangeEmail) {
+      setProfile({ email: email });
+    }
+  }
+
   return (
     <ProfileContext.Provider value={[
       profile,
@@ -51,7 +59,7 @@ export default function ProfileContextProvider(props: ParentProps) {
         changeUsername,
         changePassword: userService.changePassword.bind(userService),
         requestChangeEmail: userService.requestChangeEmail.bind(userService),
-        confirmChangeEmail: userService.confirmChangeEmail.bind(userService),
+        confirmChangeEmail,
         deleteData: userService.deleteData.bind(userService),
         deleteAccount: userService.deleteAccount.bind(userService),
       }

@@ -54,7 +54,7 @@ export default class UserService {
 
   @Notify(messages.USERNAME_CHANGE)
   public async changeUsername(username: string, password: string) {
-    const result = await this.fetchService.patch("/username", {
+    const result = await this.fetchService.patch("/me/change-username", {
       username,
       password,
     });
@@ -64,7 +64,7 @@ export default class UserService {
 
   @Notify(messages.PASSWORD_CHANGE)
   public async changePassword(currentPassword: string, newPassword: string) {
-    await this.fetchService.patch("/password", {
+    await this.fetchService.patch("/me/change-password", {
       currentPassword,
       newPassword,
     });
@@ -80,11 +80,12 @@ export default class UserService {
 
   @Notify(messages.EMAIL_CHANGE_CONFIRM)
   public async confirmChangeEmail(pin: string) {
-    await this.fetchService.post("/confirm-change-email", { pin });
+    const result = await this.fetchService.post("/confirm-change-email", { pin });
+    return result.success;
   }
 
   public async deleteData() {
-    await this.fetchService.delete("/data");
+    await this.fetchService.delete("/delete-data");
   }
 
   public async deleteAccount() {
