@@ -34,13 +34,21 @@ export default function ProfileContextProvider(props: ParentProps) {
     }
   });
 
+  async function changeUsername(username: string, password: string) {
+    const changedUsername = await userService.changeUsername(username, password);
+
+    if (changedUsername) {
+      setProfile({ username: username });
+    }
+  }
+
   return (
     <ProfileContext.Provider value={[
       profile,
       {
         checkUsername:  userService.checkUsername.bind(userService),
         checkEmail: userService.checkEmail.bind(userService),
-        changeUsername: userService.changeUsername.bind(userService),
+        changeUsername,
         changePassword: userService.changePassword.bind(userService),
         requestChangeEmail: userService.requestChangeEmail.bind(userService),
         confirmChangeEmail: userService.confirmChangeEmail.bind(userService),

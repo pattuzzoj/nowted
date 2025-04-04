@@ -1,6 +1,6 @@
 export type FetchResponse<T> =
   {
-      success: true;
+      success: boolean;
       statusCode: number;
       message: string;
       data: T;

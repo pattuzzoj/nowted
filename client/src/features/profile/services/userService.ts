@@ -35,15 +35,21 @@ export default class UserService {
   }
 
   public async checkUsername(username: string) {
-    return this.userValidationService.checkUsername(username);
+    return await this.userValidationService.checkUsername(username);
   }
 
   public async checkEmail(email: string) {
-    return this.userValidationService.checkEmail(email);
+    return await this.userValidationService.checkEmail(email);
   }
 
   public async getProfile() {
-    return await this.fetchService.get("/me");
+    const result = await this.fetchService.get("/me");
+
+    if (!result.success) {
+      throw new Error(result.message);
+    }
+
+    return result.data;
   }
 
   @Notify(messages.USERNAME_CHANGE)
@@ -53,9 +59,7 @@ export default class UserService {
       password,
     });
 
-    if (result.success) {
-      this.setProfile({ username: username });
-    }
+    return result.success;
   }
 
   @Notify(messages.PASSWORD_CHANGE)

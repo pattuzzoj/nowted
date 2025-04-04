@@ -21,14 +21,14 @@ export interface Auth {
 export const AuthContext = createContext<Auth>();
 
 export default function AuthProvider(props: ParentProps) {
-  const [isAuthenticated, setIsAuthenticated] = createSignal(true);
+  const [isAuthenticated, setIsAuthenticated] = createSignal(false);
   const authService = AuthService.getInstance();
   const [_, { clearDatabase }] = useIndexedDB();
   const navigate = useNavigate();
 
   onMount(async () => {
     try {
-      // await authService.isValidToken();
+      await authService.isValidToken();
       setIsAuthenticated(true);
     } catch (error) {
       navigate("/auth/login");
@@ -84,7 +84,7 @@ export default function AuthProvider(props: ParentProps) {
 
   async function handleRecoverAccount(account: string) {
     try {
-      await authService.recoverAccount(account);
+      return await authService.recoverAccount(account);
     } catch {}
   }
 

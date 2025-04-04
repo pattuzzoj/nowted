@@ -24,7 +24,7 @@ export default class UserValidationService {
         return false;
       }
   
-      return request.data.exists;
+      return !request.data.exists;
     }
   
     public async checkEmail(email: string) {
@@ -34,6 +34,6 @@ export default class UserValidationService {
         return false;
       }
       
-      return request.data.exists;
+      return !request.data.exists;
     }
 }

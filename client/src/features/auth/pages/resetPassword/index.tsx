@@ -19,8 +19,6 @@ export default function ResetPassword() {
   }
 
   const {handleResetPassword} = useAuth();
-
-
   const [form, { Form, Field }] = createForm<Password>();
 
   return (
