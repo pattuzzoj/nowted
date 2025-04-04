@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { and, eq, sql, gt, isNotNull } from 'drizzle-orm';
 import type { DatabaseType } from '../../../drizzle.config';
-import { folderSchema, noteSchema, userSchema } from '@database/schema';
+import { folderSchema, noteSchema } from '@database/schema';
 import { Folder } from './interfaces/folder.interface';
 
 @Injectable()

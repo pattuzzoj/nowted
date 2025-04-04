@@ -32,7 +32,7 @@ Content-Type: application/json
 
 ####
 
-PATCH {{host}}/change-username
+PATCH {{host}}/me/change-username
 Content-Type: application/json
 
 {
