@@ -11,6 +11,7 @@ import {
   Delete,
   Res,
   Put,
+  Patch,
 } from '@nestjs/common';
 import { AuthGuard } from '@shared/guards/auth.guard';
 import type { AuthRequest } from '@shared/types';
@@ -85,7 +86,7 @@ export default class UserController {
     await this.userService.handleChangeEmail(req.user.sub, Number(pin));
   }
 
-  @Put('/me/change-username')
+  @Patch('/me/change-username')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.USERNAME_UPDATED)
@@ -96,7 +97,7 @@ export default class UserController {
     await this.userService.changeUsername(req.user.sub, username);
   }
 
-  @Put('/me/change-password')
+  @Patch('/me/change-password')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.PASSWORD_UPDATED)

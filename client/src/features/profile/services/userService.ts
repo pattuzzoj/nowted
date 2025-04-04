@@ -54,7 +54,7 @@ export default class UserService {
 
   @Notify(messages.USERNAME_CHANGE)
   public async changeUsername(username: string, password: string) {
-    const result = await this.fetchService.put("/me/change-username", {
+    const result = await this.fetchService.patch("/me/change-username", {
       username,
       password,
     });
@@ -64,7 +64,7 @@ export default class UserService {
 
   @Notify(messages.PASSWORD_CHANGE)
   public async changePassword(currentPassword: string, newPassword: string) {
-    await this.fetchService.put("/me/change-password", {
+    await this.fetchService.patch("/me/change-password", {
       currentPassword,
       newPassword,
     });
