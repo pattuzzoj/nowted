@@ -20,14 +20,13 @@ export const ProfileContext = createContext<ProfileContextType>();
 
 export default function ProfileContextProvider(props: ParentProps) {
   const [profile, setProfile] = createStore({
-    username: "",
-    email: ""
+    username: "john_doe",
+    email: "johndoe@mail.com"
   });
 
   const userService = ProfileService.getInstance(profile, setProfile);
 
   onMount(async () => {
-    try
     const data = await userService.getProfile();
 
     if (data) {
