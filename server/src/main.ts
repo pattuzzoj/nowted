@@ -22,7 +22,7 @@ async function bootstrap() {
   app.use(cookieParser());
   app.enableCors({
     origin: ["https://nowted-showcase.vercel.app", "*"],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
   });
