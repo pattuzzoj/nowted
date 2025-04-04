@@ -27,10 +27,11 @@ export default function ProfileContextProvider(props: ParentProps) {
   const userService = ProfileService.getInstance(profile, setProfile);
 
   onMount(async () => {
-    const result = await userService.getProfile();
-    
-    if (result.success) {
-      setProfile(result.data);
+    try
+    const data = await userService.getProfile();
+
+    if (data) {
+      setProfile(data);
     }
   });
 

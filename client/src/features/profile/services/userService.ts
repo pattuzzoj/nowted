@@ -46,7 +46,7 @@ export default class UserService {
     const result = await this.fetchService.get("/me");
 
     if (!result.success) {
-      throw new Error(result.message);
+      return null;
     }
 
     return result.data;
