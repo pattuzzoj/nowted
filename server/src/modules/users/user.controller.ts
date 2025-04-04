@@ -18,7 +18,7 @@ import { messages } from '@utils/messages';
 import { SetMessage } from '@shared/decorators/setMessage.decorator';
 import UserService from './user.service';
 import {
-  ChangeEmailDto,
+  ConfirmChangeEmailDto,
   ChangePasswordDto,
   ChangeUsernameDto,
   RequestChangeEmailDto,
@@ -71,16 +71,16 @@ export default class UserController {
   @SetMessage(messages.EMAIL_UPDATE_REQUESTED)
   async requestChangeEmail(
     @Req() req: AuthRequest,
-    @Body() { email }: RequestChangeEmailDto,
+    @Body() { newEmail }: RequestChangeEmailDto,
   ) {
-    await this.userService.requestChangeEmail(req.user.sub, email);
+    await this.userService.requestChangeEmail(req.user.sub, newEmail);
   }
 
   @Post('/confirm-change-email')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.EMAIL_UPDATED)
-  async changeEmail(@Req() req: AuthRequest, @Body() { pin }: ChangeEmailDto) {
+  async changeEmail(@Req() req: AuthRequest, @Body() { pin }: ConfirmChangeEmailDto) {
     await this.userService.handleChangeEmail(req.user.sub, Number(pin));
   }
 
