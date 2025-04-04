@@ -117,7 +117,10 @@ export default function ChangeEmail(props: ParentProps) {
                             <Dialog.CloseTrigger title="close form" class="dialog-btn dialog-btn-cancel px-4">
                               Cancel
                             </Dialog.CloseTrigger>
-                            <form onSubmit={handleConfirmChangeEmail}>
+                            <form onSubmit={async (e) => {
+                              e.preventDefault();
+                              await handleConfirmChangeEmail();
+                            }}>
                               <span class="flex justify-center md:justify-end items-center gap-2">
                                 <button class="w-full md:w-auto flex items-center justify-center disabled:opacity-50 group dialog-btn dialog-btn-confirm" type="submit" disabled={pin()?.length !== 4 && sendConfirmationPin()}>
                                   <span class="group-disabled:hidden">

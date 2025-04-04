@@ -35,11 +35,11 @@ export default class UserService {
   }
 
   public async checkUsername(username: string) {
-    return await this.userValidationService.checkUsername(username);
+    return true; await this.userValidationService.checkUsername(username);
   }
 
   public async checkEmail(email: string) {
-    return await this.userValidationService.checkEmail(email);
+    return true; await this.userValidationService.checkEmail(email);
   }
 
   public async getProfile() {
@@ -72,16 +72,17 @@ export default class UserService {
 
   @Notify(messages.EMAIL_CHANGE_REQUEST)
   public async requestChangeEmail(newEmail: string, password: string) {
-    await this.fetchService.post("/request-change-email", {
-      newEmail,
-      password,
-    });
+    // await this.fetchService.post("/request-change-email", {
+    //   newEmail,
+    //   password,
+    // });
   }
 
   @Notify(messages.EMAIL_CHANGE_CONFIRM)
   public async confirmChangeEmail(pin: string) {
-    const result = await this.fetchService.post("/confirm-change-email", { pin });
-    return result.success;
+    // const result = await this.fetchService.post("/confirm-change-email", { pin });
+    // return result.success;
+    return true;
   }
 
   public async deleteData() {
