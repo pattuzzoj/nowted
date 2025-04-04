@@ -5,11 +5,11 @@ import CloseIcon from "lucide-solid/icons/x";
 import Input from "@/shared/components/form/input";
 import PasswordInput from "@/shared/components/form/password";
 import useUserContext from "@/features/profile/hooks/useProfile";
-import { debounce } from "@utilify/core";
 import { Dialog } from "@ark-ui/solid";
 import { Portal } from "solid-js/web";
 import { ParentProps } from "solid-js";
 import UserRoundIcon from "lucide-solid/icons/user-round";
+import { debounce } from "@/features/notes/utils/functions";
 
 type FormSchemaType = {
   username: string
@@ -27,7 +27,7 @@ export default function ChangeUsername(props: ParentProps) {
     await changeUsername(schema.username, schema.password);
   }
 
-  const handleValidateUsername = debounce(checkUsername, 300) as () => Promise<boolean>;
+  const handleValidateUsername = debounce(checkUsername, 500) as () => Promise<boolean>;
 
   return (
     <Dialog.Root>

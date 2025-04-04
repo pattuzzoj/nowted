@@ -6,10 +6,10 @@ import Input from "@/shared/components/form/input";
 import MailIcon from "lucide-solid/icons/mail";
 import PasswordInput from "@/shared/components/form/password";
 import useUserContext from "@/features/profile/hooks/useProfile";
-import { debounce } from "@utilify/core";
 import { Dialog, PinInput } from "@ark-ui/solid";
 import { Portal } from "solid-js/web";
 import { createSignal, ParentProps } from "solid-js";
+import { debounce } from "@/features/notes/utils/functions";
 
 type FormSchemaType = {
   email: string
@@ -38,7 +38,7 @@ export default function ChangeEmail(props: ParentProps) {
     setVerificationFormIsActive(false);
   }
 
-  const handleValidateEmail = debounce(checkEmail, 300) as () => Promise<boolean>;
+  const handleValidateEmail = debounce(checkEmail, 500) as () => Promise<boolean>;
 
   return (
     <Dialog.Root>
