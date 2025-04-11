@@ -10,7 +10,6 @@ import {
   Post,
   Delete,
   Res,
-  Put,
   Patch,
 } from '@nestjs/common';
 import { AuthGuard } from '@shared/guards/auth.guard';
@@ -33,38 +32,22 @@ export default class UserController {
   @Get('/me')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
-  async getUserInfo(@Req() req: AuthRequest) {
-    return await this.userService.getProfile(req.user.sub);
+  async getProfile(@Req() { user }: AuthRequest) {
+    return await this.userService.getProfile(user.sub);
   }
 
   @Get('/check-username')
   @HttpCode(HttpStatus.OK)
+  @SetMessage(messages.USERNAME_AVAILABLE)
   async checkUsernameExists(@Query('username') username: string) {
-    const usernameExists = await this.userService.checkUsername(username);
-
-    return {
-      message: usernameExists
-        ? messages.USERNAME_NOT_AVAILABLE
-        : messages.USERNAME_AVAILABLE,
-      data: {
-        exists: usernameExists,
-      },
-    };
+    await this.userService.checkUsername(username);
   }
 
   @Get('/check-email')
   @HttpCode(HttpStatus.OK)
+  @SetMessage(messages.EMAIL_AVAILABLE)
   async checkEmailExists(@Query('email') email: string) {
-    const emailExists = await this.userService.checkEmail(email);
-
-    return {
-      message: emailExists
-        ? messages.EMAIL_NOT_AVAILABLE
-        : messages.EMAIL_AVAILABLE,
-      data: {
-        exists: emailExists,
-      },
-    };
+    await this.userService.checkEmail(email);
   }
 
   @Post('/request-change-email')
@@ -72,41 +55,44 @@ export default class UserController {
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.EMAIL_UPDATE_REQUESTED)
   async requestChangeEmail(
-    @Req() req: AuthRequest,
+    @Req() { user }: AuthRequest,
     @Body() { newEmail }: RequestChangeEmailDto,
   ) {
-    await this.userService.requestChangeEmail(req.user.sub, newEmail);
+    await this.userService.requestChangeEmail(user.sub, newEmail);
   }
 
   @Post('/confirm-change-email')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.EMAIL_UPDATED)
-  async changeEmail(@Req() req: AuthRequest, @Body() { pin }: ConfirmChangeEmailDto) {
-    await this.userService.handleChangeEmail(req.user.sub, pin);
+  async confirmChangeEmail(
+    @Req() { user }: AuthRequest,
+    @Body() { pin }: ConfirmChangeEmailDto,
+  ) {
+    await this.userService.confirmChangeEmail(user.sub, pin);
   }
 
-  @Patch('/me/change-username')
+  @Patch('/me/username')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.USERNAME_UPDATED)
   async changeUsername(
-    @Req() req: AuthRequest,
+    @Req() { user }: AuthRequest,
     @Body() { username }: ChangeUsernameDto,
   ) {
-    await this.userService.changeUsername(req.user.sub, username);
+    await this.userService.changeUsername(user.sub, username);
   }
 
-  @Patch('/me/change-password')
+  @Patch('/me/password')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.PASSWORD_UPDATED)
   async changePassword(
-    @Req() req: AuthRequest,
+    @Req() { user }: AuthRequest,
     @Body() { currentPassword, newPassword }: ChangePasswordDto,
   ) {
     await this.userService.changePassword(
-      req.user.sub,
+      user.sub,
       currentPassword,
       newPassword,
     );
@@ -116,21 +102,21 @@ export default class UserController {
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.ACCOUNT_DELETED)
-  async deleteAllData(@Req() req: AuthRequest) {
-    await this.userService.deleteAllData(req.user.sub);
+  async deleteData(@Req() { user }: AuthRequest) {
+    await this.userService.deleteData(user.sub);
   }
 
   @Delete('')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.ACCOUNT_DELETED)
-  async deleteAccount(
-    @Req() req: AuthRequest,
+  async delete(
+    @Req() { user }: AuthRequest,
     @Res({ passthrough: true }) res: Response,
   ) {
-    await this.userService.deleteAccount(req.user.sub);
+    await this.userService.delete(user.sub);
 
-    res.clearCookie('jwt', {
+    res.clearCookie('', {
       httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,

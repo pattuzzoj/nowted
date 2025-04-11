@@ -25,27 +25,44 @@ export default class UserService {
   ) {}
 
   async getProfile(userId: string) {
-    const { email, username } = await this.userRepository.findUserById(userId) as User;
+    const { email, username } = (await this.userRepository.findById(
+      userId,
+    )) as User;
     return { email, username };
   }
 
   async checkUsername(username: string) {
-    const user = await this.userRepository.findUserByUsername(username);
-    return Boolean(user);
+    const user = await this.userRepository.findByUsername(username);
+
+    if (user) {
+      throw new ConflictException({
+        message: messages.USERNAME_NOT_AVAILABLE
+      });
+    }
   }
 
   async checkEmail(email: string) {
-    const user = await this.userRepository.findUserByEmail(email);
-    return Boolean(user);
+    const user = await this.userRepository.findByEmail(email);
+
+    if (user) {
+      throw new ConflictException({
+        message: messages.EMAIL_NOT_AVAILABLE
+      });
+    }
   }
 
   async requestChangeEmail(userId: string, email: string) {
-    const emailExists = await this.checkEmail(email);
+    await this.checkEmail(email);
+    const pendingChange = (await this.pendingRepository.getPendingByAction(
+      userId,
+      'change_email',
+    )) as PendingChanges;
 
-    if (emailExists) {
-      throw new ConflictException(messages.EMAIL_ALREADY_USED);
+    if (pendingChange) {
+      await this.pendingRepository.delete(pendingChange?.id);
     }
-    const user = await this.userRepository.findUserById(userId) as User;
+
+    const user = (await this.userRepository.findById(userId)) as User;
     const PIN = random(1000, 9999);
 
     this.pendingRepository.create({
@@ -68,7 +85,7 @@ export default class UserService {
     await this.mailService.sendEmailChangeVerificationPin(email, PIN);
   }
 
-  async handleChangeEmail(userId: string, pin: number) {
+  async confirmChangeEmail(userId: string, pin: number) {
     const pendingChange = (await this.pendingRepository.getPendingByAction(
       userId,
       'change_email',
@@ -90,7 +107,7 @@ export default class UserService {
     currentPassword: string,
     newPassword: string,
   ) {
-    const user = await this.userRepository.findUserById(userId);
+    const user = await this.userRepository.findById(userId);
 
     const isSamePassword = await bcrypt.compare(
       currentPassword,
@@ -107,21 +124,16 @@ export default class UserService {
   }
 
   async changeUsername(userId: string, username: string) {
-    const usernameExists = await this.checkUsername(username);
-
-    if (usernameExists) {
-      throw new ConflictException(messages.USERNAME_ALREADY_USED);
-    }
-
+    await this.checkUsername(username);
     await this.userRepository.changeUsername(userId, username);
   }
 
-  async deleteAllData(userId: string) {
-    await this.folderRepository.destroyData(userId);
-    await this.noteRepository.destroyData(userId);
+  async deleteData(userId: string) {
+    await this.folderRepository.deleteData(userId);
+    await this.noteRepository.deleteData(userId);
   }
 
-  async deleteAccount(userId: string) {
-    await this.userRepository.deleteUser(userId);
+  async delete(userId: string) {
+    await this.userRepository.delete(userId);
   }
 }

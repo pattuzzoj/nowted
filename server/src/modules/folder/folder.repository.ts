@@ -8,7 +8,7 @@ import { Folder } from './interfaces/folder.interface';
 export default class FolderRepository {
   constructor(@Inject('DATABASE') private db: DatabaseType) {}
 
-  async getFoldersSinceLastSync(userId: string, lastSync: string) {
+  async getSinceLastSync(userId: string, lastSync: string) {
     return await this.db
       .select()
       .from(folderSchema)
@@ -20,7 +20,7 @@ export default class FolderRepository {
       );
   }
 
-  async checkIfFolderExists(id: string) {
+  async checkExistsById(id: string) {
     const folder = await this.db
       .select({ id: folderSchema.id })
       .from(folderSchema)
@@ -96,13 +96,13 @@ export default class FolderRepository {
     ]);
   }
 
-  async destroyData(userId: string) {
+  async deleteData(userId: string) {
     await this.db
     .delete(folderSchema)
     .where(eq(folderSchema.user_id, userId))
   }
 
-  async cleanDeletedFolders() {
+  async cleanDeleted() {
     await this.db
       .delete(folderSchema)
       .where(sql`deleted_at + INTERVAL '30 days' <= NOW()`);

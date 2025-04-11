@@ -29,9 +29,19 @@ export const authMessages = {
     success: "Recovery Email Sent",
     error: "Error Sending Recovery Email"
   },
+  ACCOUNT_SUSPENDED: {
+    loading: "Suspending Account...",
+    success: "Account Suspended Successful",
+    error: "Error Suspending Account"
+  },
   CONFIRM_RECOVERY: {
     loading: "Confirming Account Recovery...",
     success: "Account Recovery Confirmed",
     error: "Error Confirming Account Recovery"
+  },
+  RESEND_EMAIL: {
+    loading: "Resending Confirmation Email...",
+    success: "Successful confirmation email forwarding",
+    error: "Error Resending Confirmation Email"
   }
 };

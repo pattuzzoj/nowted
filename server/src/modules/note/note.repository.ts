@@ -8,7 +8,7 @@ import { Note } from './interfaces/note.interface';
 export default class NoteRepository {
   constructor(@Inject('DATABASE') private db: DatabaseType) {}
 
-  async getNotesSinceLastSync(userId: string, lastSync: string) {
+  async getSinceLastSync(userId: string, lastSync: string) {
     return await this.db
       .select()
       .from(noteSchema)
@@ -20,7 +20,7 @@ export default class NoteRepository {
       );
   }
 
-  async checkIfNoteExists(id: string) {
+  async checkExistsById(id: string) {
     const [note] = await this.db
       .select({ id: noteSchema.id })
       .from(noteSchema)
@@ -77,13 +77,13 @@ export default class NoteRepository {
       );
   }
 
-  async destroyData(userId: string) {
+  async deleteData(userId: string) {
     await this.db
     .delete(noteSchema)
     .where(eq(noteSchema.user_id, userId));
   }
 
-  async cleanDeletedNotes() {
+  async cleanDeleted() {
     await this.db
       .delete(noteSchema)
       .where(sql`deleted_at + INTERVAL '30 days' <= NOW()`);

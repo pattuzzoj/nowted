@@ -1,25 +1,24 @@
-import FetchService from "@/shared/services/fetchService";
 import { messages } from "@/shared/utils/messages";
 import { Notify } from "@/shared/utils/decorators/notify";
-import { baseURL } from "@/shared/utils/constants";
 import UserValidationService from "@/shared/services/userValidationService";
 import { SetStoreFunction } from "solid-js/store";
+import axios from "axios";
+import { ResponseDataType } from "@/shared/types";
 
 type ProfileType = {
   username: string;
   email: string;
-}
+};
 
 export default class UserService {
   private static instance: UserService;
-  private fetchService: FetchService;
+  private baseURL = "/users";
   private userValidationService: UserValidationService;
 
   private constructor(
     private profile: ProfileType,
     private setProfile: SetStoreFunction<ProfileType>
   ) {
-    this.fetchService = new FetchService(baseURL.concat("/users"));
     this.userValidationService = UserValidationService.getInstance();
   }
 
@@ -43,28 +42,21 @@ export default class UserService {
   }
 
   public async getProfile() {
-    const result = await this.fetchService.get("/me");
-
-    if (!result.success) {
-      return null;
-    }
-
-    return result.data;
+    const response = await axios.get<ResponseDataType>(this.baseURL + "/me");
+    return response.data;
   }
 
   @Notify(messages.USERNAME_CHANGE)
   public async changeUsername(username: string, password: string) {
-    const result = await this.fetchService.patch("/me/change-username", {
+    await axios.patch<ResponseDataType>(this.baseURL + "/me/username", {
       username,
       password,
     });
-
-    return result.success;
   }
 
   @Notify(messages.PASSWORD_CHANGE)
   public async changePassword(currentPassword: string, newPassword: string) {
-    await this.fetchService.patch("/me/change-password", {
+    await axios.patch<ResponseDataType>(this.baseURL + "/me/password", {
       currentPassword,
       newPassword,
     });
@@ -72,7 +64,7 @@ export default class UserService {
 
   @Notify(messages.EMAIL_CHANGE_REQUEST)
   public async requestChangeEmail(newEmail: string, password: string) {
-    await this.fetchService.post("/request-change-email", {
+    await axios.post<ResponseDataType>(this.baseURL + "/request-change-email", {
       newEmail,
       password,
     });
@@ -80,15 +72,18 @@ export default class UserService {
 
   @Notify(messages.EMAIL_CHANGE_CONFIRM)
   public async confirmChangeEmail(pin: number) {
-    const result = await this.fetchService.post("/confirm-change-email", { pin });
-    return result.success;
+    await axios.post<ResponseDataType>(this.baseURL + "/confirm-change-email", {
+      pin,
+    });
   }
 
+  @Notify(messages.DELETING_DATA)
   public async deleteData() {
-    await this.fetchService.delete("/delete-data");
+    await axios.delete<ResponseDataType>(this.baseURL + "/delete-data");
   }
 
+  @Notify(messages.DELETING_ACCOUNT)
   public async deleteAccount() {
-    await this.fetchService.delete("");
+    await axios.delete<ResponseDataType>(this.baseURL);
   }
 }

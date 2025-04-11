@@ -9,7 +9,7 @@ export interface Auth {
   setIsAuthenticated: Setter<boolean>,
   checkEmail: (email: string) => Promise<boolean>,
   checkUsername: (username: string) => Promise<boolean>,
-  handleVerify: () => Promise<void>,
+  handleVerifySession: () => Promise<void>,
   handleLogin: (credentials: Login) => Promise<void>,
   handleRegister: (registration: Register) => Promise<void>,
   handleActivateAccount: (token: string) => Promise<void>,
@@ -26,32 +26,21 @@ export default function AuthProvider(props: ParentProps) {
   const [_, { clearDatabase }] = useIndexedDB();
   const navigate = useNavigate();
 
-  onMount(async () => {
+  async function handleVerifySession() {
     try {
-      await authService.isValidToken();
+      await authService.isValidSession();
       setIsAuthenticated(true);
-    } catch (error) {
-      navigate("/auth/login");
-    }
-  });
-
-  async function handleVerify() {
-    try {
-      await authService.isValidToken();
-      setIsAuthenticated(true);
-    } catch (error) {
-      setIsAuthenticated(false);
+    } catch {
       navigate("/auth/login");
     }
   }
 
   async function handleLogin(credentials: Login) {
-    try {
-      await authService.login(credentials);
+    const isLogged = await authService.login(credentials);
+
+    if (isLogged) {
       setIsAuthenticated(true);
       navigate("/");
-    } catch (error) {
-      console.log("Erro:", error);
     }
   }
 
@@ -66,15 +55,14 @@ export default function AuthProvider(props: ParentProps) {
     try {
       await authService.activateAccount(token);
       navigate("/auth/login");
-    } catch (error) {
-      navigate("/auth/login");
+    } catch {
+      navigate("/auth/resend-verification");
     }
   }
 
   async function handleLogout() {
     try {
       await authService.logout();
-      
       localStorage.clear();
       await clearDatabase();
       setIsAuthenticated(false);
@@ -82,19 +70,19 @@ export default function AuthProvider(props: ParentProps) {
     } catch {}
   }
 
-  async function handleRecoverAccount(account: string) {
-    try {
-      return await authService.recoverAccount(account);
-    } catch {}
-  }
-
   async function handleResetPassword(token: string, password: string) {
     try {
       await authService.resetPassword(token, password);
       navigate("/auth/login");
-    } catch (error) {
+    } catch {
       navigate("/auth/recover-account");
     }
+  }
+
+  async function handleRecoverAccount(account: string) {
+    try {
+      await authService.recoverAccount(account);
+    } catch {}
   }
 
   return (
@@ -103,7 +91,7 @@ export default function AuthProvider(props: ParentProps) {
       setIsAuthenticated,
       checkEmail: authService.checkEmail.bind(authService),
       checkUsername: authService.checkUsername.bind(authService),
-      handleVerify,
+      handleVerifySession,
       handleLogin,
       handleRegister,
       handleActivateAccount,

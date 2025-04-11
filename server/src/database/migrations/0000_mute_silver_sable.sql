@@ -1,4 +1,3 @@
-CREATE TYPE "public"."account_status" AS ENUM('pending', 'active', 'suspended');--> statement-breakpoint
 CREATE TYPE "public"."change_action" AS ENUM('change_email');--> statement-breakpoint
 CREATE TYPE "public"."change_type" AS ENUM('insert', 'update', 'delete');--> statement-breakpoint
 CREATE TABLE "folders" (
@@ -43,7 +42,6 @@ CREATE TABLE "users" (
 	"email" varchar(100) NOT NULL,
 	"username" varchar(16) NOT NULL,
 	"password" varchar(100) NOT NULL,
-	"account_status" "account_status" DEFAULT 'pending' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp,
@@ -54,6 +52,6 @@ CREATE TABLE "users" (
 ALTER TABLE "folders" ADD CONSTRAINT "folders_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "notes" ADD CONSTRAINT "notes_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "notes" ADD CONSTRAINT "notes_folder_id_folders_id_fk" FOREIGN KEY ("folder_id") REFERENCES "public"."folders"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "pending_changes" ADD CONSTRAINT "pending_changes_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "pending_changes" ADD CONSTRAINT "pending_changes_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "emailIndex" ON "users" USING btree ("email");--> statement-breakpoint
 CREATE INDEX "usernameIndex" ON "users" USING btree ("username");

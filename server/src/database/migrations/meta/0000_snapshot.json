@@ -1,5 +1,5 @@
 {
-  "id": "4f0c1a2f-6ba8-4511-95a3-ee7e4bc9504b",
+  "id": "274a563f-91fd-4bc8-a199-6fc3d112e8ec",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -273,7 +273,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -311,14 +311,6 @@
           "type": "varchar(100)",
           "primaryKey": false,
           "notNull": true
-        },
-        "account_status": {
-          "name": "account_status",
-          "type": "account_status",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'pending'"
         },
         "created_at": {
           "name": "created_at",
@@ -397,15 +389,6 @@
     }
   },
   "enums": {
-    "public.account_status": {
-      "name": "account_status",
-      "schema": "public",
-      "values": [
-        "pending",
-        "active",
-        "suspended"
-      ]
-    },
     "public.change_action": {
       "name": "change_action",
       "schema": "public",

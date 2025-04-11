@@ -12,12 +12,7 @@ export class CleanService {
 
   @Cron(CronExpression.EVERY_HOUR)
   async cleanDatabase() {
-    try {
-      await this.folderService.cleanDeletedFolders();
-    } catch (error) {}
-
-    try {
-      await this.noteService.cleanDeletedNotes();
-    } catch (error) {}
+    await this.folderService.cleanDeleted();
+    await this.noteService.cleanDeleted();
   }
 }

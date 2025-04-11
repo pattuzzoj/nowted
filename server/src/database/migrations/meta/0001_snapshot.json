@@ -1,6 +1,6 @@
 {
-  "id": "80110353-4d2e-4ad6-9d36-881cfbbc10d3",
-  "prevId": "4f0c1a2f-6ba8-4511-95a3-ee7e4bc9504b",
+  "id": "3787e93a-49d5-4f42-be20-2fa18cec56c3",
+  "prevId": "274a563f-91fd-4bc8-a199-6fc3d112e8ec",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -222,6 +222,13 @@
           "primaryKey": false,
           "notNull": true
         },
+        "action": {
+          "name": "action",
+          "type": "change_action",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
         "type": {
           "name": "type",
           "type": "change_type",
@@ -266,7 +273,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -308,6 +315,14 @@
         "account_status": {
           "name": "account_status",
           "type": "account_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "email_status": {
+          "name": "email_status",
+          "type": "email_status",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
@@ -394,7 +409,6 @@
       "name": "account_status",
       "schema": "public",
       "values": [
-        "pending",
         "active",
         "suspended"
       ]
@@ -413,6 +427,14 @@
         "insert",
         "update",
         "delete"
+      ]
+    },
+    "public.email_status": {
+      "name": "email_status",
+      "schema": "public",
+      "values": [
+        "pending",
+        "verified"
       ]
     }
   },

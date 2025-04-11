@@ -3,7 +3,8 @@ import { pgTable, text, varchar, uuid, index, boolean, integer, pgEnum } from "d
 import { timestamps } from "./columns.helpers";
 import { jsonb } from "drizzle-orm/pg-core";
 
-export const accountStatusEnum = pgEnum("account_status", ["pending", "active", "suspended"]);
+export const accountStatusEnum = pgEnum("account_status", ["active", "suspended"]);
+export const emailStatusEnum = pgEnum("email_status", ["pending", "verified"]);
 export const changeActionEnum = pgEnum('change_action', ['change_email']);
 export const changeTypeEnum = pgEnum('change_type', ['insert', 'update', 'delete']);
 
@@ -12,7 +13,8 @@ export const userSchema = pgTable("users", {
   email: varchar({length: 100}).unique().notNull(),
   username: varchar({length: 16}).unique().notNull(),
   password: varchar({length: 100}).notNull(),
-  account_status: accountStatusEnum().notNull().default("pending"),
+  account_status: accountStatusEnum().notNull().default("active"),
+  email_status: emailStatusEnum().notNull().default("pending"),
   ...timestamps,
 }, (table) => [
     index("emailIndex").on(table.email),

@@ -7,5 +7,5 @@ export const messages = {
   ...AuthMessages,
   ...MailMessages,
   ...SyncMessages,
-  ...UsersMessages
+  ...UsersMessages,
 }

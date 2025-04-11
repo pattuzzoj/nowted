@@ -1,17 +1,15 @@
-import FetchService from "@/shared/services/fetchService";
 import { messages } from "@/shared/utils/messages";
 import { Notify } from "@/shared/utils/decorators/notify";
-import { baseURL } from "@/shared/utils/constants";
 import UserValidationService from "@/shared/services/userValidationService";
 import type { Login, Register } from "../types";
+import api from "@/shared/services/api";
 
 export default class AuthService {
   private static instance: AuthService;
-  private fetchService: FetchService;
+  private baseURL = "/auth";
   private userValidationService: UserValidationService;
 
   private constructor() {
-    this.fetchService = new FetchService(baseURL.concat("/auth"));
     this.userValidationService = UserValidationService.getInstance();
   }
 
@@ -31,37 +29,64 @@ export default class AuthService {
     return this.userValidationService.checkEmail(email);
   }
 
-  public async isValidToken() {
-    return await this.fetchService.get("/verify-token");
+  public async isValidSession() {
+    return await api.get(`${this.baseURL}/verify-session`, { withCredentials: true });
   }
-
+  
   @Notify(messages.LOGIN)
   public async login(credentials: Login) {
-    return await this.fetchService.post("/login", credentials);
+    const {data} = await api.post<{ accessToken: string }>(
+      `${this.baseURL}/login`,
+      credentials
+    );
+
+    if (data.accessToken) {
+      localStorage.setItem("AUTH_TOKEN", `Bearer ${data.accessToken}`);
+    }
+
+    return true;
   }
 
   @Notify(messages.REGISTER)
   public async register(registration: Register) {
-    return await this.fetchService.post("/register", registration);
+    await api.post(`${this.baseURL}/register`, registration);
   }
 
   @Notify(messages.LOGOUT)
   public async logout() {
-    return await this.fetchService.delete("/logout");
+    await api.delete(`${this.baseURL}/logout`);
   }
 
   @Notify(messages.ACTIVATE_ACCOUNT)
   public async activateAccount(token: string) {
-    await this.fetchService.post("/activate-account", { token });
+    await api.post(`${this.baseURL}/verify-email`, { token });
+  }
+
+  @Notify(messages.RESEND_EMAIL)
+  public async resendVerification(token: string) {
+    await api.post(`${this.baseURL}/resend-verification`, { token });
+
+    return true;
   }
 
   @Notify(messages.ACCOUNT_RECOVERY)
   public async recoverAccount(account: string) {
-    await this.fetchService.post("/forgot-password", { account });
+    await api.post(`${this.baseURL}/forgot-password`, { account });
+
+    return true;
   }
 
   @Notify(messages.RESET_PASSWORD)
   public async resetPassword(token: string, password: string) {
-    await this.fetchService.post("/reset-password", { token, password });
+    await api.post(`${this.baseURL}/reset-password`, {
+      token,
+      password,
+    });
+  }
+
+  @Notify(messages.ACCOUNT_SUSPENDED)
+  public async suspendAccount() {
+    const response = await api.post(`${this.baseURL}/suspend-account`);
+    return response.data.success;
   }
 }

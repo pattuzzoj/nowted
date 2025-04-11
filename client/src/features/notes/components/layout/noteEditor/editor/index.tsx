@@ -17,17 +17,16 @@ import AlignMenu from './menus/alignMenu';
 import MarkingMenu from './menus/markingMenu';
 import MediaMenu from './menus/mediaMenu';
 import { debounce } from '@utilify/core';
+import { createEffect, createSignal, onCleanup } from 'solid-js';
 
 export default function Editor() {
   const [data, { updateNote }] = useData();
+  const [note, setNote] = createSignal(data.note);
+
   let editorElement;
 
-  const save = debounce(async (preview, content) => {
-    await updateNote({
-      ...data.note,
-      preview,
-      content
-    });
+  const save = debounce(async (note) => {
+    await updateNote(note);
   }, 1000);
 
   const editor = createTiptapEditor(() => ({
@@ -65,10 +64,17 @@ export default function Editor() {
         class: "h-full grow focus-visible:outline-0"
       }
     },
-    content: data.note.content,
+    content: "",
+    onCreate: (props) => {
+      setTimeout(() => props.editor.commands.setContent(data.note.content), 300);
+    },
     onUpdate: (props) => {
-      save(props.editor.getText().slice(0, 30), props.editor.getHTML());
-    }
+      setNote({...note(), preview: props.editor.getText().slice(0, 30), content: props.editor.getHTML()});
+      save({ preview: note().preview, content: note().content });
+    },
+    onDestroy: async () => {
+      await updateNote({ preview: note().preview, content: note().content });
+    },
   })) as unknown as () => IEditor;
 
   return (

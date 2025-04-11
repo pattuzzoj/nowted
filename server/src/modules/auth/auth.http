@@ -2,56 +2,72 @@
 @path = /auth
 @host = {{hostname}}{{path}}
 
-GET {{host}}/verify
-
-###
-
-POST {{host}}/login
-Content-type: application/json
+### Register
+POST http://localhost:5000/auth/register
+Content-Type: application/json
 
 {
-  "login": "pattuzzoj@gmail.com",
-  "password": "Ju30042001"
+  "password": "Password123!",
+  "username": "testuser"
 }
 
-###
-
-POST {{host}}/register
-Content-type: application/json
+### Verify Email
+POST http://localhost:5000/auth/verify-email
+Content-Type: application/json
 
 {
-  "email": "pattuzzoj@safas.com",
-  "username": "safsaf",
-  "password": "Ju30042001"
+  "token": "<emailVerificationToken>"
 }
 
-###
-
-POST {{host}}/activate-account
-Content-type: application/json
+### Resend Verification Email
+POST http://localhost:5000/auth/resend-verification
+Content-Type: application/json
 
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwNGQ4YTRiMC0zMTlmLTQ3ZTQtOTU4Ny02ZDczMmNmMWZjY2EiLCJlbWFpbCI6InBhdHR1enpvakBnbWFpbC5jb20iLCJpYXQiOjE3NDAyODI2ODAsImV4cCI6MTc0MDI4Mjk4MH0.t5RjPKCd-4NbQPsJEJJnYH0p5-363EkVIfdpUM4b9W8"
+  "token": "<emailVerificationToken>"
 }
 
-###
-
-DELETE {{host}}/logout
-
-###
-
-@POST {{host}}/forgot-password
-Content-type: application/json
+### Login
+POST http://localhost:5000/auth/login
+Content-Type: application/json
 
 {
-  "email": "pattuzzoj@gmail.com"
+  "login": "test@example.com",
+  "password": "Password123!"
 }
 
-###
+### Refresh Token (requires cookie set from login)
+POST http://localhost:5000/auth/refresh-token
+Content-Type: application/json
+Cookie: refresh-token=<refreshToken>
 
-POST {{host}}/reset-password
-Content-type: application/json
+{}
+
+### Verify Session (requires auth guard)
+GET http://localhost:5000/auth/verify-session
+Authorization: Bearer <accessToken>
+
+### Logout (requires auth guard)
+DELETE http://localhost:5000/auth/logout
+Cookie: refresh-token=<refreshToken>
+
+### Forgot Password
+POST http://localhost:5000/auth/forgot-password
+Content-Type: application/json
 
 {
-  "password": "Ju30042001"
+  "account": "test@example.com"
 }
+
+### Reset Password
+POST http://localhost:5000/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "<resetToken>",
+  "password": "NewPassword123!"
+}
+
+### Suspend Account (requires auth guard)
+POST http://localhost:5000/auth/suspend-account
+Authorization: Bearer <accessToken>

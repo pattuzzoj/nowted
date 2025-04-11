@@ -12,11 +12,11 @@ export default class SyncService {
   ) {}
 
   async fetch(userId: string, lastSync: string) {
-    const folders = await this.folderService.getFoldersSinceLastSync(
+    const folders = await this.folderService.getSinceLastSync(
       userId,
       lastSync,
     );
-    const notes = await this.noteService.getNotesSinceLastSync(
+    const notes = await this.noteService.getSinceLastSync(
       userId,
       lastSync,
     );

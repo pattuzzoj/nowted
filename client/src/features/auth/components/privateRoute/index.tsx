@@ -2,10 +2,10 @@ import { onMount, ParentProps, Show } from "solid-js";
 import useAuth from "../../hooks/useAuth";
 
 export default function PrivateRoute(props: ParentProps) {
-  const { isAuthenticated, handleVerify } = useAuth();
+  const { isAuthenticated, handleVerifySession } = useAuth();
 
   onMount(async () => {
-    // await handleVerify();
+    await handleVerifySession();
   });
 
   return (

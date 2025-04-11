@@ -90,7 +90,7 @@ export default function ChangeEmail(props: ParentProps) {
                     <LoaderCircleIcon class="hidden group-disabled:block group-disabled:animate-spin text-center" />
                   </button>
                 </span>
-                <Dialog.Root open={verificationFormIsActive()}>
+                <Dialog.Root open={verificationFormIsActive()} onOpenChange={() => setVerificationFormIsActive(false)}>
                   <Portal>
                     <Dialog.Positioner>
                       <Dialog.Content>

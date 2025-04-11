@@ -2,48 +2,57 @@
 @path = /users
 @host = {{hostname}}{{path}}
 
-GET {{host}}/check-username?username=ReidenGlob
-Content-Type: application/json
+### Get Current User Profile
+GET http://localhost:5000/users/me
+Authorization: Bearer <accessToken>
 
-####
+### Check if Username Exists
+GET http://localhost:5000/users/check-username?username=testuse
 
-GET {{host}}/check-email?email=pattuzzoj@gmail.com
-Content-Type: application/json
+### Check if Email Exists
+GET http://localhost:5000/users/check-email?email=test@example.com
 
-####
-
-POST {{host}}/request-change-email
-Content-Type: application/json
-
-{
-  "id": "9b702d2d-4280-4fa1-9e7a-7a3622430ddc",
-  "email": "reidenglobal1@gmail.com"
-}
-
-####
-
-POST {{host}}/change-email
+### Request Change Email
+POST http://localhost:5000/users/request-change-email
+Authorization: Bearer <accessToken>
 Content-Type: application/json
 
 {
-  "id": "9b702d2d-4280-4fa1-9e7a-7a3622430ddc",
-  "pin": 4250
+  "newEmail": "newemail@example.com"
 }
 
-####
-
-PATCH {{host}}/me/change-username
+### Confirm Change Email
+POST http://localhost:5000/users/confirm-change-email
+Authorization: Bearer <accessToken>
 Content-Type: application/json
 
 {
-  "username": "reidenglobal123"
+  "pin": "123456"
 }
 
-###
-
-PATCH {{host}}/change-password
+### Change Username
+PATCH http://localhost:5000/users/me/username
+Authorization: Bearer <accessToken>
 Content-Type: application/json
 
 {
-  "password": "new_password123"
+  "username": "newusername"
 }
+
+### Change Password
+PATCH http://localhost:5000/users/me/password
+Authorization: Bearer <accessToken>
+Content-Type: application/json
+
+{
+  "currentPassword": "OldPassword123!",
+  "newPassword": "NewPassword123!"
+}
+
+### Delete User Data
+DELETE http://localhost:5000/users/delete-data
+Authorization: Bearer <accessToken>
+
+### Delete User Account
+DELETE http://localhost:5000/users
+Authorization: Bearer <accessToken>

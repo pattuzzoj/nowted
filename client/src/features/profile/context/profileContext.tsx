@@ -27,27 +27,24 @@ export default function ProfileContextProvider(props: ParentProps) {
   const userService = ProfileService.getInstance(profile, setProfile);
 
   onMount(async () => {
-    const data = await userService.getProfile();
-
-    if (data) {
+    try {
+      const data = await userService.getProfile();
       setProfile(data);
-    }
+    } catch {}
   });
 
   async function changeUsername(username: string, password: string) {
-    const changedUsername = await userService.changeUsername(username, password);
-
-    if (changedUsername) {
+    try {
+      await userService.changeUsername(username, password);
       setProfile({ username: username });
-    }
+    } catch {}
   }
 
   async function confirmChangeEmail(email: string, pin: number) {
-    const confirmedChangeEmail = await userService.confirmChangeEmail(pin);
-
-    if (confirmedChangeEmail) {
+    try {
+      await userService.confirmChangeEmail(pin);
       setProfile({ email: email });
-    }
+    } catch {}
   }
 
   return (

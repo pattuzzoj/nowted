@@ -1,39 +1,47 @@
-import { baseURL } from "../utils/constants";
-import FetchService from "./fetchService";
+import api from "./api";
 
 export default class UserValidationService {
   private static instance: UserValidationService;
-    private fetchService: FetchService;
-  
-    private constructor() {
-      this.fetchService = new FetchService(baseURL.concat("/users"));
+
+  private constructor() {}
+
+  static getInstance() {
+    if (!UserValidationService.instance) {
+      UserValidationService.instance = new UserValidationService();
     }
+
+    return UserValidationService.instance;
+  }
+
+  public async checkUsername(username: string) {
+    try {
+      const response = await api.get("users/check-username", {
+        params: { username }
+      });
   
-    static getInstance() {
-      if (!UserValidationService.instance) {
-        UserValidationService.instance = new UserValidationService();
+      if (!(response.statusText === "OK")) {
+        throw new Error(`HTTP Status error: ${response.status}`);
       }
   
-      return UserValidationService.instance;
+      return true;
+    } catch {
+      return false;
     }
+  }
+
+  public async checkEmail(email: string) {
+    try {
+      const response = await api.get("users/check-email", {
+        params: { email },
+      });
   
-    public async checkUsername(username: string) {
-      const request = await this.fetchService.get("/check-username?username=" + username);
-  
-      if (!request.success) {
-        return false;
+      if (!(response.statusText === "OK")) {
+        throw new Error(`HTTP Status error: ${response.status}`);
       }
   
-      return !request.data.exists;
+      return true;
+    } catch {
+      return false;
     }
-  
-    public async checkEmail(email: string) {
-      const request = await this.fetchService.get("/check-email?email=" + email);
-  
-      if (!request.success) {
-        return false;
-      }
-      
-      return !request.data.exists;
-    }
+  }
 }

@@ -18,5 +18,15 @@ export const profileMessages = {
     loading: "Confirming Email Change...",
     success: "Email Changed Successfully",
     error: "Error Confirming Email Change"
+  },
+  DELETING_DATA: {
+    loading: "Deleting Data...",
+    success: "Data Deleted Successfully",
+    error: "Error Deleting Data"
+  },
+  DELETING_ACCOUNT: {
+    loading: "Deleting Account...",
+    success: "Account Deleted Successfully",
+    error: "Error Deleting Account"
   }
 };

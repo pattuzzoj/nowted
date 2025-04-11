@@ -8,13 +8,12 @@ import {
   Delete,
   UseGuards,
   Res,
-  // Req,
+  Req
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthGuard } from '@shared/guards/auth.guard';
 import { messages } from '@utils/messages';
 import { SetMessage } from '@shared/decorators/setMessage.decorator';
-// import type { AuthRequest } from '@shared/types';
 import {
   LoginDto,
   RegisterDto,
@@ -23,55 +22,71 @@ import {
   ForgotPasswordDto,
 } from './dto';
 import AuthService from './auth.service';
+import type { AuthRequest } from '@shared/types';
 
 @Controller('/auth')
 export default class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Get('/verify-token')
-  @UseGuards(AuthGuard)
+  @Post('/register')
+  @HttpCode(HttpStatus.CREATED)
+  @SetMessage(messages.REGISTERED)
+  async register(@Body() register: RegisterDto) {
+    await this.authService.register(register);
+  }
+
+  @Post('/verify-email')
   @HttpCode(HttpStatus.OK)
-  @SetMessage(messages.LOGGED)
-  async verifyToken() {}
+  @SetMessage(messages.EMAIL_VERIFIED)
+  async verifyEmail(@Body() { token }: TokenDto) {
+    await this.authService.verifyEmail(token);
+  }
+
+  @Post('/resend-verification')
+  @HttpCode(HttpStatus.OK)
+  @SetMessage(messages.MAIL_SENT)
+  async resendVerification(@Body() { token }: TokenDto) {
+    await this.authService.resendVerification(token);
+  }
 
   @Post('/login')
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.LOGGED)
   async login(
     @Res({ passthrough: true }) res: Response,
-    @Body() loginDto: LoginDto,
+    @Body() login: LoginDto,
   ) {
-    const token = await this.authService.login(loginDto);
+    const { refreshToken, accessToken } = await this.authService.login(login);
 
-    res.cookie('jwt', token, {
+    res.cookie('refresh-token', refreshToken, {
       httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: 'none',
       domain: 'nowted-server.vercel.app',
     });
+
+    return { accessToken };
   }
 
-  @Post('/register')
-  @HttpCode(HttpStatus.CREATED)
-  @SetMessage(messages.REGISTERED)
-  async register(@Body() registerDto: RegisterDto) {
-    await this.authService.register(registerDto);
-  }
-
-  @Post('/activate-account')
+  @Post('/refresh-token')
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
-  @SetMessage(messages.ACCOUNT_ACTIVATED)
-  async activateAccount(@Body() tokenDto: TokenDto) {
-    await this.authService.activateAccount(tokenDto.token);
+  @SetMessage(messages.TOKEN_REFRESH)
+  async refreshToken(@Req() { user }: AuthRequest) {
+    const accessToken = await this.authService.generateAccessToken(user);
+    return {
+      accessToken,
+    };
   }
 
-  // @Post('/resend-activation-token')
-  // @HttpCode(HttpStatus.OK)
-  // @SetMessage(messages.MAIL_SENT)
-  // async resendActivationToken(@Body() tokenDto: TokenDto) {
-  //   await this.authService.resendActivationToken(tokenDto);
-  // }
+  @Get('/verify-session')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @SetMessage(messages.LOGGED)
+  async verifySession() {
+    // verify session with guard
+  }
 
   @Delete('/logout')
   @UseGuards(AuthGuard)
@@ -87,39 +102,36 @@ export default class AuthController {
     });
   }
 
-  // @Delete('/delete-account')
-  // @UseGuards(AuthGuard)
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // @SetMessage(messages.ACCOUNT_DELETED)
-  // async deleteAccount(
-  //   @Req() req: AuthRequest,
-  //   @Res({ passthrough: true }) res: Response,
-  // ) {
-  //   await this.authService.deleteAccount(req.user.sub);
-
-  //   res.clearCookie('jwt', {
-  //     httpOnly: true,
-  //     secure: true,
-  //     maxAge: 30 * 24 * 60 * 60 * 1000,
-  //     sameSite: 'none',
-  //     domain: 'nowted-server.vercel.app',
-  //   });
-  // }
-
   @Post('/forgot-password')
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.MAIL_SENT)
-  async recoverAccount(@Body() forgotPasswordDto: ForgotPasswordDto) {
-    await this.authService.recoverAccount(forgotPasswordDto.account);
+  async recoverAccount(@Body() { account }: ForgotPasswordDto) {
+    await this.authService.recoverAccount(account);
   }
 
   @Post('/reset-password')
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.PASSWORD_UPDATED)
-  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
-    await this.authService.resetPassword(
-      resetPasswordDto.token,
-      resetPasswordDto.password,
-    );
+  async resetPassword(@Body() { token, password }: ResetPasswordDto) {
+    await this.authService.resetPassword(token, password);
+  }
+
+  @Post('/suspend-account')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @SetMessage(messages.ACCOUNT_SUSPENDED)
+  async suspendUserAccount(
+    @Req() { user }: AuthRequest,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.authService.suspendUserAccount(user.sub);
+
+    res.clearCookie('jwt', {
+      httpOnly: true,
+      secure: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      sameSite: 'none',
+      domain: 'nowted-server.vercel.app',
+    });
   }
 }

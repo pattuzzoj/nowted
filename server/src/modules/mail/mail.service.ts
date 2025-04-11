@@ -96,4 +96,39 @@ export default class MailService {
       `,
     });
   }
+
+  async sendAccountSuspensionMail(email: string) {
+    await this.send({
+      from: 'Nowted <no-reply@nowted.com>',
+      to: email,
+      subject: 'Your Account Has Been Suspended',
+      html: `
+      <div style="font-family: Arial, sans-serif; color: #333; text-align: center;">
+        <h2>Your Account Has Been Suspended</h2>
+        <p>You have successfully suspended your Nowted account.</p>
+        <p>While your account is suspended, you won’t receive notifications and won’t have access to your content.</p>
+        <p>To reactivate your account, simply log in again at any time.</p>
+        <p>If you have any questions, we're here to help.</p>
+        <p>— The Nowted Team</p>
+      </div>
+    `,
+    });
+  }
+
+  async sendAccountReactivationMail(email: string) {
+    await this.send({
+      from: 'Nowted <no-reply@nowted.com>',
+      to: email,
+      subject: 'Your Account Has Been Reactivated',
+      html: `
+      <div style="font-family: Arial, sans-serif; color: #333; text-align: center;">
+        <h2>Welcome Back!</h2>
+        <p>Your Nowted account has been successfully reactivated after your recent login.</p>
+        <p>You now have full access to all your content and features again.</p>
+        <p>We're glad to have you back!</p>
+        <p>— The Nowted Team</p>
+      </div>
+    `,
+    });
+  }
 }

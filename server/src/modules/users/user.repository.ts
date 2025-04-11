@@ -8,13 +8,13 @@ import { User } from './interfaces/user.interface';
 export default class UserRepository {
   constructor(@Inject('DATABASE') private db: DatabaseType) {}
 
-  async createUser(user: User) {
+  async create(user: User) {
     const [result] = await this.db.insert(userSchema).values(user).returning();
 
     return result;
   }
 
-  async findUserByLogin(login: string) {
+  async findByLogin(login: string) {
     const [user] = await this.db
       .select()
       .from(userSchema)
@@ -23,7 +23,7 @@ export default class UserRepository {
     return user;
   }
 
-  async findUserById(id: string) {
+  async findById(id: string) {
     const [user] = await this.db
       .select()
       .from(userSchema)
@@ -31,7 +31,7 @@ export default class UserRepository {
     return user;
   }
 
-  async findUserByEmail(email: string) {
+  async findByEmail(email: string) {
     const [user] = await this.db
       .select()
       .from(userSchema)
@@ -40,7 +40,7 @@ export default class UserRepository {
     return user;
   }
 
-  async findUserByUsername(username: string) {
+  async findByUsername(username: string) {
     const [user] = await this.db
       .select()
       .from(userSchema)
@@ -49,7 +49,7 @@ export default class UserRepository {
     return user;
   }
 
-  async activateUser(id: string) {
+  async activateAccount(id: string) {
     await this.db
       .update(userSchema)
       .set({ account_status: 'active', updated_at: new Date().toISOString() })
@@ -77,7 +77,7 @@ export default class UserRepository {
       .where(eq(userSchema.id, id));
   }
 
-  async suspendAccountUser(id: string) {
+  async suspendAccount(id: string) {
     await this.db
       .update(userSchema)
       .set({
@@ -87,9 +87,7 @@ export default class UserRepository {
       .where(eq(userSchema.id, id));
   }
 
-  async deleteUser(id: string) {
-    await this.db
-      .delete(userSchema)
-     .where(eq(userSchema.id, id));
+  async delete(id: string) {
+    await this.db.delete(userSchema).where(eq(userSchema.id, id));
   }
 }

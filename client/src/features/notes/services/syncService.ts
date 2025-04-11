@@ -1,22 +1,20 @@
 import { deepMerge } from "@utilify/core";
-import FetchService from "@/shared/services/fetchService";
 import { Notify } from "@/shared/utils/decorators/notify";
 import { messages } from "@/shared/utils/messages";
-import { baseURL } from "@/shared/utils/constants";
 import FolderService from "./folderService";
 import NoteService from "./noteService";
 import ActionRecordService from "./actionRecordService";
 import type { Folder, Note } from "../types";
+import api from "@/shared/services/api";
 
 export default class SyncService {
   private static instance: SyncService;
-  private fetchService: FetchService;
+  private baseURL = "/sync";
   private folderService: FolderService;
   private noteService: NoteService;
   private ActionRecordService: ActionRecordService;
 
   private constructor() {
-    this.fetchService = new FetchService(baseURL.concat("/sync"));
     this.folderService = FolderService.getInstance();
     this.noteService = NoteService.getInstance();
     this.ActionRecordService = ActionRecordService.getInstance();
@@ -34,36 +32,24 @@ export default class SyncService {
     return localStorage.getItem("lastSync") || new Date("0").toISOString();
   }
 
-  private setLastSync(lastSync: string) {
-    localStorage.setItem("lastSync", lastSync);
+  private setLastSync() {
+    localStorage.setItem("lastSync", new Date().toISOString());
   }
 
   @Notify(messages.SYNC_ALL)
   async syncFetch() {
     const lastSync = this.getLastSync();
-    const response = await this.fetchService.get<{
+    const response = await api.get<{
       folders: Folder[];
       notes: Note[];
-    }>(`/${lastSync}`);
+    }>(`${this.baseURL}/${lastSync}`);
 
-    if (response.status === "error") {
-      return response;
-    }
+    this.setLastSync();
 
-    try {
-      await this.folderService.populate(response.data.folders);
-      await this.noteService.populate(response.data.notes);
+    await this.folderService.populate(response.data.folders);
+    await this.noteService.populate(response.data.notes);
 
-      this.setLastSync(response.timestamp);
-    } catch (error) {
-      return {
-        status: "error",
-        message: "Internal Error",
-        data: null,
-      };
-    }
-
-    return response;
+    return data;
   }
 
   @Notify(messages.SYNC_ALL)
@@ -109,18 +95,14 @@ export default class SyncService {
       };
     }
 
-    const response = await this.fetchService.post("", synchronizedRecords);
+    const response = await api.post(this.baseURL, synchronizedRecords);
 
-    if (response.status === "error") {
-      return response;
-    }
-
-    this.setLastSync(response.timestamp);
+    this.setLastSync();
 
     for (const item of actionRecords) {
       await this.ActionRecordService.delete(item.id);
     }
 
-    return response;
+    return response.data;
   }
 }

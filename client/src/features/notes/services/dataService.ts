@@ -11,7 +11,7 @@ export interface UseCases {
   updateFolder: (data: Folder) => Promise<void>;
   deleteFolder: (id: string) => Promise<void>;
   createNote: (data: Note) => Promise<void>;
-  updateNote: (data: Note) => Promise<void>;
+  updateNote: (data: Partial<Note>) => Promise<void>;
   favoriteNote: (id: string) => Promise<void>;
   unfavoriteNote: (id: string) => Promise<void>;
   archiveNote: (id: string) => Promise<void>;
