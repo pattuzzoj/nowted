@@ -1,4 +1,4 @@
-import { Accessor, Setter, createContext, createSignal, ParentProps, onMount } from "solid-js";
+import { Accessor, Setter, createContext, createSignal, ParentProps } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import useIndexedDB from "@/shared/hooks/useIndexedDB";
 import AuthService from "../services/authService";
@@ -36,12 +36,11 @@ export default function AuthProvider(props: ParentProps) {
   }
 
   async function handleLogin(credentials: Login) {
-    const isLogged = await authService.login(credentials);
-
-    if (isLogged) {
+    try {
+      await authService.login(credentials);
       setIsAuthenticated(true);
       navigate("/");
-    }
+    } catch {}
   }
 
   async function handleRegister(registration: Register) {

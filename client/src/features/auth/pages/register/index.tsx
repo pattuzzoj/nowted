@@ -6,7 +6,7 @@ import Input from "@/shared/components/form/input";
 import Password from "@/shared/components/form/password";
 import Submit from "@/shared/components/form/submit";
 import useAuth from "../../hooks/useAuth";
-import { debounce } from "@utilify/core";
+import { debounce } from "@/shared/utils/helpers";
 
 type Register = {
   email: string;

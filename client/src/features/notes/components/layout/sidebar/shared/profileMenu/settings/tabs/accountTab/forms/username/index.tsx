@@ -9,7 +9,7 @@ import { Dialog } from "@ark-ui/solid";
 import { Portal } from "solid-js/web";
 import { ParentProps } from "solid-js";
 import UserRoundIcon from "lucide-solid/icons/user-round";
-import { debounce } from "@/features/notes/utils/functions";
+import { debounce } from "@/shared/utils/helpers";
 
 type FormSchemaType = {
   username: string

@@ -9,7 +9,7 @@ import useUserContext from "@/features/profile/hooks/useProfile";
 import { Dialog, PinInput } from "@ark-ui/solid";
 import { Portal } from "solid-js/web";
 import { createSignal, ParentProps } from "solid-js";
-import { debounce } from "@/features/notes/utils/functions";
+import { debounce } from "@/shared/utils/helpers";
 
 type FormSchemaType = {
   email: string
