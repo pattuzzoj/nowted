@@ -56,6 +56,13 @@ export default class UserRepository {
       .where(eq(userSchema.id, id));
   }
 
+  async verifyEmail(id: string) {
+    await this.db
+      .update(userSchema)
+      .set({ email_status: 'verified', updated_at: new Date().toISOString() })
+      .where(eq(userSchema.id, id));
+  }
+
   async changeEmail(id: string, email: string) {
     await this.db
       .update(userSchema)

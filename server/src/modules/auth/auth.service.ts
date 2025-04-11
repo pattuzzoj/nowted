@@ -107,7 +107,7 @@ export default class AuthService {
       throw new ConflictException(messages.EMAIL_ALREADY_VERIFIED);
     }
 
-    await this.userRepository.activateAccount(user.id);
+    await this.userRepository.verifyEmail(user.id);
     await this.mailService.sendWelcomeMail(user.email);
   }
 
@@ -223,9 +223,17 @@ export default class AuthService {
   }
   
   async generateAccessToken(payload: Omit<AccessTokenPayload, 'purpose'>) {
+    const user = await this.userRepository.findById(payload.sub);
+
+    if (!user) {
+      throw new BadRequestException(messages.USER_NOT_FOUND);
+    }
+
     return await this.jwtService.signAsync(
       {
-        ...payload,
+        sub: user.id,
+        email: user.email,
+        username: user.username,
         purpose: 'access-token',
       },
       {

@@ -70,11 +70,10 @@ export default class AuthController {
   }
 
   @Post('/refresh-token')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.TOKEN_REFRESH)
-  async refreshToken(@Req() { user }: AuthRequest) {
-    const accessToken = await this.authService.generateAccessToken(user);
+  async refreshToken(@Req() req: AuthRequest) {
+    const accessToken = await this.authService.generateAccessToken(req.cookies['refresh-token']);
     return {
       accessToken,
     };
