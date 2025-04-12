@@ -92,7 +92,7 @@ export default class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @SetMessage(messages.LOGOUT)
   async logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('jwt', {
+    res.clearCookie('refresh-token', {
       httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -125,7 +125,7 @@ export default class AuthController {
   ) {
     await this.authService.suspendUserAccount(user.sub);
 
-    res.clearCookie('jwt', {
+    res.clearCookie('refresh-token', {
       httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,

@@ -116,7 +116,7 @@ export default class UserController {
   ) {
     await this.userService.delete(user.sub);
 
-    res.clearCookie('', {
+    res.clearCookie('refresh-token', {
       httpOnly: true,
       secure: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
