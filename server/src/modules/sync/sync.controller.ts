@@ -4,8 +4,8 @@ import {
   Post,
   Param,
   UseGuards,
-  Request,
   Body,
+  Req,
 } from '@nestjs/common';
 import type { AuthRequest } from '@shared/types';
 import { AuthGuard } from '@shared/guards/auth.guard';
@@ -22,15 +22,15 @@ export default class SyncController {
   @Get(':lastSync')
   @SetMessage(messages.SYNCHRONIZED)
   async syncFetch(
-    @Request() req: AuthRequest,
+    @Req() {user}: AuthRequest,
     @Param('lastSync') lastSync: string,
   ) {
-    return await this.syncService.fetch(req.user.sub, lastSync);
+    return await this.syncService.fetch(user.sub, lastSync);
   }
 
   @Post()
   @SetMessage(messages.SYNCHRONIZED)
-  async syncPush(@Request() req: AuthRequest, @Body() data: SyncRecord[]) {
-    await this.syncService.push(req.user.sub, data);
+  async syncPush(@Req() {user}: AuthRequest, @Body() data: SyncRecord[]) {
+    await this.syncService.push(user.sub, data);
   }
 }
