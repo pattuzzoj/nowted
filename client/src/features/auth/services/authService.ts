@@ -42,7 +42,7 @@ export default class AuthService {
     );
 
     if (data.accessToken) {
-      localStorage.setItem("AUTH_TOKEN", `Bearer ${data.accessToken}`);
+      localStorage.setItem("AUTH_TOKEN", data.accessToken);
     }
   }
 

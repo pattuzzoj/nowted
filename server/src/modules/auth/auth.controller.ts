@@ -84,7 +84,6 @@ export default class AuthController {
   @SetMessage(messages.LOGGED)
   async verifySession(@Req() req: AuthRequest) {
     await this.authService.verifyToken(req.cookies['refresh-token'], 'refresh-token');
-    // verify session with guard
   }
 
   @Delete('/logout')

@@ -26,13 +26,17 @@ api.interceptors.request.use(config => {
 api.interceptors.response.use((response) => response, async (error: AxiosError) => {
   if (error.response?.status === 401) {
     try {
-      const {data} = await axios.post("/auth/refresh-token", {}, {withCredentials: true});
+      const { data } = await axios.post(
+        "https://nowted-server.vercel.app/auth/refresh-token",
+        {},
+        { withCredentials: true }
+      );
       localStorage.setItem("AUTH_TOKEN", data.accessToken);
   
       return api.request(error.config as InternalAxiosRequestConfig);
     } catch (error) {
-      // localStorage.removeItem("AUTH_TOKEN");
-      // window.location.href = "/auth/login";
+      localStorage.removeItem("AUTH_TOKEN");
+      window.location.href = "/auth/login";
     }
   }
 
