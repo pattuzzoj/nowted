@@ -80,10 +80,10 @@ export default class AuthController {
   }
 
   @Get('/verify-session')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @SetMessage(messages.LOGGED)
-  async verifySession() {
+  async verifySession(@Req() req: AuthRequest) {
+    await this.authService.verifyToken(req.cookies['refresh-token'], 'refresh-token');
     // verify session with guard
   }
 

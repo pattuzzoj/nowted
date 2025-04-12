@@ -43,8 +43,6 @@ export default class AuthService {
     if (data.accessToken) {
       localStorage.setItem("AUTH_TOKEN", `Bearer ${data.accessToken}`);
     }
-
-    return true;
   }
 
   @Notify(messages.REGISTER)
@@ -65,15 +63,11 @@ export default class AuthService {
   @Notify(messages.RESEND_EMAIL)
   public async resendVerification(token: string) {
     await api.post(`${this.baseURL}/resend-verification`, { token });
-
-    return true;
   }
 
   @Notify(messages.ACCOUNT_RECOVERY)
   public async recoverAccount(account: string) {
     await api.post(`${this.baseURL}/forgot-password`, { account });
-
-    return true;
   }
 
   @Notify(messages.RESET_PASSWORD)
@@ -86,7 +80,6 @@ export default class AuthService {
 
   @Notify(messages.ACCOUNT_SUSPENDED)
   public async suspendAccount() {
-    const response = await api.post(`${this.baseURL}/suspend-account`);
-    return response.data.success;
+    await api.post(`${this.baseURL}/suspend-account`);
   }
 }
