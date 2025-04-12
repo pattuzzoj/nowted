@@ -31,8 +31,8 @@ api.interceptors.response.use((response) => response, async (error: AxiosError) 
   
       return api.request(error.config as InternalAxiosRequestConfig);
     } catch (error) {
-      localStorage.removeItem("AUTH_TOKEN");
-      window.location.href = "/auth/login";
+      // localStorage.removeItem("AUTH_TOKEN");
+      // window.location.href = "/auth/login";
     }
   }
 
