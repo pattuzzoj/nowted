@@ -37,7 +37,8 @@ export default class AuthService {
   public async login(credentials: Login) {
     const {data} = await api.post<{ accessToken: string }>(
       `${this.baseURL}/login`,
-      credentials
+      credentials,
+      { withCredentials: true }
     );
 
     if (data.accessToken) {

@@ -32,8 +32,8 @@ POST http://localhost:5000/auth/login
 Content-Type: application/json
 
 {
-  "login": "test@example.com",
-  "password": "Password123!"
+  "login": "pattuzzoj@gmail.com",
+  "password": "Ju30042001@"
 }
 
 ### Refresh Token (requires cookie set from login)
