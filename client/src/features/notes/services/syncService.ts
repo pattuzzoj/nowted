@@ -39,15 +39,15 @@ export default class SyncService {
   @Notify(messages.SYNC_ALL)
   async syncFetch() {
     const lastSync = this.getLastSync();
-    const response = await api.get<{
+    const {data} = await api.get<{
       folders: Folder[];
       notes: Note[];
     }>(`${this.baseURL}/${lastSync}`);
 
     this.setLastSync();
 
-    await this.folderService.populate(response.data.folders);
-    await this.noteService.populate(response.data.notes);
+    await this.folderService.populate(data.folders);
+    await this.noteService.populate(data.notes);
 
     return data;
   }
@@ -95,7 +95,7 @@ export default class SyncService {
       };
     }
 
-    const response = await api.post(this.baseURL, synchronizedRecords);
+    const {data} = await api.post(this.baseURL, synchronizedRecords);
 
     this.setLastSync();
 
@@ -103,6 +103,6 @@ export default class SyncService {
       await this.ActionRecordService.delete(item.id);
     }
 
-    return response.data;
+    return data;
   }
 }

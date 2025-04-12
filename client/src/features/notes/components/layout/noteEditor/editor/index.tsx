@@ -17,7 +17,8 @@ import AlignMenu from './menus/alignMenu';
 import MarkingMenu from './menus/markingMenu';
 import MediaMenu from './menus/mediaMenu';
 import { debounce } from '@utilify/core';
-import { createEffect, createSignal, onCleanup } from 'solid-js';
+import { createSignal } from 'solid-js';
+import { Note } from '@/features/notes/types';
 
 export default function Editor() {
   const [data, { updateNote }] = useData();
@@ -70,10 +71,10 @@ export default function Editor() {
     },
     onUpdate: (props) => {
       setNote({...note(), preview: props.editor.getText().slice(0, 30), content: props.editor.getHTML()});
-      save({ preview: note().preview, content: note().content });
+      save({ id: note().id, preview: note().preview, content: note().content });
     },
     onDestroy: async () => {
-      await updateNote({ preview: note().preview, content: note().content });
+      await updateNote({ id: note().id, preview: note().preview, content: note().content } as Note);
     },
   })) as unknown as () => IEditor;
 
