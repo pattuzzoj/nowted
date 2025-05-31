@@ -1,3 +1,6 @@
 {
-  "livePreview.defaultPreviewPath": "/client/dist/index.html"
+  "livePreview.defaultPreviewPath": "/client/dist/index.html",
+  "cursorAI.experimentalProvider": "local",
+  "cursorAI.local.endpoint": "http://localhost:11434",
+  "cursorAI.local.model": "deepseek-r1:14b"
 }

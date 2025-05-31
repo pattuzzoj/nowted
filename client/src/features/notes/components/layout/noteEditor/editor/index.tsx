@@ -17,18 +17,23 @@ import AlignMenu from './menus/alignMenu';
 import MarkingMenu from './menus/markingMenu';
 import MediaMenu from './menus/mediaMenu';
 import { debounce } from '@utilify/core';
-import { createSignal } from 'solid-js';
-import { Note } from '@/features/notes/types';
+import { createEffect, createSignal } from 'solid-js';
 
 export default function Editor() {
   const [data, { updateNote }] = useData();
-  const [note, setNote] = createSignal(data.note);
+  const [note, setNote] = createSignal({...data.note});
 
-  let editorElement;
+  createEffect(() => {
+    if (data.note.id !== note().id) {
+      setNote(data.note);
+    }
+  })
 
   const save = debounce(async (note) => {
     await updateNote(note);
   }, 1000);
+  
+  let editorElement;
 
   const editor = createTiptapEditor(() => ({
     element: editorElement!,
@@ -65,17 +70,25 @@ export default function Editor() {
         class: "h-full grow focus-visible:outline-0"
       }
     },
-    content: "",
+    content: note().content,
     onCreate: (props) => {
       setTimeout(() => props.editor.commands.setContent(data.note.content), 300);
     },
-    onUpdate: (props) => {
-      setNote({...note(), preview: props.editor.getText().slice(0, 30), content: props.editor.getHTML()});
-      save({ id: note().id, preview: note().preview, content: note().content });
+    onUpdate: async (props) => {
+      const content = props.editor.getHTML();
+
+      // if (content === note().content) {
+      //   return;
+      // }
+
+      const preview = props.editor.getText().slice(0, 30);
+
+      save({...note(), preview, content});
+      editorElement.focus();
     },
-    onDestroy: async () => {
-      await updateNote({ id: note().id, preview: note().preview, content: note().content } as Note);
-    },
+    // onDestroy: async () => {
+    //   await updateNote(note());
+    // },
   })) as unknown as () => IEditor;
 
   return (

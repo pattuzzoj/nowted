@@ -46,8 +46,8 @@ export default class SyncService {
 
     this.setLastSync();
 
-    await this.folderService.populate(data.folders);
-    await this.noteService.populate(data.notes);
+    await this.folderService.seedSyncFolders(data.folders);
+    await this.noteService.seedSyncNotes(data.notes);
 
     return data;
   }

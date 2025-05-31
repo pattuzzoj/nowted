@@ -1,5 +1,5 @@
 import { Show } from "solid-js";
-import { useNavigate, useParams } from "@solidjs/router";
+import { useNavigate } from "@solidjs/router";
 import { createMediaQuery } from "@solid-primitives/media";
 import { Splitter } from "@ark-ui/solid/splitter";
 import TrashIcon from "lucide-solid/icons/trash-2";
@@ -17,16 +17,13 @@ export default function Trash() {
   const isMobile = createMediaQuery("(max-width: 1023px)");
   const isDesktop = createMediaQuery("(min-width: 1024px)");
   const navigate = useNavigate();
-  const params = useParams();
 
   return (
     <>
       <Show when={isMobile()}>
-        <Show when={params.noteId} fallback={(
+        <Show when={data.note.id} fallback={(
           <NoteList
           title={<><TrashIcon class="size-5" /> Trash</>}
-          list={data.trash}
-          context="trash"
           fallback={<EmptyTrash />}/>
         )}>
           <div class="relative h-screen w-full bg-layout-primary flex flex-col items-center justify-center gap-4 text-center p-2">
@@ -58,8 +55,6 @@ export default function Trash() {
             <Splitter.Panel id="list">
               <NoteList
                 title={<><TrashIcon class="size-5" /> Trash</>}
-                list={data.trash}
-                context="trash"
                 />
             </Splitter.Panel>
             <Splitter.ResizeTrigger id="list:editor">
@@ -68,7 +63,7 @@ export default function Trash() {
               </div>
             </Splitter.ResizeTrigger>
             <Splitter.Panel id="editor">
-              <Show when={params.noteId} fallback={
+              <Show when={data.note} fallback={
                 <div class="h-screen bg-layout-primary flex flex-col items-center justify-center text-center gap-4">
                   <TrashIcon class="size-12" />
                   <h2>No note selected</h2>

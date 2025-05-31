@@ -22,7 +22,7 @@ export default class ActionRecordService {
     return await this.actionRecordStore.getAll();
   }
 
-  public async create(type: ActionOperation, entity: ActionEntity, data: ActionData) {
+  private async create(type: ActionOperation, entity: ActionEntity, data: ActionData) {
     await this.actionRecordStore.add({
       id: crypto.randomUUID(),
       type,
@@ -30,6 +30,22 @@ export default class ActionRecordService {
       data,
       timestamp: new Date().toISOString()
     });
+  }
+
+  public async add(entity: ActionEntity, data: ActionData) {
+    await this.create("create", entity, data);
+  }
+
+  public async update(entity: ActionEntity, data: ActionData) {
+    await this.create("update", entity, data);
+  }
+
+  public async trash(entity: ActionEntity, data: ActionData) {
+    await this.create("delete", entity, data);
+  }
+
+  public async restore(entity: ActionEntity, data: ActionData) {
+    await this.create("restore", entity, data);
   }
 
   public async delete(id: string) {

@@ -1,15 +1,14 @@
-import { adjustDate } from "@utilify/core";
 import { StoreOperations } from "@/shared/context/indexedDB";
 import { Folder } from "../entities/folder";
 
 export interface IFolderService {
-  populate(folders: Folder[]): Promise<void>;
-  get(id: string): Promise<Folder>;
-  getAll(): Promise<Folder[]>;
-  create(folder: Folder): Promise<Folder>;
-  update(folder: Folder): Promise<Folder>;
-  delete(id: string): Promise<void>;
-  clear(): Promise<void>;
+  seedSyncFolders(folders: Folder[]): Promise<void>;
+  hasFolder(id: string): Promise<boolean>;
+  getFolder(id: string): Promise<Folder>;
+  getAllFolders(): Promise<Folder[]>;
+  createFolder(folder: Folder): Promise<Folder>;
+  updateFolder(folder: Folder): Promise<Folder>;
+  deleteFolder(id: string): Promise<void>;
 }
 
 export default class FolderService implements IFolderService {
@@ -29,73 +28,43 @@ export default class FolderService implements IFolderService {
     return FolderService.instance;
   }
 
-  async get(id: string) {
-    return await this.folderStore.get(id);
-  }
-
-  async getAll() {
-    const folders = (await this.folderStore.getAll())
-      .filter((folder) => folder.deleted_at === null)
-      .sort((folder, nextFolder) => folder.order - nextFolder.order);
-
-    return folders;
-  }
-
-  async getActiveFolders() {
-    const folders = (await this.getAll()).filter(
-      (folder) => folder.deleted_at === null
-    );
-
-    return folders;
-  }
-
-  async getDeletedFolders() {
-    const folders = (await this.getAll()).filter(
-      (folder) => folder.deleted_at !== null
-    );
-
-    return folders;
-  }
-
-  async populate(folders: Folder[]) {
+  async seedSyncFolders(folders: Folder[]) {
     for (const folder of folders) {
       await this.folderStore.put(folder);
     }
   }
 
-  async create(data: Folder) {
+  async hasFolder(id: string) {
+    const key = await this.folderStore.getKey(id);
+    return Boolean(key);
+  }
+
+  async getFolder(id: string) {
+    return await this.folderStore.get(id);
+  }
+
+  async getAllFolders() {
+    const folders = (await this.folderStore.getAll())
+      .sort((folder, nextFolder) => folder.order - nextFolder.order);
+
+    return folders;
+  }
+
+  async createFolder(data: Folder) {
     const folder = new Folder(data.name, data.color, data.order);
     await this.folderStore.add(folder);
 
     return folder;
   }
 
-  async update(folder: Folder) {
+  async updateFolder(folder: Folder) {
     folder.updated_at = new Date().toISOString();
     await this.folderStore.put(folder);
 
     return folder;
   }
 
-  async delete(id: string) {
+  async deleteFolder(id: string) {
     await this.folderStore.delete(id);
-  }
-
-  async clear() {
-    await this.clear();
-  }
-
-  async cleanDeletedFolders() {
-    const folders = await this.getDeletedFolders();
-
-    for (const folder of folders) {
-      const deletedAt = new Date(folder.deleted_at!);
-      const deletedDate = adjustDate(deletedAt, 7, "days");
-      const now = new Date();
-
-      if (now > deletedDate) {
-        await this.folderStore.delete(folder.id);
-      }
-    }
   }
 }

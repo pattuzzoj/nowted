@@ -6,22 +6,18 @@ import NoteList from "@/features/notes/components/layout/noteList";
 import useData from "@/features/notes/hooks/useData";
 import NoteEditor from "@/features/notes/components/layout/noteEditor";
 import EmptyFolder from "./emptyFolder";
-import { useParams } from "@solidjs/router";
 
 export default function Folder() {
   const [data] = useData();
   const isMobile = createMediaQuery("(max-width: 1023px)");
   const isDesktop = createMediaQuery("(min-width: 1024px)");
-  const params = useParams();
 
   return (
     <>
       <Show when={isMobile()}>
-        <Show when={params.noteId} fallback={
+        <Show when={data.note.id} fallback={
           <NoteList
             title={<><FolderOpenIcon class="size-5 text-transparent" style={{ fill: data.folder.color }} />{data.folder.name}</>}
-            list={data.notes}
-            context="folder"
             fallback={<EmptyFolder name={data.folder.name} />}
           />
         }>
@@ -36,8 +32,6 @@ export default function Folder() {
           <Splitter.Panel id="list">
             <NoteList
             title={<><FolderOpenIcon class="size-5 text-transparent"style={{ fill: data.folder.color }} />{data.folder.name}</>}
-            list={data.notes}
-            context="folder"
             fallback={<EmptyFolder name={data.folder.name}/>}
             />
           </Splitter.Panel>
@@ -47,7 +41,7 @@ export default function Folder() {
             </div>
           </Splitter.ResizeTrigger>
           <Splitter.Panel id="editor">
-            <Show when={params.noteId} fallback={
+            <Show when={data.note.id} fallback={
               <div class="h-screen bg-layout-primary flex flex-col items-center justify-center text-center gap-4">
                 <FolderOpenIcon class="size-12" />
                 <h2>No note selected</h2>

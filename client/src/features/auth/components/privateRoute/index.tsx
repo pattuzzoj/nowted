@@ -5,11 +5,11 @@ export default function PrivateRoute(props: ParentProps) {
   const { isAuthenticated, handleVerifySession } = useAuth();
 
   onMount(async () => {
-    await handleVerifySession();
+    // await handleVerifySession();
   });
 
   return (
-    <Show when={isAuthenticated()}>
+    <Show when={isAuthenticated() || true}>
       {props.children}
     </Show>
   )

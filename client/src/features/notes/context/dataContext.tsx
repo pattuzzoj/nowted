@@ -1,6 +1,12 @@
-import { createContext, createEffect, onMount, ParentProps } from "solid-js";
-import { createStore } from "solid-js/store";
-import { useNavigate, useParams } from "@solidjs/router";
+import {
+  createContext,
+  createEffect,
+  createSignal,
+  on,
+  ParentProps,
+} from "solid-js";
+import { createStore, reconcile } from "solid-js/store";
+import { useLocation, useNavigate, useParams } from "@solidjs/router";
 import useIndexedDB from "@/shared/hooks/useIndexedDB";
 import FolderService from "../services/folderService";
 import NoteService from "../services/noteService";
@@ -9,16 +15,15 @@ import ActionRecordService from "../services/actionRecordService";
 import DataService from "../services/dataService";
 import type { ContextData, UseCases } from "../services/dataService";
 import type { ActionRecord, Folder, Note } from "../types";
+import { Length } from "class-validator";
 
-export type DataContextType = [
-  data: ContextData,
-  services: UseCases
-]
+export type DataContextType = [data: ContextData, services: UseCases];
 
 export const DataContext = createContext<DataContextType>();
 
 export default function DataContextProvider(props: ParentProps) {
   const [data, setData] = createStore<ContextData>({
+    context: "",
     folder: {} as Folder,
     note: {} as Note,
     folders: [],
@@ -26,7 +31,7 @@ export default function DataContextProvider(props: ParentProps) {
     recents: [],
     favorites: [],
     archived: [],
-    trash: []
+    trash: [],
   });
   const [useStore] = useIndexedDB();
   const folderStore = useStore<Folder>("folder");
@@ -41,22 +46,107 @@ export default function DataContextProvider(props: ParentProps) {
   const syncService = SyncService.getInstance();
   const params = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const pathname = () => location.pathname;
+  const [hasLoadedGlobals, setHasLoadedGlobals] = createSignal(false);
 
-  (async () => {
-    setData("folders", await folderService.getAll());
-    setData("favorites", await noteService.getFavoriteNotes());
-    setData("archived", await noteService.getArchivedNotes());
-    setData("trash", await noteService.getDeletedNotes());
-  })();
+  createEffect(
+    on(pathname, async (path) => {
+      if (!hasLoadedGlobals()) {
+        setData("folders", await folderService.getAllFolders());
+        setData("favorites", await noteService.getFavoriteNotes());
+        setData("archived", await noteService.getArchivedNotes());
+        setData("trash", await noteService.getTrashNotes());
 
-  onMount(async () => {
-    try {
-      await syncService.syncFetch();
-      setData("folders", await folderService.getAll());
-      setData("favorites", await noteService.getFavoriteNotes());
-      setData("archived", await noteService.getArchivedNotes());
-      setData("trash", await noteService.getDeletedNotes());
-    } catch (error) {}
+        setHasLoadedGlobals(true);
+      }
+
+      const { folderId, noteId } = params;
+
+      await loadNote(noteId);
+
+      let notes = [];
+
+      if (path.startsWith("/folder") && folderId) {
+        await loadFolder(folderId);
+      } else if (path.startsWith("/favorites")) {
+        notes = await noteService.getAllNotes([...data.favorites]);
+        setData("notes", notes);
+      } else if (path.startsWith("/archived")) {
+        notes = await noteService.getAllNotes([...data.archived]);
+        setData("notes", notes);
+      } else if (path.startsWith("/trash")) {
+        notes = await noteService.getAllNotes([...data.trash]);
+        setData("notes", notes);
+      } else {
+        setData("notes", []);
+      }
+    })
+  );
+
+  async function loadNote(noteId: string | undefined) {
+    if (noteId) {
+      const hasNote = await noteService.hasNote(noteId);
+
+      if (!hasNote) {
+        navigate("/");
+        return;
+      }
+
+      const note = await noteService.getNote(noteId);
+      const hasFolder = await folderService.hasFolder(note.folder_id);
+
+      if (hasFolder && note.folder_id !== data.folder.id) {
+        const folder = await folderService.getFolder(note.folder_id);
+        setData("folder", folder);
+      }
+
+      setData("note", note);
+    } else {
+      setData("note", reconcile({} as Note));
+    }
+  }
+
+  async function loadFolder(folderId: string) {
+    if (folderId) {
+      const hasFolder = await folderService.hasFolder(folderId);
+
+      if (!hasFolder) {
+        navigate("/");
+        return;
+      }
+
+      const folder = await folderService.getFolder(folderId);
+      const notes = await noteService.getNotesByFolderId(folderId);
+      const activeNotes = notes.filter((note) => !note.archived);
+
+      setData("folder", folder);
+      setData("notes", reconcile(activeNotes));
+    } else {
+      setData("folder", reconcile({} as Folder));
+    }
+  }
+
+  async function setContext(
+    context: "" | "folder" | "favorites" | "archived" | "trash"
+  ) {
+    setData("context", context);
+  }
+
+  createEffect(() => {
+    const pathname = location.pathname;
+
+    if (pathname.includes("folder")) {
+      setContext("folder");
+    } else if (pathname.includes("favorites")) {
+      setContext("favorites");
+    } else if (pathname.includes("archived")) {
+      setContext("archived");
+    } else if (pathname.includes("trash")) {
+      setContext("trash");
+    } else {
+      setContext("");
+    }
   });
 
   async function moveNote(id: string, folderId: string) {
@@ -66,68 +156,30 @@ export default function DataContextProvider(props: ParentProps) {
       navigate(`/folder/${folderId}/note/${id}`);
     }
   }
-  
-  createEffect(async () => {
-    if (params.folderId) {
-      const folder = await folderService.get(params.folderId);
-      const notes = await noteService.getNotesByFolderId(params.folderId);
 
-      setData("folder", folder);
-      setData("notes", notes);
-    } else {
-      setData("folder", { id: "" });
-      setData("notes", []);
-    }
-  });
+  // function backoff(attempt: number = 0) {
+  //   const baseDelay = 2000;
+  //   const maxDelay = 30000;
+  //   const delay = Math.min(baseDelay * 2 ** attempt, maxDelay);
 
-  createEffect(async () => {
-    if (params.noteId) {
-      const note = await noteService.get(params.noteId);
-      const folder = await folderService.get(note.folder_id);
+  //   return setTimeout(async () => {
+  //     const response = await syncService.syncPush();
 
-      if (params.folderId && params.folderId !== note.folder_id) {
-        navigate("/folder/" + params.folderId);
-        return;
-      }
+  //     if (response.status === "error") {
+  //       backoff(attempt + 1);
+  //       return;
+  //     }
 
-      if (folder) {
-        setData("folder", folder);
-      }
-
-      setData("note", note);
-    } else {
-      setData("note", { id: "" });
-    }
-  });
-
-  function backoff(attempt: number = 0) {
-    const baseDelay = 2000;
-    const maxDelay = 30000;
-    const delay = Math.min(baseDelay * (2 ** attempt), maxDelay);
-
-    return setTimeout(async () => {
-      const response = await syncService.syncPush();
-
-      if (response.status === "error") {
-        backoff(attempt + 1);
-        return;
-      }
-
-      backoff(0);
-    }, delay);
-  }
-
-  // const backoffId = backoff();
-
-  // onCleanup(() => {
-  //   clearTimeout(backoffId);
-  // });
+  //     backoff(0);
+  //   }, delay);
+  // }
 
   return (
-    <DataContext.Provider value={
-      [
+    <DataContext.Provider
+      value={[
         data,
         {
+          setContext,
           // folder
           createFolder: dataService.createFolder.bind(dataService),
           updateFolder: dataService.updateFolder.bind(dataService),
@@ -143,10 +195,10 @@ export default function DataContextProvider(props: ParentProps) {
           moveNote,
           trashNote: dataService.trashNote.bind(dataService),
           deleteNote: dataService.deleteNote.bind(dataService),
-        }
-      ]
-    }>
+        },
+      ]}
+    >
       {props.children}
     </DataContext.Provider>
-  )
+  );
 }

@@ -6,22 +6,18 @@ import NoteList from "@/features/notes/components/layout/noteList";
 import useData from "@/features/notes/hooks/useData";
 import NoteEditor from "@/features/notes/components/layout/noteEditor";
 import EmptyArchived from "./emptyArchived";
-import { useParams } from "@solidjs/router";
 
 export default function Archived() {
   const [data] = useData();
   const isMobile = createMediaQuery("(max-width: 1023px)");
   const isDesktop = createMediaQuery("(min-width: 1024px)");
-  const params = useParams();
 
   return (
     <>
       <Show when={isMobile()}>
-        <Show when={params.noteId} fallback={
+        <Show when={data.note.id} fallback={
           <NoteList
             title={<><Archive class="size-5" /> Archived</>}
-            list={data.archived}
-            context="archived"
             fallback={<EmptyArchived />}
           />
         }>
@@ -37,8 +33,6 @@ export default function Archived() {
             <Splitter.Panel id="list">
               <NoteList
                 title={<><Archive class="size-5" /> Archived</>}
-                list={data.archived}
-                context="archived"
               />
             </Splitter.Panel>
             <Splitter.ResizeTrigger id="list:editor">
@@ -47,7 +41,7 @@ export default function Archived() {
               </div>
             </Splitter.ResizeTrigger>
             <Splitter.Panel id="editor">
-              <Show when={params.noteId} fallback={
+              <Show when={data.note && data.note.archived} fallback={
                 <div class="h-screen bg-layout-primary flex flex-col items-center justify-center text-center gap-4">
                   <Archive class="size-12" />
                   <h2>No note selected</h2>

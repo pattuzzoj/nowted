@@ -21,20 +21,20 @@ export default class AuthService {
     return AuthService.instance;
   }
 
-  public async checkUsername(username: string) {
+  async checkUsername(username: string) {
     return this.userValidationService.checkUsername(username);
   }
 
-  public async checkEmail(email: string) {
+  async checkEmail(email: string) {
     return this.userValidationService.checkEmail(email);
   }
 
-  public async isValidSession() {
+  async isValidSession() {
     return await api.get(`${this.baseURL}/verify-session`, { withCredentials: true });
   }
   
   @Notify(messages.LOGIN)
-  public async login(credentials: Login) {
+  async login(credentials: Login) {
     const {data} = await api.post<{ accessToken: string }>(
       `${this.baseURL}/login`,
       credentials,
@@ -47,32 +47,32 @@ export default class AuthService {
   }
 
   @Notify(messages.REGISTER)
-  public async register(registration: Register) {
+  async register(registration: Register) {
     await api.post(`${this.baseURL}/register`, registration);
   }
 
   @Notify(messages.LOGOUT)
-  public async logout() {
+  async logout() {
     await api.delete(`${this.baseURL}/logout`);
   }
 
   @Notify(messages.ACTIVATE_ACCOUNT)
-  public async activateAccount(token: string) {
+  async activateAccount(token: string) {
     await api.post(`${this.baseURL}/verify-email`, { token });
   }
 
   @Notify(messages.RESEND_EMAIL)
-  public async resendVerification(token: string) {
+  async resendVerification(token: string) {
     await api.post(`${this.baseURL}/resend-verification`, { token });
   }
 
   @Notify(messages.ACCOUNT_RECOVERY)
-  public async recoverAccount(account: string) {
+  async recoverAccount(account: string) {
     await api.post(`${this.baseURL}/forgot-password`, { account });
   }
 
   @Notify(messages.RESET_PASSWORD)
-  public async resetPassword(token: string, password: string) {
+  async resetPassword(token: string, password: string) {
     await api.post(`${this.baseURL}/reset-password`, {
       token,
       password,
@@ -80,7 +80,7 @@ export default class AuthService {
   }
 
   @Notify(messages.ACCOUNT_SUSPENDED)
-  public async suspendAccount() {
+  async suspendAccount() {
     await api.post(`${this.baseURL}/suspend-account`);
   }
 }

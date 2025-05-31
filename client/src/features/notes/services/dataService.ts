@@ -1,4 +1,4 @@
-import { SetStoreFunction } from "solid-js/store";
+import { reconcile, SetStoreFunction } from "solid-js/store";
 import { Notify } from "@/shared/utils/decorators/notify";
 import { messages } from "@/shared/utils/messages";
 import FolderService from "./folderService";
@@ -23,17 +23,18 @@ export interface UseCases {
 }
 
 export type ContextData = {
+  context: "" | "folder" | "favorites" | "archived" | "trash";
   folder: Folder;
   note: Note;
   recents: Note[];
   folders: Folder[];
   notes: Note[];
-  favorites: Note[];
-  archived: Note[];
-  trash: Note[];
+  favorites: string[];
+  archived: string[];
+  trash: string[];
 };
 
-type Resource = Exclude<keyof ContextData, "folder" | "note">;
+type Resource = Exclude<keyof ContextData, "folder" | "note" | "context">;
 
 export default class DataService implements UseCases {
   private static instance: DataService;
@@ -75,62 +76,69 @@ export default class DataService implements UseCases {
   }
 
   private remove(resource: Resource, id: string) {
-    this.setData(resource, (items: any[]) =>
-      items.filter((item) => item.id !== id)
-    );
+    if (resource === "favorites" || resource === "archived" || resource === "trash") {
+      this.setData(resource, (items: any[]) =>
+        items.filter((item) => item !== id)
+      );
+    } else {
+      this.setData(resource, (items: any[]) =>
+        items.filter((item) => item.id !== id)
+      );
+    }
   }
 
   @Notify(messages.CREATE_FOLDER)
   public async createFolder(data: Folder) {
-    const folder = await this.folderService.create(data);
+    const folder = await this.folderService.createFolder(data);
+    await this.actionRecordService.add("folder", folder);
     this.add("folders", folder);
-    this.actionRecordService.create("create", "folder", folder);
   }
 
   @Notify(messages.UPDATE_FOLDER)
   public async updateFolder(data: Folder) {
-    const folder = await this.folderService.update(data);
+    const folder = await this.folderService.updateFolder(data);
+    await this.actionRecordService.update("folder", folder);
 
     if (this.data.folder.id === folder.id) {
       this.setData("folder", folder);
     }
 
     this.replace("folders", folder);
-    this.actionRecordService.create("update", "folder", folder);
   }
 
   @Notify(messages.DELETE_FOLDER)
   public async deleteFolder(id: string) {
     const notes = await this.noteService.getNotesByFolderId(id);
-
+    await this.actionRecordService.trash("folder", {id});
+    
     for (const note of notes) {
-      await this.noteService.trash(note.id);
+      await this.noteService.trashNote(note.id);
     }
-
+    
     if (this.data.folder.id === id) {
-      this.setData("folder", { id: "" });
+      this.setData("folder", reconcile({} as Folder));
       this.setData("notes", []);
     }
-
-    await this.folderService.delete(id);
+    
+    await this.folderService.deleteFolder(id);
     this.setData("favorites", await this.noteService.getFavoriteNotes());
     this.setData("archived", await this.noteService.getArchivedNotes());
-    this.setData("trash", await this.noteService.getDeletedNotes());
+    this.setData("trash", await this.noteService.getTrashNotes());
     this.remove("folders", id);
-    this.actionRecordService.create("delete", "folder", {id});
   }
 
   @Notify(messages.CREATE_NOTE)
   public async createNote(data: Note) {
     data.folder_id = this.data.folder.id;
-    const note = await this.noteService.create(data);
+    const note = await this.noteService.createNote(data);
+    await this.actionRecordService.add("note", note);
     this.add("notes", note);
-    this.actionRecordService.create("create", "note", note);
   }
 
   @Notify(messages.UPDATE_NOTE)
   public async updateNote(data: Note) {
-    const note = await this.noteService.update(data);
+    const note = await this.noteService.updateNote(data);
+    await this.actionRecordService.update("note", note);
 
     if (this.data.note.id === note.id) {
       this.setData("note", note);
@@ -141,125 +149,119 @@ export default class DataService implements UseCases {
       ...this.data.recents.filter((recent) => recent.id !== note.id),
     ];
 
-    if (!this.data.recents.find((recentNote) => recentNote.id === note.id)) {
-      this.setData("recents", recents.slice(0, 3));
-    }
-
+    this.setData("recents", recents.slice(0, 3));
     this.replace("notes", note);
-    this.replace("favorites", note);
-    this.replace("archived", note);
-    this.actionRecordService.create("update", "note", note);
   }
-
+  
   @Notify(messages.FAVORITE_NOTE)
   public async favoriteNote(id: string) {
-    const note = await this.noteService.favorite(id);
+    const note = await this.noteService.favoriteNote(id);
+    await this.actionRecordService.update("note", note);
 
-    if (this.data.note.id === note.id) {
+    if (this.data.note.id === id) {
       this.setData("note", note);
     }
 
-    this.add("favorites", note);
     this.replace("notes", note);
-    this.replace("archived", note);
-    this.actionRecordService.create("update", "note", note);
+    this.add("favorites", note.id);
   }
 
   @Notify(messages.UNFAVORITE_NOTE)
   public async unfavoriteNote(id: string) {
-    const note = await this.noteService.unfavorite(id);
+    const note = await this.noteService.unfavoriteNote(id);
+    await this.actionRecordService.update("note", note);
 
     if (this.data.note.id === note.id) {
       this.setData("note", note);
     }
 
     this.remove("favorites", note.id);
-    this.replace("notes", note);
-    this.replace("archived", note);
-    this.actionRecordService.create("update", "note", note);
+    
+    if (this.data.context === "favorites") {
+      this.remove("notes", note.id);
+    } else {
+      this.replace("notes", note);
+    }
   }
 
   @Notify(messages.ARCHIVE_NOTE)
   public async archiveNote(id: string) {
-    const note = await this.noteService.archive(id);
+    const note = await this.noteService.archiveNote(id);
+    await this.actionRecordService.update("note", note);
 
     if (this.data.note.id === note.id) {
       this.setData("note", note);
     }
 
-    this.remove("notes", note.id);
-    this.add("archived", note);
-    this.replace("favorites", note);
-    this.actionRecordService.create("update", "note", note);
+    this.add("archived", note.id);
+
+    if (this.data.context === "folder") {
+      this.remove("notes", note.id);
+    } else {
+      this.replace("notes", note);
+    }
   }
 
   @Notify(messages.UNARCHIVE_NOTE)
   public async unarchiveNote(id: string) {
-    const note = await this.noteService.unarchive(id);
+    const note = await this.noteService.unarchiveNote(id);
+    await this.actionRecordService.update("note", note);
 
     if (this.data.note.id === note.id) {
       this.setData("note", note);
     }
 
-    if (this.data.folder.id === note.folder_id) {
-      this.add("notes", note);
-    }
-
-    this.replace("favorites", note);
     this.remove("archived", note.id);
-    this.actionRecordService.create("update", "note", note);
+    
+    if (this.data.context === "archived") {
+      this.remove("notes", note.id);
+    } else {
+      this.replace("notes", note);
+    }
   }
 
   @Notify(messages.RESTORE_NOTE)
   public async restoreNote(id: string, folderId: string) {
-    const note = await this.noteService.restore(id);
-    note.folder_id = folderId;
-    await this.noteService.update(note);
+    const note = await this.noteService.restoreNote(id, folderId);
+    await this.actionRecordService.restore("note", note);
     this.remove("trash", id);
-    this.actionRecordService.create("restore", "note", note);
   }
 
   @Notify(messages.MOVE_NOTE)
   public async moveNote(id: string, folderId: string) {
-    let note = await this.noteService.get(id);
+    let note = await this.noteService.getNote(id);
     note.folder_id = folderId;
-    note = await this.noteService.update(note);
+    note = await this.noteService.updateNote(note);
+    await this.actionRecordService.update("note", note);
 
     if (this.data.note.id === note.id) {
       this.setData("note", note);
-      const folder = await this.folderService.get(note.folder_id);
+      const folder = await this.folderService.getFolder(note.folder_id);
       this.setData("folder", folder);
       this.setData("notes", await this.noteService.getNotesByFolderId(note.folder_id));
     }
 
-    this.replace("favorites", note);
-    this.replace("archived", note);
-
-    this.actionRecordService.create("update", "note", note);
   }
 
   @Notify(messages.TRASH_NOTE)
   public async trashNote(id: string) {
-    const note = await this.noteService.trash(id);
-
-    if (this.data.folder.id === this.data.note.folder_id) {
-      this.remove("notes", note.id);
-    }
+    const note = await this.noteService.trashNote(id);
+    await this.actionRecordService.trash("note", note);
 
     if (this.data.note.id === note.id) {
-      this.setData("note", {id: ""});
+      this.setData("note", reconcile({} as Note));
     }
 
+    this.remove("notes", note.id);
     this.remove("favorites", note.id);
     this.remove("archived", note.id);
     this.remove("recents", note.id);
-    this.add("trash", note);
-    this.actionRecordService.create("delete", "note", note);
+    this.add("trash", note.id);
   }
 
   @Notify(messages.DELETE_NOTE)
   public async deleteNote(id: string) {
-    await this.noteService.delete(id);
+    await this.noteService.deleteNote(id);
     this.remove("trash", id);
   }
 }

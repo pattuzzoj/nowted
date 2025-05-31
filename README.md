@@ -1,3 +1,31 @@
+# Nowted
+
+##
+
+Qual problema que o software resolve?
+Para quem é o software?
+O que ele faz?
+Como ele faz?
+Quais as restrições para o que ele faz?
+Quais tecnologias podem ser utilizadas?
+Qual melhor arquitetura?
+
+# Nowted
+
+## Público Alvo
+
+
+
+
+
+
+
+
+
+
+
+
+
 # 📝 Nowted
 
 Nowted é uma aplicação moderna de gerenciamento de notas que oferece uma experiência rica e organizada para criação, edição e categorização de anotações. Projetada com foco em produtividade e usabilidade, ela permite desde o simples ato de anotar até o gerenciamento completo de notas em pastas, com suporte a imagens, sistema de autenticação seguro e notificações em tempo real.

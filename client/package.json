@@ -11,6 +11,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@types/diff-match-patch": "^1.0.36",
     "typescript": "^5.7.2",
     "vite": "^6.0.0",
     "vite-plugin-solid": "^2.11.0",
@@ -36,6 +37,9 @@
     "@tiptap/starter-kit": "^2.11.5",
     "@utilify/core": "^1.0.0",
     "axios": "^1.8.4",
+    "deff": "^0.0.0",
+    "diff-match-patch": "^1.0.5",
+    "lightningcss": "^1.29.3",
     "lucide-solid": "^0.473.0",
     "solid-js": "^1.9.4",
     "solid-tiptap": "^0.7.0",
